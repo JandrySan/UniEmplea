@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <h2>Panel del Administrador</h2>
+  <p>Bienvenido, {{ nombre }}</p>
+
+  <!-- =============================== -->
+  <!-- USUARIOS PENDIENTES -->
+  <!-- =============================== -->
+  <h3>Usuarios pendientes de aprobación</h3>
+  {% if pendientes %}
+    <table border="1" cellpadding="8">
+      <tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Acciones</th></tr>
+      {% for u in pendientes %}
+      <tr>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.correo }}</td>
+        <td>{{ u.rol }}</td>
+        <td>
+          <a href="{{ url_for('aprobar_usuario', id_usuario=u._id) }}">✅ Aprobar</a> |
+          <a href="{{ url_for('rechazar_usuario', id_usuario=u._id) }}">❌ Rechazar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No hay usuarios pendientes.</p>
+  {% endif %}
+
+  <hr>
+
+  <!-- =============================== -->
+  <!-- OFERTAS LABORALES -->
+  <!-- =============================== -->
+  <h3>Ofertas laborales publicadas</h3>
+  <p><a href="{{ url_for('listar_ofertas') }}">📋 Ver todas las ofertas</a></p>
+  <p><a href="{{ url_for('crear_oferta') }}">➕ Crear nueva oferta</a></p>
+
+  <hr>
+
+  <!-- =============================== -->
+  <!-- POSTULACIONES -->
+  <!-- =============================== -->
+  <h3>Postulaciones recibidas</h3>
+  <p><a href="{{ url_for('mis_postulaciones') }}">👀 Ver todas las postulaciones</a></p>
+
+  <hr>
+
+  <!-- =============================== -->
+  <!-- CREAR EMPRESA (opcional) -->
+  <!-- =============================== -->
+  <h3>Registrar nueva empresa</h3>
+  <form method="POST" action="{{ url_for('crear_empresa') }}">
+    <label>Nombre de la empresa:</label><br>
+    <input type="text" name="nombre" required><br>
+    <label>Correo de la empresa:</label><br>
+    <input type="email" name="correo" required><br>
+    <label>Contraseña:</label><br>
+    <input type="password" name="contrasena" required><br><br>
+    <button type="submit">Registrar empresa</button>
+  </form>
+{% endblock %}

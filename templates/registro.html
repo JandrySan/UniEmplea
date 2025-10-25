@@ -1,0 +1,147 @@
+{% block contenido %}
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f0f4f8; /* fondo suave */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .logo {
+    width: 500px; /* tamaño grande */
+    max-width: 90%; /* para que se adapte en móviles */
+    margin: 40px 0 20px 0;
+    display: block;
+    object-fit: contain;
+  }
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  form {
+    background-color: #ffffff; /* formulario blanco */
+    padding: 35px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 360px;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #2563eb; /* azul */
+  }
+
+  label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  input:focus, select:focus {
+    border-color: #2563eb;
+    outline: none;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #2563eb;
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  button:hover {
+    background-color: #1e40af;
+    transform: scale(1.02);
+  }
+
+  p {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 15px;
+    color: #6b7280;
+  }
+
+  a {
+    color: #2563eb;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<!-- Logo centrado y grande -->
+<img src="{{ url_for('static', filename='UniEmplea2.1.png') }}" alt="UniEmplea Logo" class="logo">
+
+ 
+<div class="form-container">
+  <form method="post">
+    <h2>Registro de Usuario</h2>
+    <!-- resto de inputs -->
+
+    <div class="form-group">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" name="nombre" required>
+    </div>
+
+    <div class="form-group">
+      <label for="correo">Correo institucional</label>
+      <input id="correo" name="correo" type="email" required>
+    </div>
+
+    <div class="form-group">
+      <label for="contrasena">Contraseña</label>
+      <input id="contrasena" name="contrasena" type="password" required>
+    </div>
+
+    <div class="form-group">
+      <label for="rol">Rol</label>
+      <select id="rol" name="rol" required>
+        <option value="estudiante">Estudiante</option>
+        <option value="egresado">Egresado</option>
+        <option value="empresa">Empresa</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="facultad">Facultad</label>
+      <input id="facultad" name="facultad">
+    </div>
+
+    <div class="form-group">
+      <label for="extra">Extra (semestre/año)</label>
+      <input id="extra" name="extra">
+    </div>
+
+    <button type="submit">Registrar</button>
+    
+  </form>
+</div>
+{% endblock %}

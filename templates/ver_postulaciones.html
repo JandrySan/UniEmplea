@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Postulaciones recibidas</h2>
+
+{% if postulaciones %}
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>Oferta</th>
+      <th>Postulante</th>
+      <th>Correo</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    {% for p in postulaciones %}
+    <tr>
+      <td>{{ p.titulo_oferta }}</td>
+      <td>{{ p.nombre_usuario or 'No disponible' }}</td>
+      <td>{{ p.correo_usuario or 'No disponible' }}</td>
+      <td>{{ p.fecha_postulacion }}</td>
+      <td>{{ p.estado }}</td>
+      <td>
+        {% if p.estado == 'pendiente' %}
+          <a href="{{ url_for('aceptar_postulacion', id_postulacion=p['_id']) }}">✅ Aceptar</a> |
+          <a href="{{ url_for('rechazar_postulacion', id_postulacion=p['_id']) }}">❌ Rechazar</a>
+        {% elif p.estado == 'aceptada' %}
+          <span>🟢 Aceptada</span> |
+          <a href="#">📅 Agendar cita</a>  <!-- futuro -->
+        {% elif p.estado == 'rechazada' %}
+          <span>🔴 Rechazada</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No hay postulaciones por el momento.</p>
+{% endif %}
+{% endblock %}

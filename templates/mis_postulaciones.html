@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Mis postulaciones</h2>
+
+{% if postulaciones %}
+  <ul>
+  {% for p in postulaciones %}
+    <li>
+      <strong>{{ p.titulo_oferta }}</strong> — {{ p.empresa }}<br>
+      {% if p.estado == 'pendiente' %}
+        <span style="color: orange;">Estado: Pendiente</span>
+      {% elif p.estado == 'aceptada' %}
+        <span style="color: green;">Estado: Aceptada ✅</span>
+      {% elif p.estado == 'rechazada' %}
+        <span style="color: red;">Estado: Rechazada ❌</span>
+      {% endif %}
+      <br>Fecha: {{ p.fecha_postulacion }}
+      <hr>
+    </li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No te has postulado a ninguna oferta.</p>
+{% endif %}
+{% endblock %}

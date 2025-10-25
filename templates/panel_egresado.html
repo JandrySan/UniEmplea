@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <h2>Panel del Egresado</h2>
+  <p>Bienvenido, {{ nombre }}</p>
+  <p>Aquí podrás actualizar tu información laboral y aplicar a ofertas.</p>
+<a href="{{ url_for('mis_postulaciones') }}">📋 Ver mis postulaciones</a><br>
+
+  {% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Panel del Estudiante</h2>
+<p>Bienvenido, {{ nombre }}</p>
+
+<p><a href="{{ url_for('listar_ofertas') }}">📄 Ver ofertas laborales</a></p>
+<a href="{{ url_for('mis_postulaciones') }}">📋 Ver mis postulaciones</a><br>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <h2>Lista de usuarios</h2>
+  <table border="1" cellpadding="5">
+    <tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Facultad</th><th>Acciones</th></tr>
+    {% for u in usuarios %}
+    <tr>
+      <td>{{ u.nombre }}</td>
+      <td>{{ u.correo }}</td>
+      <td>{{ u.rol }}</td>
+      <td>{{ u.facultad }}</td>
+      <td><a href="/usuarios/{{ u._id }}/resumen">Ver resumen</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

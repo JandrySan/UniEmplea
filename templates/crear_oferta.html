@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Publicar nueva oferta</h2>
+<form method="post">
+  <label>Título:</label><br>
+  <input name="titulo" required><br><br>
+
+  <label>Descripción:</label><br>
+  <textarea name="descripcion" rows="5" cols="50" required></textarea><br><br>
+
+  <button type="submit">Publicar</button>
+</form>
+{% endblock %}
