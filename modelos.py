@@ -43,14 +43,20 @@ class Usuario(ModeloBase):
     
 
 class Estudiante(Usuario):
-    def __init__(self, nombre, correo, contrasena, facultad,semestre, estado="pendiente"):
+    def __init__(self, nombre, correo, contrasena, facultad,semestre, carrera, estado="pendiente"):
         super().__init__(nombre, correo, contrasena,"estudiante", facultad,estado)
         self.semestre = semestre
         self.practicas = []
+        self.carrera = carrera #faltaba agregar atributo
 
+    #actualice el diccionario para incluir los atributos faltantes
     def a_diccionario(self):
         d = super().a_diccionario()
-        d.update({"semestre": self.semestre, "practicas":self.practicas})
+        d.update({
+            "semestre": self.semestre, 
+            "practicas":self.practicas,
+            "carrera": self.carrera
+            })
         return d 
     
     def obtener_resumen_perfil(self):
@@ -58,14 +64,24 @@ class Estudiante(Usuario):
     
 
 class Egresado(Usuario):
-    def __init__(self, nombre, correo, contrasena, facultad, anio_graduacion,estado="pendiente"):
+    def __init__(self, nombre, correo, contrasena, facultad, cv, carrera, portafolio, anio_graduacion,estado="pendiente",):
         super().__init__(nombre, correo, contrasena,"egresado", facultad,estado)
         self.anio_graduacion = anio_graduacion
         self.empleos = []
+        self.cv = cv #faltaba agregar atributo 
+        self.carrera = carrera #faltaba agregar atributo
+        self.portafolio = portafolio #faltaba agregar atributo
 
+    #actualice el diccionario para incluir los atributos faltantes
     def a_diccionario(self):
         d = super().a_diccionario()
-        d.update({"anio_graduacion": self.anio_graduacion, "empleos": self.empleos})
+        d.update({
+            "anio_graduacion": self.anio_graduacion, 
+            "empleos": self.empleos,
+            "cv": self.cv,
+            "carrera": self.carrera,
+            "portafolio": self.portafolio
+            })
         return d 
     
     def obtener_resumen_perfil(self):
@@ -73,13 +89,22 @@ class Egresado(Usuario):
     
 
 class Empresa(Usuario):
-    def __init__(self, nombre, correo, contrasena, nombre_empresa,estado="activo"):
+    def __init__(self, nombre, correo, contrasena,ruc, direccion, telefono, nombre_empresa,estado="activo"):
         super().__init__(nombre, correo, contrasena, "empresa", None,estado)
         self.nombre_empresa = nombre_empresa
+        self.ruc = ruc #faltaba agregar atributo
+        self.direccion = direccion #faltaba agregar atributo
+        self.telefono = telefono #faltaba agregar atributo
 
+    #actualice el diccionario para incluir los atributos faltantes
     def a_diccionario(self):
         d = super().a_diccionario()
-        d.update({"nombre_empresa": self.nombre_empresa})
+        d.update({
+            "nombre_empresa": self.nombre_empresa,
+            "ruc": self.ruc,
+            "direccion": self.direccion,
+            "telefono": self.telefono
+            })
         return d
 
     def puede_publicar_oferta(self):
@@ -90,8 +115,19 @@ class Empresa(Usuario):
     
 
 class Administrador(Usuario):
-    def __init__(self, nombre, correo, contrasena,estado="activo"):
+    def __init__(self, nombre, correo, contrasena, cargo, permisos, estado="activo"):
         super().__init__(nombre, correo, contrasena, "administrador", None,estado)
+        self.cargo = cargo #faltaba agregar atributo
+        self.permisos = permisos #faltaba agregar atributo
+    
+    #se agrega diccioniario por los atributos faltantes
+    def a_diccionario(self):
+        d = super().a_diccionario()
+        d.update({
+            "cargo": self.cargo,
+            "permisos": self.permisos
+            })
+        return d
 
     def puede_publicar_oferta(self):
         return True
@@ -100,14 +136,44 @@ class Administrador(Usuario):
         return f"Administrador {self.nombre}"
     
 
+class Profesor(Usuario):
+    def __init__(self, nombre, correo, contrasena, carrera, especialidad, departamento, facultad=None, estado="activo"):
+        super().__init__(nombre, correo, contrasena, "Profesor", facultad, estado)
+        self.carrera = carrera 
+        self.especialidad = especialidad
+        self.departamento = departamento
+    def a_diccionario(self):
+        d = super().a_diccionario()
+        d.update({
+            "carrera": self.carrera,
+            "especialidad": self.especialidad,
+            "departamento": self.departamento
+        })
+        return d
+    def obtener_resumen_perfil(self):
+        return f"Profesor {self.nombre}, especialidad {self.especialidad}"
+    
+    def asignar_practiva():
+        pass
+    def evaluar_egresado():
+        pass
+    def generarInforme():
+        pass
+
+
 class Oferta(ModeloBase):
-    def __init__(self, titulo,descripcion, empresa, estado ="activa"):
+    def __init__(self, titulo,descripcion, empresa, requisitos, ubicacion, salario, modalidad, estado ="activa"):
         self.titulo = titulo
         self.descripcion = descripcion
         self.empresa = empresa 
         self.fecha_publicacion = datetime.utcnow()
         self.estado = estado
+        self.requisitos = requisitos #faltaba agregar atributo
+        self.ubicacion = ubicacion #faltaba agregar atributo
+        self.salario = salario #faltaba agregar atributo
+        self.modalidad = modalidad #faltaba agregar atributo
 
+    #actualice el diccionario para incluir los atributos faltantes
     def a_diccionario(self):
         d = super().a_diccionario()
         d.update({
@@ -115,8 +181,11 @@ class Oferta(ModeloBase):
             "descripcion": self.descripcion,
             "empresa": self.empresa,
             "fecha_publicacion": self.fecha_publicacion,
-            "estado": self.estado 
-
+            "estado": self.estado,
+            "requisitos": self.requisitos,  
+            "ubicacion": self.ubicacion,
+            "salario": self.salario,
+            "modalidad": self.modalidad
         })
         return d
     

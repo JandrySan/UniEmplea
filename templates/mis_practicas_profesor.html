@@ -1,0 +1,32 @@
+<!-- mis_practicas_profesor.html -->
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Mis Prácticas Asignadas</h2>
+
+{% if practicas %}
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>Estudiante</th>
+      <th>Carrera</th>
+      <th>Empresa</th>
+      <th>Área</th>
+      <th>Estado</th>
+      <th>Fecha Inicio</th>
+      <th>Fecha Fin</th>
+    </tr>
+    {% for p in practicas %}
+    <tr>
+      <td>{{ p.nombre_estudiante }}</td>
+      <td>{{ p.carrera }}</td>
+      <td>{{ p.nombre_empresa }}</td>
+      <td>{{ p.area_practica }}</td>
+      <td>{{ p.estado }}</td>
+      <td>{{ p.fecha_inicio or 'No definida' }}</td>
+      <td>{{ p.fecha_fin or 'No definida' }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No has asignado prácticas aún.</p>
+{% endif %}
+{% endblock %}

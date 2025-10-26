@@ -1,0 +1,36 @@
+<!-- asignar_practica.html -->
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Asignar Práctica</h2>
+<form method="post">
+  <label>Estudiante:</label><br>
+  <select name="id_estudiante" required>
+    <option value="">Seleccionar estudiante...</option>
+    {% for e in estudiantes %}
+      <option value="{{ e._id }}">{{ e.nombre }} - {{ e.carrera }}</option>
+    {% endfor %}
+  </select><br><br>
+
+  <label>Empresa:</label><br>
+  <select name="id_empresa" required>
+    <option value="">Seleccionar empresa...</option>
+    {% for emp in empresas %}
+      <option value="{{ emp._id }}">{{ emp.nombre_empresa }}</option>
+    {% endfor %}
+  </select><br><br>
+
+  <label>Área de práctica:</label><br>
+  <input name="area_practica" required><br><br>
+
+  <label>Descripción:</label><br>
+  <textarea name="descripcion" rows="4" cols="50"></textarea><br><br>
+
+  <label>Fecha inicio:</label><br>
+  <input type="date" name="fecha_inicio"><br><br>
+
+  <label>Fecha fin:</label><br>
+  <input type="date" name="fecha_fin"><br><br>
+
+  <button type="submit">Asignar práctica</button>
+</form>
+{% endblock %}

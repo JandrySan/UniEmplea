@@ -1,0 +1,36 @@
+<!-- mis_evaluaciones_profesor.html -->
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Mis Evaluaciones Realizadas</h2>
+
+{% if evaluaciones %}
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>Egresado</th>
+      <th>Carrera</th>
+      <th>Calificación</th>
+      <th>Estado</th>
+      <th>Fecha</th>
+      <th>Observaciones</th>
+    </tr>
+    {% for e in evaluaciones %}
+    <tr>
+      <td>{{ e.nombre_egresado }}</td>
+      <td>{{ e.carrera }}</td>
+      <td>{{ e.calificacion_final }}/10</td>
+      <td>
+        {% if e.aprobado %}
+          <span style="color: green;">✅ Aprobado</span>
+        {% else %}
+          <span style="color: red;">❌ Reprobado</span>
+        {% endif %}
+      </td>
+      <td>{{ e.fecha_evaluacion }}</td>
+      <td>{{ e.observaciones or 'Sin observaciones' }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No has realizado evaluaciones aún.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,16 @@
+<!-- generar_informe.html -->
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Generar Informe</h2>
+<form method="post">
+  <label>Tipo de informe:</label><br>
+  <select name="tipo_informe" required>
+    <option value="">Seleccionar tipo...</option>
+    <option value="practicas">Prácticas supervisadas</option>
+    <option value="evaluaciones">Evaluaciones realizadas</option>
+    <option value="general">Resumen general</option>
+  </select><br><br>
+
+  <button type="submit">Generar informe</button>
+</form>
+{% endblock %}
