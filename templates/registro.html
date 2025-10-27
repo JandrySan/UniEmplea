@@ -165,17 +165,10 @@
         <label for="extra-egr">Año de graduación</label>
         <input id="extra-egr" name="extra">
       </div>
-
-      <div class="form-group">
-        <label for="cv">CV</label>
-        <input id="cv" name="cv">
-      </div>
-
-      <div class="form-group">
-        <label for="portafolio">Portafolio</label>
-        <input id="portafolio" name="portafolio">
-      </div>
     </div>
+      
+
+      
 
     <!-- CAMPOS EMPRESA -->
     <div id="campos-empresa" style="display:none;">
@@ -200,33 +193,21 @@
       </div>
     </div>
 
+    <!-- CAMPOS PROFESOR -->
+    <div id="campos-profesor" style="display:none;">
+      <div class="form-group">
+        <label for="facultad-prof">Facultad</label>
+        <input id="facultad-prof" name="facultad">
+      </div>
+    </div>
+
+    
     <button type="submit">Registrar</button>
     <p>¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a></p>
   </form>
 </div>
 
-<!-- CAMPOS PROFESOR -->
-<div id="campos-profesor" style="display:none;">
-  <div class="form-group">
-    <label for="facultad-prof">Facultad</label>
-    <input id="facultad-prof" name="facultad">
-  </div>
-
-  <div class="form-group">
-    <label for="id_profesor">ID Profesor</label>
-    <input id="id_profesor" name="id_profesor" type="number">
-  </div>
-
-  <div class="form-group">
-    <label for="especialidad">Especialidad</label>
-    <input id="especialidad" name="especialidad">
-  </div>
-
-  <div class="form-group">
-    <label for="departamento">Departamento</label>
-    <input id="departamento" name="departamento">
-  </div>
-</div>
+  
 
 <script>
   function mostrarCamposRol() {
