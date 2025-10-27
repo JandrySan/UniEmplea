@@ -41,7 +41,7 @@
   <!-- POSTULACIONES -->
   <!-- =============================== -->
   <h3>Postulaciones recibidas</h3>
-  <p><a href="{{ url_for('mis_postulaciones') }}">👀 Ver todas las postulaciones</a></p>
+  <p><a href="{{ url_for('ver_postulaciones') }}">👀 Ver todas las postulaciones</a></p>
 
   <hr>
 
@@ -50,12 +50,27 @@
   <!-- =============================== -->
   <h3>Registrar nueva empresa</h3>
   <form method="POST" action="{{ url_for('crear_empresa') }}">
-    <label>Nombre de la empresa:</label><br>
+    <label>Nombre del contacto:</label><br>
     <input type="text" name="nombre" required><br>
+    
     <label>Correo de la empresa:</label><br>
     <input type="email" name="correo" required><br>
+    
     <label>Contraseña:</label><br>
-    <input type="password" name="contrasena" required><br><br>
+    <input type="password" name="contrasena" required><br>
+    
+    <label>Nombre de la empresa:</label><br>
+    <input type="text" name="nombre_empresa" required><br>
+    
+    <label>RUC:</label><br>
+    <input type="text" name="ruc" required><br>
+    
+    <label>Dirección:</label><br>
+    <input type="text" name="direccion" required><br>
+    
+    <label>Teléfono:</label><br>
+    <input type="text" name="telefono" required><br><br>
+    
     <button type="submit">Registrar empresa</button>
   </form>
 {% endblock %}

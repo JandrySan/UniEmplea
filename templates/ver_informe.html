@@ -1,0 +1,20 @@
+<!-- ver_informe.html -->
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Informe {{ informe.tipo|upper }}</h2>
+<p><strong>Profesor:</strong> {{ informe.nombre_profesor }}</p>
+<p><strong>Departamento:</strong> {{ informe.departamento }}</p>
+<p><strong>Especialidad:</strong> {{ informe.especialidad }}</p>
+<p><strong>Fecha de generación:</strong> {{ informe.fecha_generacion }}</p>
+
+<hr>
+
+<h3>Datos del informe:</h3>
+<ul>
+  {% for clave, valor in informe.datos.items() %}
+    <li><strong>{{ clave }}:</strong> {{ valor }}</li>
+  {% endfor %}
+</ul>
+
+<a href="{{ url_for('panel') }}">Volver al panel</a>
+{% endblock %}

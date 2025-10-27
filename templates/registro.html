@@ -104,7 +104,6 @@
 <div class="form-container">
   <form method="post">
     <h2>Registro de Usuario</h2>
-    <!-- resto de inputs -->
 
     <div class="form-group">
       <label for="nombre">Nombre</label>
@@ -123,25 +122,131 @@
 
     <div class="form-group">
       <label for="rol">Rol</label>
-      <select id="rol" name="rol" required>
+      <select id="rol" name="rol" required onchange="mostrarCamposRol()">
+        <option value="">Seleccionar...</option>
         <option value="estudiante">Estudiante</option>
         <option value="egresado">Egresado</option>
         <option value="empresa">Empresa</option>
+        <option value="profesor">Profesor</option>
       </select>
     </div>
 
-    <div class="form-group">
-      <label for="facultad">Facultad</label>
-      <input id="facultad" name="facultad">
+    <!-- CAMPOS ESTUDIANTE -->
+    <div id="campos-estudiante" style="display:none;">
+      <div class="form-group">
+        <label for="facultad-est">Facultad</label>
+        <input id="facultad-est" name="facultad">
+      </div>
+
+      <div class="form-group">
+        <label for="carrera-est">Carrera</label>
+        <input id="carrera-est" name="carrera">
+      </div>
+
+      <div class="form-group">
+        <label for="extra-est">Semestre</label>
+        <input id="extra-est" name="extra">
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="extra">Extra (semestre/año)</label>
-      <input id="extra" name="extra">
+    <!-- CAMPOS EGRESADO -->
+    <div id="campos-egresado" style="display:none;">
+      <div class="form-group">
+        <label for="facultad-egr">Facultad</label>
+        <input id="facultad-egr" name="facultad">
+      </div>
+
+      <div class="form-group">
+        <label for="carrera-egr">Carrera</label>
+        <input id="carrera-egr" name="carrera">
+      </div>
+
+      <div class="form-group">
+        <label for="extra-egr">Año de graduación</label>
+        <input id="extra-egr" name="extra">
+      </div>
+
+      <div class="form-group">
+        <label for="cv">CV</label>
+        <input id="cv" name="cv">
+      </div>
+
+      <div class="form-group">
+        <label for="portafolio">Portafolio</label>
+        <input id="portafolio" name="portafolio">
+      </div>
+    </div>
+
+    <!-- CAMPOS EMPRESA -->
+    <div id="campos-empresa" style="display:none;">
+      <div class="form-group">
+        <label for="extra-emp">Nombre de la empresa</label>
+        <input id="extra-emp" name="extra">
+      </div>
+
+      <div class="form-group">
+        <label for="ruc">RUC</label>
+        <input id="ruc" name="ruc">
+      </div>
+
+      <div class="form-group">
+        <label for="direccion">Dirección</label>
+        <input id="direccion" name="direccion">
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" name="telefono">
+      </div>
     </div>
 
     <button type="submit">Registrar</button>
-    
+    <p>¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a></p>
   </form>
 </div>
+
+<!-- CAMPOS PROFESOR -->
+<div id="campos-profesor" style="display:none;">
+  <div class="form-group">
+    <label for="facultad-prof">Facultad</label>
+    <input id="facultad-prof" name="facultad">
+  </div>
+
+  <div class="form-group">
+    <label for="id_profesor">ID Profesor</label>
+    <input id="id_profesor" name="id_profesor" type="number">
+  </div>
+
+  <div class="form-group">
+    <label for="especialidad">Especialidad</label>
+    <input id="especialidad" name="especialidad">
+  </div>
+
+  <div class="form-group">
+    <label for="departamento">Departamento</label>
+    <input id="departamento" name="departamento">
+  </div>
+</div>
+
+<script>
+  function mostrarCamposRol() {
+    const rol = document.getElementById('rol').value;
+    
+    document.getElementById('campos-estudiante').style.display = 'none';
+    document.getElementById('campos-egresado').style.display = 'none';
+    document.getElementById('campos-empresa').style.display = 'none';
+    document.getElementById('campos-profesor').style.display = 'none';
+    
+    if (rol === 'estudiante') {
+      document.getElementById('campos-estudiante').style.display = 'block';
+    } else if (rol === 'egresado') {
+      document.getElementById('campos-egresado').style.display = 'block';
+    } else if (rol === 'empresa') {
+      document.getElementById('campos-empresa').style.display = 'block';
+    }
+    else if (rol === 'profesor') {
+      document.getElementById('campos-profesor').style.display = 'block';
+    }
+  }
+</script>
 {% endblock %}

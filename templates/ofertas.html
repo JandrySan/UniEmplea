@@ -8,7 +8,19 @@
     <li>
       <strong>{{ o.titulo }}</strong><br>
       <em>Empresa:</em> {{ o.empresa }}<br>
+      {% if o.ubicacion %}
+      <em>Ubicación:</em> {{ o.ubicacion }}<br>
+      {% endif %}
+      {% if o.modalidad %}
+      <em>Modalidad:</em> {{ o.modalidad }}<br>
+      {% endif %}
+      {% if o.salario %}
+      <em>Salario:</em> {{ o.salario }}<br>
+      {% endif %}
       <p>{{ o.descripcion }}</p>
+      {% if o.requisitos %}
+      <p><strong>Requisitos:</strong> {{ o.requisitos }}</p>
+      {% endif %}
       <small>Publicado: {{ o.fecha_publicacion }}</small><br>
       
       {% if session['rol'] in ['estudiante', 'egresado'] %}

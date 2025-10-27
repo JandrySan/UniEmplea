@@ -8,6 +8,22 @@
   <label>Descripción:</label><br>
   <textarea name="descripcion" rows="5" cols="50" required></textarea><br><br>
 
+  <label>Requisitos:</label><br>
+  <textarea name="requisitos" rows="3" cols="50"></textarea><br><br>
+
+  <label>Ubicación:</label><br>
+  <input name="ubicacion"><br><br>
+
+  <label>Salario:</label><br>
+  <input name="salario"><br><br>
+
+  <label>Modalidad:</label><br>
+  <select name="modalidad">
+    <option value="Presencial">Presencial</option>
+    <option value="Remoto">Remoto</option>
+    <option value="Híbrido">Híbrido</option>
+  </select><br><br>
+
   <button type="submit">Publicar</button>
 </form>
 {% endblock %}
