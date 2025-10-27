@@ -4,7 +4,7 @@
 <h2>Panel del Profesor</h2>
 <p>Bienvenido, {{ nombre }}</p>
 
-<p><a href="{{ url_for('asignar_practica') }}">➕ Asignar práctica</a></p>
+<p><a href="{{ url_for('asignar_practica', id_practica=o['_id']) }}">Asignar</a>
 <p><a href="{{ url_for('mis_practicas_profesor') }}">📋 Ver mis prácticas asignadas</a></p>
 <p><a href="{{ url_for('evaluar_egresado') }}">✏️ Evaluar egresado</a></p>
 <p><a href="{{ url_for('mis_evaluaciones_profesor') }}">📊 Ver mis evaluaciones</a></p>
