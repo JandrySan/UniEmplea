@@ -24,7 +24,7 @@
       <small>Publicado: {{ o.fecha_publicacion }}</small><br>
       
       {% if session['rol'] in ['estudiante', 'egresado'] %}
-        <a href="{{ url_for('postular', id_ofertas=o['_id']) }}">📩 Postularme</a>
+        <a href="{{ url_for('postular', id_oferta=o['_id']) }}">📩 Postular</a>
       {% endif %}
       <hr>
     </li>
