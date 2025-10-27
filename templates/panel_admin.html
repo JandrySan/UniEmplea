@@ -3,9 +3,7 @@
   <h2>Panel del Administrador</h2>
   <p>Bienvenido, {{ nombre }}</p>
 
-  <!-- =============================== -->
-  <!-- USUARIOS PENDIENTES -->
-  <!-- =============================== -->
+ 
   <h3>Usuarios pendientes de aprobación</h3>
   {% if pendientes %}
     <table border="1" cellpadding="8">
@@ -28,26 +26,20 @@
 
   <hr>
 
-  <!-- =============================== -->
-  <!-- OFERTAS LABORALES -->
-  <!-- =============================== -->
+
   <h3>Ofertas laborales publicadas</h3>
   <p><a href="{{ url_for('listar_ofertas') }}">📋 Ver todas las ofertas</a></p>
   <p><a href="{{ url_for('crear_oferta') }}">➕ Crear nueva oferta</a></p>
 
   <hr>
 
-  <!-- =============================== -->
-  <!-- POSTULACIONES -->
-  <!-- =============================== -->
+
   <h3>Postulaciones recibidas</h3>
-  <p><a href="{{ url_for('ver_postulaciones') }}">👀 Ver todas las postulaciones</a></p>
+  <p><a href="{{ url_for('ver_postulaciones') }}"> Ver todas las postulaciones</a></p>
 
   <hr>
 
-  <!-- =============================== -->
-  <!-- CREAR EMPRESA (opcional) -->
-  <!-- =============================== -->
+ 
   <h3>Registrar nueva empresa</h3>
   <form method="POST" action="{{ url_for('crear_empresa') }}">
     <label>Nombre del contacto:</label><br>
