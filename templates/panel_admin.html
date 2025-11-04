@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del Administrador</title>
+    <style>
+        /* ===== ESTILO GLOBAL ===== */
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #eef1f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        header h2 {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 25px;
+            padding: 0 20px;
+        }
+
+        section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+        }
+
+        h3 {
+            color: #1a73e8;
+            margin-top: 0;
+            font-weight: 600;
+        }
+
+        /* ===== FORMULARIOS ===== */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        input, select {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+
+        button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #155ab6;
+        }
+
+        /* ===== LISTAS ===== */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+        }
+
+        li {
+            background-color: #f8fafc;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #1a73e8;
+            font-size: 14px;
+        }
+
+        /* ===== TABLAS ===== */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background-color: #1a73e8;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            main {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+
+            section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>Bienvenido Administrador {{ nombre }}</h2>
+</header>
+
+<main>
+    <!-- FACULTADES -->
+    <section>
+        <h3>Gestión de Facultades</h3>
+        <form method="POST" action="{{ url_for('crear_facultad') }}">
+            <input name="nombre" placeholder="Nombre de la facultad" required>
+            <input name="descripcion" placeholder="Descripción">
+            <button type="submit">Agregar Facultad</button>
+        </form>
+        <ul>
+            {% for f in facultades %}
+            <li><strong>{{ f.nombre }}</strong> - {{ f.descripcion or '' }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- CARRERAS -->
+    <section>
+        <h3>Gestión de Carreras</h3>
+        <form method="POST" action="{{ url_for('crear_carrera') }}">
+            <input name="nombre" placeholder="Nombre de la carrera" required>
+            <select name="facultad_id" required>
+                <option value="">Seleccione facultad</option>
+                {% for f in facultades %}
+                <option value="{{ f._id }}">{{ f.nombre }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Agregar Carrera</button>
+        </form>
+    </section>
+
+    <!-- DECANOS -->
+    <section>
+        <h3>Asignar Decano</h3>
+        <form method="POST" action="{{ url_for('crear_decano') }}">
+            <input name="nombre" placeholder="Nombre del decano" required>
+            <input name="correo" type="email" placeholder="Correo institucional" required>
+            <input name="contrasena" type="password" placeholder="Contraseña temporal">
+            <select name="facultad_id" required>
+                <option value="">Seleccione facultad</option>
+                {% for f in facultades %}
+                <option value="{{ f._id }}">{{ f.nombre }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Asignar Decano</button>
+        </form>
+    </section>
+
+    <!-- PROFESORES -->
+    <section>
+        <h3>Crear Profesor</h3>
+        <form method="POST" action="{{ url_for('crear_profesor') }}">
+            <input name="nombre" placeholder="Nombre del profesor" required>
+            <input name="correo" placeholder="Correo institucional" type="email" required>
+            <input name="contrasena" placeholder="Contraseña temporal" type="password">
+            <input name="especialidad" placeholder="Especialidad">
+            <select name="carrera_id" required>
+                <option value="">Seleccione carrera</option>
+                {% for c in carreras %}
+                <option value="{{ c._id }}">{{ c.nombre }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Agregar Profesor</button>
+        </form>
+    </section>
+    
+    <!-- ESTUDIANTES -->
+    <section>
+        <h3>Cargar Estudiantes (Excel)</h3>
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('cargar_estudiantes') }}">
+            <input type="file" name="archivo" accept=".xlsx" required>
+            <button type="submit">Subir Estudiantes</button>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>

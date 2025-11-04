@@ -1,0 +1,34 @@
+<!-- evaluar_egresado.html -->
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Evaluar Egresado</h2>
+<form method="post">
+  <label>Egresado:</label><br>
+  <select name="id_egresado" required>
+    <option value="">Seleccionar egresado...</option>
+    {% for e in egresados %}
+      <option value="{{ e._id }}">{{ e.nombre }} - {{ e.carrera }}</option>
+    {% endfor %}
+  </select><br><br>
+
+  <label>Calificación final (0-10):</label><br>
+  <input type="number" step="0.1" min="0" max="10" name="calificacion" required><br><br>
+
+  <label>Conocimientos técnicos (0-10):</label><br>
+  <input type="number" step="0.1" min="0" max="10" name="comp_tecnicos" value="0"><br><br>
+
+  <label>Trabajo en equipo (0-10):</label><br>
+  <input type="number" step="0.1" min="0" max="10" name="comp_equipo" value="0"><br><br>
+
+  <label>Comunicación (0-10):</label><br>
+  <input type="number" step="0.1" min="0" max="10" name="comp_comunicacion" value="0"><br><br>
+
+  <label>Resolución de problemas (0-10):</label><br>
+  <input type="number" step="0.1" min="0" max="10" name="comp_problemas" value="0"><br><br>
+
+  <label>Observaciones:</label><br>
+  <textarea name="observaciones" rows="4" cols="50"></textarea><br><br>
+
+  <button type="submit">Guardar evaluación</button>
+</form>
+{% endblock %}

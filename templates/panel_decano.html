@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block contenido %}
+<main class="container" style="max-width:900px;margin:auto;background:white;padding:25px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.1);">
+
+    <h2 style="color:#333;">Panel del Decano</h2>
+    <p>Bienvenido, {{ nombre }} 👋</p>
+
+    <section style="margin-top:30px;">
+        <h3>Carreras de la Facultad: {{ facultad.nombre }}</h3>
+        <table border="1" cellpadding="8" cellspacing="0" width="100%" style="border-collapse:collapse;">
+            <tr style="background-color:#f1f1f1;">
+                <th>Nombre de la Carrera</th>
+                <th>Estado</th>
+                <th>Director Actual</th>
+                <th>Acción</th>
+            </tr>
+            {% for c in carreras %}
+            <tr>
+                <td>{{ c.nombre }}</td>
+                <td>{{ c.estado or 'activa' }}</td>
+                <td>
+                    {% if c.director_id %}
+                        {% set director = repo_usuarios.obtener_por_id(c.director_id) %}
+                        {% if director %}
+                            {{ director.nombre }}
+                        {% else %}
+                            <em>No encontrado</em>
+                        {% endif %}
+                    {% else %}
+                        <em>Sin director asignado</em>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="{{ url_for('decano_asignar_director') }}">
+                        <input type="hidden" name="carrera_id" value="{{ c._id }}">
+                        <input name="nombre" placeholder="Nombre del Director" required>
+                        <input name="correo" placeholder="Correo institucional" type="email" required>
+                        <input name="contrasena" placeholder="Contraseña temporal" type="password">
+                        <button type="submit" style="background:#007bff;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
+                            Asignar Director
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+
+</main>
+{% endblock %}

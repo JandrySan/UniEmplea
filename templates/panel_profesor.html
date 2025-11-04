@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Panel Profesor - {{ nombre }}</h2>
+
+<h3>Materias asignadas</h3>
+<ul>
+  {% for m in materias %}
+    <li>{{ m.nombre }} (Sem {{ m.semestre }})</li>
+  {% endfor %}
+</ul>
+
+<h3>Tutorías aceptadas</h3>
+<ul>
+  {% for s in tutorados %}
+    <li>{{ s.nombre }} - {{ s.correo }}</li>
+  {% endfor %}
+</ul>
+
+<h3>Prácticas a cargo</h3>
+<table border="1" cellpadding="6">
+  <tr><th>Estudiante</th><th>Empresa</th><th>Área</th><th>Estado</th><th>Acción</th></tr>
+  {% for p in practicas %}
+  <tr>
+    <td>{{ p.nombre_estudiante or p.id_estudiante }}</td>
+    <td>{{ p.nombre_empresa or p.id_empresa }}</td>
+    <td>{{ p.area }}</td>
+    <td>{{ p.estado }}</td>
+    <td>
+      <form method="POST" action="{{ url_for('aprobar_practica', id_practica=p._id) }}">
+        <button type="submit">Aprobar</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

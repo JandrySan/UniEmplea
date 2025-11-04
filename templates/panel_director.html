@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Panel del Director</h2>
+
+<h3>Estudiantes de la carrera</h3>
+<table border="1" cellpadding="6">
+  <tr><th>Nombre</th><th>Correo</th><th>Semestre</th><th>Tutor</th><th>Acción</th></tr>
+  {% for e in estudiantes %}
+  <tr>
+    <td>{{ e.nombre }}</td>
+    <td>{{ e.correo }}</td>
+    <td>{{ e.semestre or 'N/A' }}</td>
+    <td>{{ e.tutor_id or 'Sin tutor' }}</td>
+    <td>
+      <form method="POST" action="{{ url_for('director_asignar_tutor') }}">
+        <input type="hidden" name="estudiante_id" value="{{ e._id }}">
+        <select name="profesor_id" required>
+          {% for p in profesores %}
+            <option value="{{ p._id }}">{{ p.nombre }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Asignar tutor</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

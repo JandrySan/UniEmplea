@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>UniEmplea</title>
+  </head>
+  <body>
+    <header>
+      <h1>UniEmplea</h1>
+      <nav>
+        {% if session.get('usuario_id') %}
+          <a href="{{ url_for('panel') }}">Panel</a> |
+          <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+        {% endif %}
+      </nav>
+      <hr>
+    </header>
+
+    <main>
+      {% block contenido %}{% endblock %}
+    </main>
+  </body>
+</html>
