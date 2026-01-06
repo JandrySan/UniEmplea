@@ -1,0 +1,30 @@
+<h2>Panel Director</h2>
+
+<p>Total estudiantes: {{ metricas.total_estudiantes }}</p>
+<p>Con tutor: {{ metricas.con_tutor }} ({{ metricas.porcentaje_con_tutor }}%)</p>
+
+<table>
+  <tr>
+    <th>Estudiante</th>
+    <th>Tutor</th>
+    <th>Asignar</th>
+  </tr>
+
+  {% for e in estudiantes %}
+  <tr>
+    <td>{{ e.nombre }}</td>
+    <td>{{ e.tutor_id or "Sin tutor" }}</td>
+    <td>
+      <form method="POST" action="{{ url_for('director.asignar_tutor') }}">
+        <input type="hidden" name="estudiante_id" value="{{ e.id }}">
+        <select name="tutor_id">
+          {% for p in profesores %}
+            <option value="{{ p.id }}">{{ p.nombre }}</option>
+          {% endfor %}
+        </select>
+        <button>Asignar</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
