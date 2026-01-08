@@ -74,55 +74,90 @@
             font-weight: bold;
         }
 
-        footer {
-            text-align: center;
-            padding: 15px;
-            background-color: #ddd;
-            margin-top: 40px;
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>UniEmplea</h1>
-        <p>Panel de Administración</p>
-        <a href="{{ url_for('auth.login') }}" class="logout">Cerrar sesión</a>
-    </header>
+<header>
+    <h1>UniEmplea</h1>
+    <p>Panel de Administración</p>
+    <a href="{{ url_for('auth.login') }}" class="logout">Cerrar sesión</a>
+</header>
 
-    <main>
-        <h2>Bienvenido Administrador 👋</h2>
+<main>
+    <h2>Bienvenido Administrador 👋</h2>
 
-        <section class="cards">
-            <div class="card">
-                <h3>👤 Usuarios</h3>
-                <p>Gestionar usuarios del sistema</p>
-                <a href="#">Ver usuarios</a>
-            </div>
+    <!-- 🔹 MÉTRICAS -->
+    <section class="cards">
+        <div class="card">
+            <h3>🎓 Estudiantes en prácticas</h3>
+            <p>{{ en_practicas }}</p>
+        </div>
 
-            <div class="card">
-                <h3>🏢 Empresas</h3>
-                <p>Administrar empresas registradas</p>
-                <a href="#">Ver empresas</a>
-            </div>
+        <div class="card">
+            <h3>💼 Egresados trabajando</h3>
+            <p>{{ egresados_trabajando }}</p>
+        </div>
 
-            <div class="card">
-                <h3>🎓 Estudiantes</h3>
-                <p>Gestionar estudiantes</p>
-                <a href="#">Ver estudiantes</a>
-            </div>
+        <div class="card">
+            <h3>🏫 Estudiantes por facultad</h3>
+            <ul>
+                {% for facultad, total in estudiantes_facultad.items() %}
+                    <li><strong>{{ facultad }}</strong>: {{ total }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
 
-            <div class="card">
-                <h3>📄 Ofertas</h3>
-                <p>Revisar ofertas laborales</p>
-                <a href="#">Ver ofertas</a>
-            </div>
-        </section>
-    </main>
+    <hr style="margin:40px 0">
 
-    <footer>
-        <p>© 2026 UniEmplea - Proyecto POO</p>
-    </footer>
+    <!-- 🔹 GESTIÓN -->
+    <section class="cards">
+
+        <div class="card">
+            <h3>👤 Usuarios</h3>
+            <p>Gestionar usuarios del sistema</p>
+            <a href="{{ url_for('admin.listar_usuarios') }}">Ver usuarios</a>
+        </div>
+
+        <div class="card">
+            <h3>🏢 Empresas</h3>
+            <p>Administrar empresas registradas</p>
+            <a href="{{ url_for('admin.gestionar_empresas') }}">Ver empresas</a>
+        </div>
+
+        <div class="card">
+            <h3>🎓 Estudiantes</h3>
+            <p>Gestionar estudiantes</p>
+            <a href="{{ url_for('admin.listar_estudiantes') }}">Ver estudiantes</a>
+        </div>
+
+        <!--  FACULTADES Y CARRERAS -->
+        <div class="card">
+            
+            <h3>📚 Gestión Académica</h3>
+            <p>Facultades y carreras</p>
+            <a href="{{ url_for('admin.gestion_academica') }}">
+                Administrar
+            </a>
+        </div>
+
+
+        <div class="card">
+            <h3>📄 Ofertas</h3>
+            <p>Revisar ofertas laborales</p>
+             <li><a href="{{ url_for('admin.gestionar_ofertas') }}">📄 Ofertas</a></li>
+        </div>
+
+    </section>
+</main>
 
 </body>
 </html>

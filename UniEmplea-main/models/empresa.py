@@ -1,8 +1,8 @@
+# models/empresa.py
 class Empresa:
-    def __init__(self, id, nombre, email):
+    def __init__(self, id, nombre, correo, telefono, direccion):
         self.id = id
         self.nombre = nombre
-        self.email = email
-
-    def rol(self):
-        return "empresa"
+        self.correo = correo
+        self.telefono = telefono
+        self.direccion = direccion

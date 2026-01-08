@@ -1,4 +1,4 @@
-from werkzeug.security import check_password_hash
+from utils.seguridad import verificar_password
 
 class RepositorioAuthMongo:
 
@@ -6,12 +6,12 @@ class RepositorioAuthMongo:
         self.repo_usuarios = repo_usuarios
 
     def autenticar(self, correo, contrasena):
-        data = self.repo_usuarios.buscar_por_correo(correo)
+        usuario = self.repo_usuarios.collection.find_one({"correo": correo})
 
-        if not data:
-            raise ValueError("Usuario no encontrado")
+        if not usuario:
+            raise ValueError("Correo o contraseña incorrectos")
 
-        if not check_password_hash(data["password"], contrasena):
-            raise ValueError("Contraseña incorrecta")
+        if not verificar_password(contrasena, usuario["password"]):
+            raise ValueError("Correo o contraseña incorrectos")
 
-        return data
+        return usuario  # 👈 DEBE SER DICT

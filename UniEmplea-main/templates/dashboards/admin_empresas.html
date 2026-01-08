@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Empresas</title>
+<style>
+body{font-family:Arial;background:#f4f6f8}
+table{width:100%;background:white;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #ddd}
+</style>
+</head>
+<body>
+
+<h2>🏢 Empresas</h2>
+
+<form method="POST">
+    <input name="nombre" placeholder="Nombre" required>
+    <input name="correo" placeholder="Correo" required>
+    <input name="telefono" placeholder="Teléfono">
+    <input name="direccion" placeholder="Dirección">
+    <button>➕ Crear</button>
+</form>
+
+<hr>
+
+<table>
+<tr>
+    <th>Nombre</th><th>Correo</th><th>Acciones</th>
+</tr>
+{% for e in empresas %}
+<tr>
+    <td>{{ e.nombre }}</td>
+    <td>{{ e.correo }}</td>
+    <td>
+        <form method="POST"
+              action="{{ url_for('admin.eliminar_empresa', id=e.id) }}">
+            <button>🗑 Eliminar</button>
+        </form>
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+<a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver</a>
+</body>
+</html>

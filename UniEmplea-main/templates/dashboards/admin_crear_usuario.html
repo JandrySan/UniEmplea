@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Usuario | UniEmplea</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+        }
+
+        header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 12px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0b5ed7;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Crear Usuario</h1>
+</header>
+
+<main>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        <label>Nombre</label>
+        <input type="text" name="nombre">
+
+        <label>Correo</label>
+        <input type="email" name="correo">
+
+        <label>Contraseña</label>
+        <input type="password" name="password">
+
+        <label>Rol</label>
+        <select name="rol">
+            <option value="">Seleccione un rol</option>
+            <option value="administrador">Administrador</option>
+            <option value="empresa">Empresa</option>
+            <option value="estudiante">Estudiante</option>
+            <option value="egresado">Egresado</option>
+        </select>
+
+        <button type="submit">Crear Usuario</button>
+    </form>
+
+    <a href="{{ url_for('admin.listar_usuarios') }}">⬅ Volver</a>
+</main>
+
+</body>
+</html>

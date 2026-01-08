@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estudiantes | Admin</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+        }
+
+        header {
+            background: #0d6efd;
+            color: white;
+            padding: 20px;
+        }
+
+        main {
+            padding: 30px;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        .acciones a {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🎓 Estudiantes</h1>
+    <a href="{{ url_for('admin.dashboard_admin') }}" style="color:white;">⬅ Volver</a>
+</header>
+
+<main>
+
+<form method="POST"
+      action="{{ url_for('admin.cargar_estudiantes_excel') }}"
+      enctype="multipart/form-data">
+
+    <input type="file" name="archivo" accept=".xlsx,.xls" required>
+    <button type="submit">📤 Cargar Excel</button>
+
+</form>
+
+
+<table>
+    <tr>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Facultad</th>
+        <th>Carrera</th>
+        <th>Semestre</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for item in estudiantes_data %}
+    <tr>
+        <td>{{ item.estudiante.nombre }}</td>
+        <td>{{ item.estudiante.correo }}</td>
+        <td>{{ item.estudiante.rol() }}</td>
+        <td>{{ item.facultad.nombre if item.facultad else "-" }}</td>
+        <td>{{ item.carrera.nombre if item.carrera else "-" }}</td>
+        <td>
+            {% if item.estudiante.rol() == "estudiante" %}
+                {{ item.estudiante.semestre }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>
+            <a href="{{ url_for('admin.editar_estudiante', id=item.estudiante.id) }}">
+                ✏ Editar
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

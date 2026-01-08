@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuarios | Administrador</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+        }
+
+        header {
+            background: #0d6efd;
+            color: white;
+            padding: 20px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        main {
+            padding: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .acciones a {
+            margin-right: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .editar { color: #0d6efd; }
+        .activar { color: green; }
+        .desactivar { color: orange; }
+        .eliminar { color: red; }
+
+        .btn-crear {
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: #0d6efd;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .estado-activo {
+            color: green;
+            font-weight: bold;
+        }
+
+        .estado-inactivo {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Usuarios del sistema</h1>
+    <a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver al dashboard</a>
+</header>
+
+<main>
+
+    <a href="{{ url_for('admin.crear_usuario') }}" class="btn-crear">
+        ➕ Crear nuevo usuario
+    </a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for u in usuarios %}
+            <tr>
+                <td>{{ u.nombre }}</td>
+                <td>{{ u.correo }}</td>
+                <td>{{ u.rol }}</td>
+                <td>
+                    {% if u.activo %}
+                        <span class="estado-activo">Activo</span>
+                    {% else %}
+                        <span class="estado-inactivo">Inactivo</span>
+                    {% endif %}
+                </td>
+                <td class="acciones">
+                    <a class="editar"
+                       href="{{ url_for('admin.editar_usuario', id=u['_id']) }}">
+                       ✏ Editar
+                    </a>
+
+                    {% if u.activo %}
+                        <a href="{{ url_for('admin.cambiar_estado_usuario', id=u['_id']) }}"
+                            class="estado">
+                            {{ "🚫 Desactivar" if u.activo else "✅ Activar" }}
+                        </a>
+
+                    {% else %}
+                        <a class="activar"
+                           href="{{ url_for('admin.toggle_usuario', id=u['_id']) }}"
+                           onclick="return confirm('¿Activar este usuario?')">
+                           ✅ Activar
+                        </a>
+                    {% endif %}
+
+                    <a class="eliminar"
+                       href="{{ url_for('admin.eliminar_usuario', id=u['_id']) }}"
+                       onclick="return confirm('⚠️ ¿Eliminar este usuario definitivamente?')">
+                       🗑 Eliminar
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5" style="text-align:center;">
+                    No hay usuarios registrados
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</main>
+
+</body>
+</html>

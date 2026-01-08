@@ -1,4 +1,6 @@
-from patterns.fabrica_usuarios import FabricaUsuarios
+from models.administrador import AdministradorGeneral
+from models.estudiante import Estudiante
+from models.egresado import Egresado
 
 class ServicioAutenticacion:
 
@@ -8,11 +10,33 @@ class ServicioAutenticacion:
     def login(self, correo, contrasena):
         data = self.repo_auth.autenticar(correo, contrasena)
 
-        usuario = FabricaUsuarios.crear_usuario(
-            rol=data["rol"],
-            id=str(data["_id"]),
-            nombre=data.get("nombre", ""),
-            correo=data["correo"]
-        )
+        # data DEBE ser dict
+        rol = data["rol"]
 
-        return usuario
+        if rol == "administrador":
+            return AdministradorGeneral(
+                id=str(data["_id"]),
+                nombre=data["nombre"],
+                correo=data["correo"]
+            )
+
+        if rol == "estudiante":
+            return Estudiante(
+                id=str(data["_id"]),
+                nombre=data["nombre"],
+                correo=data["correo"],
+                carrera_id=data.get("carrera_id"),
+                semestre=data.get("semestre", 1),
+                tutor_id=data.get("tutor_id")
+            )
+
+        if rol == "egresado":
+            return Egresado(
+                id=str(data["_id"]),
+                nombre=data["nombre"],
+                correo=data["correo"],
+                carrera_id=data.get("carrera_id"),
+                trabajando=data.get("trabajando", False)
+            )
+
+        raise ValueError("Rol no reconocido")

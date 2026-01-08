@@ -2,8 +2,15 @@ from models.estudiante import Estudiante
 
 class Egresado(Estudiante):
 
-    def __init__(self, id, nombre, email):
-        super().__init__(id, nombre, email, semestre=None)
+    def __init__(self, id, nombre, correo, carrera_id, trabajando=False):
+        super().__init__(
+            id=id,
+            nombre=nombre,
+            correo=correo,
+            carrera_id=carrera_id,
+            semestre=0
+        )
+        self.trabajando = trabajando
 
     def rol(self):
         return "egresado"
@@ -12,4 +19,4 @@ class Egresado(Estudiante):
         return False
 
     def obtener_dashboard(self):
-        return "dashboards/egresado.html"
+        return "egresado.dashboard_egresado"

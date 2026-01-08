@@ -1,9 +1,9 @@
 from models.usuario import Usuario
 
 class Estudiante(Usuario):
-    
-    def __init__(self, id, nombre, email, password, carrera_id, semestre, tutor_id=None):
-        super().__init__(id, nombre, email, password)
+
+    def __init__(self, id, nombre, correo, carrera_id, semestre, tutor_id=None):
+        super().__init__(id, nombre, correo)
         self.carrera_id = carrera_id
         self.semestre = semestre
         self.tutor_id = tutor_id

@@ -19,14 +19,16 @@ def login():
         try:
             usuario = servicio_auth.login(correo, contrasena)
 
+            print("ROL DEL USUARIO:", usuario.rol())
+            print("DASHBOARD:", usuario.obtener_dashboard())
+
             session["usuario_id"] = usuario.id
             session["rol"] = usuario.rol()
 
-            
             return redirect(url_for(usuario.obtener_dashboard()))
 
-        except ValueError as e:
+        except Exception as e:
+            print("ERROR LOGIN:", e)
             return render_template("dashboards/login.html", error=str(e))
 
     return render_template("dashboards/login.html")
-

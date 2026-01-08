@@ -1,0 +1,28 @@
+<h2>📄 Ofertas registradas</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Empresa</th>
+            <th>Estado</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for o in ofertas %}
+        <tr>
+            <td>{{ o.titulo }}</td>
+            <td>{{ empresas.get(o.empresa_id, "Empresa no encontrada") }}</td>
+            <td>{{ "Activa" if o.activa else "Inactiva" }}</td>
+            <td>
+                <form method="POST"
+                      action="{{ url_for('admin.eliminar_oferta', oferta_id=o.id) }}"
+                      onsubmit="return confirm('¿Eliminar esta oferta?')">
+                    <button class="btn-danger">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
