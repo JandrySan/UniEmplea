@@ -9,20 +9,9 @@ class ServicioDirectores:
         if not carrera:
             raise ValueError("Carrera no encontrada")
 
-        # Si ya tiene director → quitar rol anterior
-        if carrera.director_id:
-            director_anterior = self.repo_usuarios.buscar_por_id(carrera.director_id)
-            if director_anterior:
-                director_anterior.carrera_id = None
-                self.repo_usuarios.actualizar_rol(director_anterior, "profesor")
-
-        # Asignar nuevo director
         profesor = self.repo_usuarios.buscar_por_id(profesor_id)
         if not profesor:
             raise ValueError("Profesor no encontrado")
 
-        profesor.carrera_id = carrera_id
-        self.repo_usuarios.actualizar_rol(profesor, "director")
-
-        carrera.director_id = profesor_id
-        self.repo_carreras.actualizar_director(carrera)
+        # Solo asigna el director a la carrera
+        self.repo_carreras.asignar_director(carrera_id, profesor_id)

@@ -153,7 +153,11 @@
         <div class="card">
             <h3>📄 Ofertas</h3>
             <p>Revisar ofertas laborales</p>
-             <li><a href="{{ url_for('admin.gestionar_ofertas') }}">📄 Ofertas</a></li>
+            <ul style="list-style: none; padding: 0;">
+                <li>
+                    <a href="{{ url_for('admin.gestionar_ofertas') }}">📄 Ofertas</a>
+                </li>
+            </ul>    
         </div>
 
     </section>

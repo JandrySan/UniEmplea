@@ -5,78 +5,118 @@
     <title>Usuarios | Administrador</title>
 
     <style>
+        :root {
+            --primary: #2563eb;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #1f2937;
+        }
+
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f8;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
             margin: 0;
+            color: var(--text);
         }
 
         header {
-            background: #0d6efd;
+            background: var(--primary);
             color: white;
-            padding: 20px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
         }
 
         header a {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 14px;
+            border-radius: 8px;
             color: white;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 500;
+            transition: background .2s;
+        }
+
+        header a:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         main {
             padding: 30px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .btn-crear {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 14px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity .2s;
+        }
+
+        .btn-crear:hover {
+            opacity: .9;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
         }
 
         th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
             text-align: left;
         }
 
         th {
             background: #f1f5f9;
+            font-size: 14px;
+            color: #475569;
         }
 
         tr:hover {
-            background: #f9fafb;
+            background: #f8fafc;
         }
 
         .acciones a {
-            margin-right: 8px;
+            margin-right: 10px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 500;
+            white-space: nowrap;
         }
 
-        .editar { color: #0d6efd; }
-        .activar { color: green; }
-        .desactivar { color: orange; }
-        .eliminar { color: red; }
-
-        .btn-crear {
-            display: inline-block;
-            margin-bottom: 15px;
-            padding: 8px 12px;
-            background: #0d6efd;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-        }
+        .editar { color: var(--primary); }
+        .activar { color: var(--success); }
+        .desactivar { color: var(--warning); }
+        .eliminar { color: var(--danger); }
 
         .estado-activo {
-            color: green;
-            font-weight: bold;
+            color: var(--success);
+            font-weight: 600;
         }
 
         .estado-inactivo {
-            color: red;
-            font-weight: bold;
+            color: var(--danger);
+            font-weight: 600;
         }
     </style>
 </head>
@@ -84,7 +124,7 @@
 
 <header>
     <h1>Usuarios del sistema</h1>
-    <a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver al dashboard</a>
+    <a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver</a>
 </header>
 
 <main>
@@ -124,11 +164,10 @@
                     </a>
 
                     {% if u.activo %}
-                        <a href="{{ url_for('admin.cambiar_estado_usuario', id=u['_id']) }}"
-                            class="estado">
-                            {{ "🚫 Desactivar" if u.activo else "✅ Activar" }}
+                        <a class="desactivar"
+                           href="{{ url_for('admin.cambiar_estado_usuario', id=u['_id']) }}">
+                           🚫 Desactivar
                         </a>
-
                     {% else %}
                         <a class="activar"
                            href="{{ url_for('admin.toggle_usuario', id=u['_id']) }}"

@@ -1,28 +1,124 @@
+<style>
+:root {
+    --primary: #2563eb;
+    --danger: #dc2626;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    padding: 30px;
+    color: var(--text);
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.table-container {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f1f5f9;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+th {
+    font-weight: 600;
+    font-size: 14px;
+    color: #475569;
+    border-bottom: 2px solid var(--border);
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--border);
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: opacity .2s, transform .1s;
+}
+
+button:hover {
+    opacity: .9;
+    transform: scale(1.05);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 8px 14px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-back:hover {
+    opacity: .9;
+}
+</style>
+
+<a href="{{ url_for('admin.dashboard_admin') }}" class="btn-back">⬅ Volver</a>
+
 <h2>📄 Ofertas registradas</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>Título</th>
-            <th>Empresa</th>
-            <th>Estado</th>
-            <th>Acción</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for o in ofertas %}
-        <tr>
-            <td>{{ o.titulo }}</td>
-            <td>{{ empresas.get(o.empresa_id, "Empresa no encontrada") }}</td>
-            <td>{{ "Activa" if o.activa else "Inactiva" }}</td>
-            <td>
-                <form method="POST"
-                      action="{{ url_for('admin.eliminar_oferta', oferta_id=o.id) }}"
-                      onsubmit="return confirm('¿Eliminar esta oferta?')">
-                    <button class="btn-danger">Eliminar</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Empresa</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in ofertas %}
+            <tr>
+                <td>{{ o.titulo }}</td>
+                <td>{{ empresas.get(o.empresa_id, "Empresa no encontrada") }}</td>
+                <td>{{ "Activa" if o.activa else "Inactiva" }}</td>
+                <td>
+                    <form method="POST"
+                          action="{{ url_for('admin.eliminar_oferta', oferta_id=o.id) }}"
+                          onsubmit="return confirm('¿Eliminar esta oferta?')">
+                        <button class="btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

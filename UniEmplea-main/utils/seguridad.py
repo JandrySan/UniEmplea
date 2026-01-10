@@ -1,12 +1,7 @@
-import bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
 
-def hash_password(password: str) -> str:
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password.encode("utf-8"), salt)
-    return hashed.decode("utf-8")
+def hash_password(password):
+    return generate_password_hash(password)
 
-def verificar_password(password: str, password_hash: str) -> bool:
-    return bcrypt.checkpw(
-        password.encode("utf-8"),
-        password_hash.encode("utf-8")
-    )
+def verificar_password(password, password_hash):
+    return check_password_hash(password_hash, password)

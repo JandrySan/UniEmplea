@@ -5,14 +5,24 @@
     <title>Crear Usuario | UniEmplea</title>
 
     <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --danger: #dc2626;
+            --text: #1f2937;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
             margin: 0;
+            color: var(--text);
         }
 
         header {
-            background-color: #0d6efd;
+            background-color: var(--primary);
             color: white;
             padding: 20px;
             text-align: center;
@@ -21,48 +31,71 @@
         main {
             max-width: 500px;
             margin: 40px auto;
-            background: white;
+            background: var(--card);
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,.06);
         }
 
         label {
             display: block;
             margin-top: 15px;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         input, select {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         button {
             margin-top: 25px;
             width: 100%;
             padding: 12px;
-            background-color: #0d6efd;
+            background-color: var(--primary);
             color: white;
             border: none;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
+            transition: opacity .2s, transform .1s;
         }
 
         button:hover {
-            background-color: #0b5ed7;
+            opacity: .9;
+            transform: scale(1.02);
         }
 
         .error {
-            color: red;
-            margin-bottom: 10px;
+            background: #fee2e2;
+            color: var(--danger);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: 500;
         }
 
         a {
             display: block;
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -91,6 +124,7 @@
         <select name="rol">
             <option value="">Seleccione un rol</option>
             <option value="administrador">Administrador</option>
+            <option value="decano">Decano</option>
             <option value="empresa">Empresa</option>
             <option value="estudiante">Estudiante</option>
             <option value="egresado">Egresado</option>

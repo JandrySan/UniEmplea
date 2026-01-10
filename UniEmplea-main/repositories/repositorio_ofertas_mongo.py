@@ -1,6 +1,7 @@
+from bson import ObjectId
 from database.mongo_connection import MongoDB
 from models.oferta import Oferta
-from bson import ObjectId
+
 
 class RepositorioOfertasMongo:
 
@@ -12,6 +13,7 @@ class RepositorioOfertasMongo:
             "titulo": oferta.titulo,
             "descripcion": oferta.descripcion,
             "empresa_id": oferta.empresa_id,
+            "carrera_id": oferta.carrera_id,
             "activa": oferta.activa
         })
         oferta.id = str(result.inserted_id)
@@ -23,10 +25,16 @@ class RepositorioOfertasMongo:
             ofertas.append(
                 Oferta(
                     id=str(o["_id"]),
-                    titulo=o.get("titulo", ""),
-                    descripcion=o.get("descripcion", ""),
-                    empresa_id=o.get("empresa_id"),  # ✅ CLAVE
+                    titulo=o.get("titulo"),
+                    descripcion=o.get("descripcion"),
+                    empresa_id=o.get("empresa_id"),
+                    carrera_id=o.get("carrera_id"),
                     activa=o.get("activa", True)
                 )
             )
         return ofertas
+
+    def eliminar(self, oferta_id):
+        self.collection.delete_one(
+            {"_id": ObjectId(oferta_id)}
+        )

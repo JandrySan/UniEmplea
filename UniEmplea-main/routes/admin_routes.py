@@ -7,6 +7,8 @@ from repositories.repositorio_carreras_mongo import RepositorioCarrerasMongo
 from repositories.repositorio_facultades_mongo import RepositorioFacultadesMongo
 from repositories.repositorio_empresas_mongo import RepositorioEmpresasMongo
 from repositories.repositorio_ofertas_mongo import RepositorioOfertasMongo  
+from services.servicio_autenticacion import ServicioAutenticacion
+
 from utils.decoradores import requiere_rol
 from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
 from flask import request, redirect, url_for
@@ -18,11 +20,18 @@ from models.estudiante import Estudiante
 from werkzeug.utils import secure_filename
 from models.usuario import Usuario
 from models.empresa import Empresa
-from models.oferta import Oferta    
+from models.oferta import  Oferta 
+from models.decano import Decano
+from models.egresado import Egresado   
+from models.administrador import AdministradorGeneral
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
 
 admin_bp = Blueprint("admin", __name__)
 
-# Instancias (luego se puede mejorar con inyección)
+# Instancias 
+
 repo_estudiantes = RepositorioEstudiantes()
 repo_facultades = RepositorioFacultades()
 servicio_metricas = ServicioMetricas(repo_estudiantes, repo_facultades)
@@ -32,6 +41,8 @@ repo_carreras = RepositorioCarrerasMongo()
 repo_facultades = RepositorioFacultadesMongo()
 repo_empresas = RepositorioEmpresasMongo()
 repo_ofertas = RepositorioOfertasMongo()
+repo_auth = RepositorioUsuariosMongo()
+servicio_auth = ServicioAutenticacion(repo_auth)
 
 
 # Rutas del administrador
@@ -65,6 +76,7 @@ def listar_usuarios():
     )
 
 
+
 @admin_bp.route("/usuarios/crear", methods=["GET", "POST"])
 @requiere_rol("administrador")
 def crear_usuario():
@@ -73,22 +85,32 @@ def crear_usuario():
         correo = request.form.get("correo")
         password = request.form.get("password")
         rol = request.form.get("rol")
+        facultad = request.form.get("facultad", "")
 
-        # Validación básica
         if not nombre or not correo or not password or not rol:
             return render_template(
                 "dashboards/admin_crear_usuario.html",
                 error="Todos los campos son obligatorios"
             )
 
-        # Crear usuario base (sin rol específico aún)
-        repo_usuarios.collection.insert_one({
+        if repo_usuarios.buscar_por_correo(correo):
+            return render_template(
+                "dashboards/admin_crear_usuario.html",
+                error="El correo ya existe"
+            )
+
+        data = {
             "nombre": nombre,
             "correo": correo,
-            "password": password,  # luego se puede hashear
+            "password": generate_password_hash(password),  
             "rol": rol,
             "activo": True
-        })
+        }
+
+        if rol == "decano":
+            data["facultad"] = facultad
+
+        repo_usuarios.collection.insert_one(data)
 
         return redirect(url_for("admin.listar_usuarios"))
 

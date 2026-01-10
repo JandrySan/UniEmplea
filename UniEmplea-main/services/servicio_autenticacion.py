@@ -1,6 +1,8 @@
 from models.administrador import AdministradorGeneral
 from models.estudiante import Estudiante
 from models.egresado import Egresado
+from models.decano import Decano
+
 
 class ServicioAutenticacion:
 
@@ -10,7 +12,7 @@ class ServicioAutenticacion:
     def login(self, correo, contrasena):
         data = self.repo_auth.autenticar(correo, contrasena)
 
-        # data DEBE ser dict
+        
         rol = data["rol"]
 
         if rol == "administrador":
@@ -37,6 +39,14 @@ class ServicioAutenticacion:
                 correo=data["correo"],
                 carrera_id=data.get("carrera_id"),
                 trabajando=data.get("trabajando", False)
+            )
+        
+        if rol == "decano":
+            return Decano(
+                id=str(data["_id"]),
+                nombre=data["nombre"],
+                correo=data["correo"],
+                facultad=data.get("facultad")
             )
 
         raise ValueError("Rol no reconocido")

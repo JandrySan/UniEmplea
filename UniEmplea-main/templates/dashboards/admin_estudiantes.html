@@ -5,45 +5,116 @@
     <title>Estudiantes | Admin</title>
 
     <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #1f2937;
+        }
+
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f8;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
             margin: 0;
+            color: var(--text);
         }
 
         header {
-            background: #0d6efd;
+            background: var(--primary);
             color: white;
-            padding: 20px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header a {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background .2s;
+        }
+
+        header a:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         main {
             padding: 30px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        form {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+
+        input[type="file"] {
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            transition: opacity .2s, transform .1s;
+        }
+
+        button:hover {
+            opacity: .9;
+            transform: scale(1.03);
         }
 
         table {
             width: 100%;
-            background: white;
+            background: var(--card);
             border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
         }
 
         th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
         }
 
         th {
             background: #f1f5f9;
+            font-size: 14px;
+            color: #475569;
         }
 
-        a {
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .acciones a,
+        td a {
+            color: var(--primary);
+            font-weight: 500;
             text-decoration: none;
-            font-weight: bold;
-            color: #0d6efd;
         }
 
-        .acciones a {
-            margin-right: 10px;
+        td a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -51,7 +122,7 @@
 
 <header>
     <h1>🎓 Estudiantes</h1>
-    <a href="{{ url_for('admin.dashboard_admin') }}" style="color:white;">⬅ Volver</a>
+    <a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver</a>
 </header>
 
 <main>
@@ -64,7 +135,6 @@
     <button type="submit">📤 Cargar Excel</button>
 
 </form>
-
 
 <table>
     <tr>
@@ -99,3 +169,8 @@
     </tr>
     {% endfor %}
 </table>
+
+</main>
+
+</body>
+</html>

@@ -3,44 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <title>Empresas</title>
+
 <style>
-body{font-family:Arial;background:#f4f6f8}
-table{width:100%;background:white;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid #ddd}
+:root {
+    --primary: #2563eb;
+    --danger: #dc2626;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    padding: 30px;
+    color: var(--text);
+    margin: 0;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+.volver {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 14px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.volver:hover {
+    opacity: .9;
+}
+
+.card {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+    margin-bottom: 30px;
+}
+
+form {
+    margin-bottom: 15px;
+}
+
+input {
+    padding: 8px 10px;
+    margin-right: 6px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    width: 200px;
+}
+
+button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--primary);
+    color: white;
+    font-weight: 500;
+    transition: transform .1s, opacity .2s;
+}
+
+button:hover {
+    transform: scale(1.03);
+    opacity: .9;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f1f5f9;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+td form {
+    margin: 0;
+}
 </style>
 </head>
 <body>
 
+<!-- BOTÓN VOLVER -->
+<a href="{{ url_for('admin.dashboard_admin') }}" class="volver">
+    ⬅ Volver 
+</a>
+
 <h2>🏢 Empresas</h2>
 
-<form method="POST">
-    <input name="nombre" placeholder="Nombre" required>
-    <input name="correo" placeholder="Correo" required>
-    <input name="telefono" placeholder="Teléfono">
-    <input name="direccion" placeholder="Dirección">
-    <button>➕ Crear</button>
-</form>
+<!-- FORMULARIO -->
+<div class="card">
+    <form method="POST">
+        <input name="nombre" placeholder="Nombre" required>
+        <input name="correo" placeholder="Correo" required>
+        <input name="telefono" placeholder="Teléfono">
+        <input name="direccion" placeholder="Dirección">
+        <button>➕ Crear</button>
+    </form>
+</div>
 
-<hr>
+<!-- TABLA -->
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for e in empresas %}
+            <tr>
+                <td>{{ e.nombre }}</td>
+                <td>{{ e.correo }}</td>
+                <td>
+                    <form method="POST"
+                          action="{{ url_for('admin.eliminar_empresa', id=e.id) }}">
+                        <button>🗑 Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-<table>
-<tr>
-    <th>Nombre</th><th>Correo</th><th>Acciones</th>
-</tr>
-{% for e in empresas %}
-<tr>
-    <td>{{ e.nombre }}</td>
-    <td>{{ e.correo }}</td>
-    <td>
-        <form method="POST"
-              action="{{ url_for('admin.eliminar_empresa', id=e.id) }}">
-            <button>🗑 Eliminar</button>
-        </form>
-    </td>
-</tr>
-{% endfor %}
-</table>
-
-<a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver</a>
 </body>
 </html>

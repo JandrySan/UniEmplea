@@ -5,15 +5,26 @@
     <title>Gestión Académica | UniEmplea</title>
 
     <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 20px;
+        :root {
+            --primary: #2563eb;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #1f2937;
         }
 
-        h2, h3 {
-            color: #0d6efd;
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 30px;
+            color: var(--text);
+        }
+
+        h2, h3, h4 {
+            margin-top: 0;
         }
 
         .contenedor {
@@ -21,12 +32,28 @@
             margin: auto;
         }
 
-        .card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 30px;
+        .volver {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 14px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            font-weight: 500;
+            transition: opacity .2s;
+        }
+
+        .volver:hover {
+            opacity: .9;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
         }
 
         form {
@@ -35,26 +62,35 @@
         }
 
         input {
-            padding: 6px;
-            width: 250px;
+            padding: 8px 10px;
+            width: 260px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
         }
 
         button {
-            padding: 6px 12px;
+            padding: 8px 14px;
             border: none;
-            background-color: #0d6efd;
+            background-color: var(--primary);
             color: white;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 500;
+            transition: transform .1s, opacity .2s;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+            opacity: .9;
         }
 
         button.eliminar {
-            background-color: #dc3545;
+            background-color: var(--danger);
         }
 
         button.editar {
-            background-color: #ffc107;
-            color: black;
+            background-color: var(--warning);
+            color: white;
         }
 
         ul {
@@ -63,30 +99,33 @@
         }
 
         li {
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 6px;
             margin-bottom: 10px;
         }
 
         hr {
             margin: 25px 0;
+            border: none;
+            height: 1px;
+            background: var(--border);
         }
 
         .acciones form {
             display: inline-block;
-            margin-right: 5px;
-        }
-
-        .volver {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            color: #0d6efd;
-            font-weight: bold;
+            margin-right: 8px;
         }
     </style>
 </head>
 <body>
 
 <div class="contenedor">
+
+    <!-- BOTÓN VOLVER ARRIBA -->
+    <a href="{{ url_for('admin.dashboard_admin') }}" class="volver">
+        ⬅ Volver 
+    </a>
 
     <h2>🏫 Gestión Académica</h2>
 
@@ -133,7 +172,6 @@
                         <li>
                             {{ c.nombre }}
 
-                            <!-- EDITAR CARRERA -->
                             <form method="POST"
                                   action="{{ url_for('admin.editar_carrera', carrera_id=c.id) }}"
                                   style="display:inline">
@@ -142,7 +180,6 @@
                                 <button class="editar">Editar</button>
                             </form>
 
-                            <!-- ELIMINAR CARRERA -->
                             <form method="POST"
                                   action="{{ url_for('admin.eliminar_carrera', carrera_id=c.id) }}"
                                   style="display:inline"
@@ -166,10 +203,6 @@
 
         </div>
     {% endfor %}
-
-    <a href="{{ url_for('admin.dashboard_admin') }}" class="volver">
-        ⬅ Volver al dashboard
-    </a>
 
 </div>
 

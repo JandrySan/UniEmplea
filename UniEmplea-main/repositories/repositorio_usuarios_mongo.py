@@ -26,3 +26,25 @@ class RepositorioUsuariosMongo:
             {"_id": ObjectId(usuario_id)},
             {"$set": {"rol": nuevo_rol}}
         )
+
+    def autenticar(self, correo, contrasena):
+        usuario = self.collection.find_one({"correo": correo})
+
+        if not usuario:
+            raise ValueError("Usuario no encontrado")
+
+        if usuario["password"] != contrasena:
+            raise ValueError("Contraseña incorrecta")
+
+        if not usuario.get("activo", False):
+            raise ValueError("Usuario inactivo")
+
+        return usuario
+
+
+    def obtener_profesores(self):
+        return list(self.collection.find({
+            "rol": {"$in": ["profesor", "director"]},
+            "activo": True
+        }))
+
