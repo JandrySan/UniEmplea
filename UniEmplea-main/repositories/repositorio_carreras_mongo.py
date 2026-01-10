@@ -84,3 +84,16 @@ class RepositorioCarrerasMongo:
         })
         carrera.id = str(result.inserted_id)
         return carrera
+
+    def buscar_por_director(self, director_id):
+        c = self.collection.find_one({"director_id": director_id})
+
+        if not c:
+            return None
+
+        return Carrera(
+            id=str(c["_id"]),
+            nombre=c["nombre"],
+            facultad_id=c["facultad_id"],
+            director_id=c.get("director_id")
+        )

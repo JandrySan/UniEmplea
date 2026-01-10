@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Director</title>
+</head>
+<body>
+
+<h1>Panel del Director</h1>
+
+<ul>
+    <li>
+        <a href="{{ url_for('director.ver_carrera') }}">
+            📘 Mi carrera
+        </a>
+    </li>
+    <li>
+        <a href="{{ url_for('director.ver_docentes') }}">
+            👨‍🏫 Docentes de la carrera
+        </a>
+    </li>
+</ul>
+
+<a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+
+</body>
+</html>

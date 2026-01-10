@@ -35,9 +35,9 @@ def dashboard_decano():
 @requiere_rol("decano")
 def asignar_director():
     carrera_id = request.form.get("carrera_id")
-    profesor_id = request.form.get("profesor_id")
+    director_id = request.form.get("director_id")
 
-    repo_carreras.asignar_director(carrera_id, profesor_id)
+    servicio.asignar_director(carrera_id, director_id)
 
     return redirect(url_for("decano.listar_carreras"))
 
@@ -49,10 +49,19 @@ def listar_carreras():
     facultad_id = session["facultad_id"]
     carreras = repo_carreras.obtener_por_facultad(facultad_id)
 
+    for carrera in carreras:
+        carrera.director_nombre = None
+
+        if carrera.director_id:
+            director = repo_usuarios.buscar_por_id(carrera.director_id)
+            if director:
+                carrera.director_nombre = director["nombre"]
+
     return render_template(
         "dashboards/decano_carrera.html",
         carreras=carreras
     )
+
 
 
 
@@ -62,8 +71,8 @@ def listar_carreras():
 def form_asignar_director(carrera_id):
 
     if request.method == "POST":
-        profesor_id = request.form.get("profesor_id")
-        servicio.asignar_director(carrera_id, profesor_id)
+        director_id = request.form.get("director_id")
+        servicio.asignar_director(carrera_id, director_id)
         return redirect(url_for("decano.listar_carreras"))
 
     carrera = repo_carreras.buscar_por_id(carrera_id)

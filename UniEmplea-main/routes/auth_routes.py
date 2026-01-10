@@ -23,7 +23,7 @@ def login():
             session["usuario_id"] = usuario.id
             session["rol"] = usuario.rol()
 
-            if usuario.rol() in ["decano", "docente"]:
+            if usuario.rol() in ["decano", "docente", "director_carrera"]:
                 session["facultad_id"] = usuario.facultad_id
 
             return redirect(url_for(usuario.obtener_dashboard()))

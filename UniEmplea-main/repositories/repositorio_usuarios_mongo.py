@@ -125,3 +125,9 @@ class RepositorioUsuariosMongo:
                 )
             )
         return docentes
+    
+    def convertir_a_director(self, usuario_id):
+        self.collection.update_one(
+            {"_id": ObjectId(usuario_id)},
+            {"$set": {"rol": "director_carrera"}}
+        )
