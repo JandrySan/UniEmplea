@@ -1,0 +1,112 @@
+<style>
+:root {
+    --primary: #2563eb;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    margin: 0;
+    color: var(--text);
+}
+
+main {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.card {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+select {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+button {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+}
+
+button:hover {
+    opacity: .9;
+    transform: scale(1.02);
+}
+
+.volver {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 14px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.volver:hover {
+    opacity: .9;
+}
+</style>
+
+<main>
+
+    <a href="{{ url_for('decano.dashboard_decano') }}" class="volver">⬅ Volver</a>
+
+    <h2>Asignar Director a Facultad</h2>
+
+    <div class="card">
+        <form method="POST">
+            <label>Profesor</label>
+            <select name="profesor_id" required>
+                <option value="">Seleccione un docente</option>
+                {% for d in docentes %}
+                    <option value="{{ d.id }}">
+                        {{ d.nombre }} ({{ d.correo }})
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Asignar director</button>
+        </form>
+    </div>
+
+</main>

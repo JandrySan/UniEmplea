@@ -1,13 +1,13 @@
 from models.usuario import Usuario
 
-class Profesor(Usuario):
-    
-    def __init__(self, id, nombre, email, password, facultad_id):
-        super().__init__(id, nombre, email, password)
+class Docente(Usuario):
+
+    def __init__(self, id, nombre, correo, facultad_id):
+        super().__init__(id, nombre, correo)
         self.facultad_id = facultad_id
 
     def rol(self):
-        return "profesor"
+        return "docente"
 
     def obtener_dashboard(self):
-        return "dashboards/profesor.html"
+        return "docente.dashboard_docente"

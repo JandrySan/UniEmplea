@@ -23,17 +23,19 @@ def login():
             session["usuario_id"] = usuario.id
             session["rol"] = usuario.rol()
 
+            if usuario.rol() in ["decano", "docente"]:
+                session["facultad_id"] = usuario.facultad_id
+
             return redirect(url_for(usuario.obtener_dashboard()))
 
         except Exception as e:
-            print("ERROR LOGIN REAL:", repr(e))
             return render_template(
                 "dashboards/login.html",
                 error=str(e)
             )
 
-
     return render_template("dashboards/login.html")
+
 
 
 @auth_bp.route("/logout")

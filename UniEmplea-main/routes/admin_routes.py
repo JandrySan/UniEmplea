@@ -239,6 +239,37 @@ def editar_estudiante(id):
         estudiante=estudiante
     )
 
+#asignar decano 
+
+@admin_bp.route("/asignar-decano", methods=["GET", "POST"])
+@requiere_rol("administrador")
+def asignar_decano():
+
+    if request.method == "POST":
+        decano_id = request.form.get("decano_id")
+        facultad_id = request.form.get("facultad_id")
+
+        # Validación básica (EVITA ObjectId vacío)
+        if not decano_id or not facultad_id:
+            flash("Debe seleccionar un decano y una facultad", "error")
+            return redirect(url_for("admin.asignar_decano"))
+
+        # Asignar la facultad al decano
+        repo_usuarios.asignar_facultad(decano_id, facultad_id)
+
+        flash("Decano asignado correctamente", "success")
+        return redirect(url_for("admin.dashboard_admin"))
+
+    # GET
+    decanos = repo_usuarios.obtener_decanos()
+    facultades = repo_facultades.obtener_todas()
+
+    return render_template(
+        "dashboards/admin_asignar_decano.html",
+        decanos=decanos,
+        facultades=facultades
+    )
+
 
 # cargar estudiantes desde excel
 
@@ -474,3 +505,5 @@ def eliminar_oferta(oferta_id):
     repo_ofertas = RepositorioOfertasMongo()
     repo_ofertas.eliminar(oferta_id)
     return redirect(url_for("admin.gestionar_ofertas"))
+
+

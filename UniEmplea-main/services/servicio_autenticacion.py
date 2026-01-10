@@ -2,7 +2,7 @@ from models.administrador import AdministradorGeneral
 from models.estudiante import Estudiante
 from models.egresado import Egresado
 from models.decano import Decano
-
+from models.profesor import Docente
 
 class ServicioAutenticacion:
 
@@ -46,7 +46,16 @@ class ServicioAutenticacion:
                 id=str(data["_id"]),
                 nombre=data["nombre"],
                 correo=data["correo"],
-                facultad=data.get("facultad")
+                facultad_id=data.get("facultad_id")
             )
+        
+        if rol == "docente":
+            return Docente(
+                id=str(data["_id"]),
+                nombre=data["nombre"],
+                correo=data["correo"],
+                facultad_id=data.get("facultad_id")
+            )
+
 
         raise ValueError("Rol no reconocido")

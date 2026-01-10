@@ -1,20 +1,13 @@
 from database.mongo_connection import MongoDB
 from models.carrera import Carrera
 from bson import ObjectId
+from bson.errors import InvalidId
 
 class RepositorioCarrerasMongo:
 
     def __init__(self):
         self.collection = MongoDB().db["carreras"]
 
-    def crear(self, carrera):
-        result = self.collection.insert_one({
-            "nombre": carrera.nombre,
-            "facultad_id": carrera.facultad_id,
-            "director_id": carrera.director_id
-        })
-        carrera.id = str(result.inserted_id)
-        return carrera
 
     def obtener_por_facultad(self, facultad_id):
         carreras = []
@@ -28,11 +21,20 @@ class RepositorioCarrerasMongo:
                 )
             )
         return carreras
+    
 
     def buscar_por_id(self, carrera_id):
-        c = self.collection.find_one({"_id": ObjectId(carrera_id)})
+        if not carrera_id:
+            return None
+
+        try:
+            c = self.collection.find_one({"_id": ObjectId(carrera_id)})
+        except InvalidId:
+            return None
+
         if not c:
             return None
+
         return Carrera(
             id=str(c["_id"]),
             nombre=c["nombre"],
@@ -40,6 +42,8 @@ class RepositorioCarrerasMongo:
             director_id=c.get("director_id")
         )
 
+    
+    
     def actualizar(self, carrera_id, nuevo_nombre):
         self.collection.update_one(
             {"_id": ObjectId(carrera_id)},

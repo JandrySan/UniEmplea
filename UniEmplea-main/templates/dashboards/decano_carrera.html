@@ -50,36 +50,23 @@
             font-size: 14px;
         }
 
-        form {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        select {
-            flex: 1;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-        }
-
-        button {
+        a.btn {
+            display: inline-block;
             padding: 8px 14px;
-            border: none;
-            border-radius: 6px;
             background: var(--primary);
             color: white;
-            cursor: pointer;
+            text-decoration: none;
+            border-radius: 6px;
             font-weight: 500;
         }
 
-        button:hover {
+        a.btn:hover {
             opacity: 0.9;
         }
 
-        a {
+        a.volver {
             display: inline-block;
-            margin-top: 20px;
+            margin-top: 30px;
             text-decoration: none;
             color: var(--primary);
             font-weight: 500;
@@ -105,31 +92,25 @@
 
             <div class="info">
                 <strong>Director actual:</strong>
-                {% if carrera.director_id %}
-                    {{ carrera.director_nombre or "Asignado" }}
+                {% if carrera.director_nombre %}
+                    {{ carrera.director_nombre }}
                 {% else %}
                     <em>No asignado</em>
                 {% endif %}
             </div>
 
-            <form method="POST" action="{{ url_for('decano.asignar_director') }}">
-                <input type="hidden" name="carrera_id" value="{{ carrera.id }}">
-
-                <select name="profesor_id" required>
-                    <option value="">Seleccione un profesor</option>
-                    {% for profesor in profesores %}
-                        <option value="{{ profesor['_id'] }}">
-                            {{ profesor['nombre'] }} ({{ profesor['correo'] }})
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <button type="submit">Asignar</button>
-            </form>
+            <a
+                href="{{ url_for('decano.form_asignar_director', carrera_id=carrera.id) }}"
+                class="btn"
+            >
+                Asignar / Cambiar director
+            </a>
         </div>
     {% endfor %}
 
-    <a href="{{ url_for('decano.dashboard_decano') }}">⬅ Volver al panel</a>
+    <a href="{{ url_for('decano.dashboard_decano') }}" class="volver">
+        ⬅ Volver al panel
+    </a>
 
 </main>
 

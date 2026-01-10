@@ -1,0 +1,109 @@
+<style>
+:root {
+    --primary: #2563eb;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    margin: 0;
+    color: var(--text);
+}
+
+main {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.card {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+select {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+button {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.volver {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 14px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}
+</style>
+
+<main>
+
+    <a href="{{ url_for('admin.dashboard_admin') }}" class="volver">
+        ⬅ Volver
+    </a>
+
+    <h2>Asignar Decano a Facultad</h2>
+
+    <div class="card">
+        <form method="POST">
+
+            <label>Decano</label>
+            <select name="decano_id" required>
+                <option value="">-- Seleccione un decano --</option>
+                {% for d in decanos %}
+                    <option value="{{ d.id }}">{{ d.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Facultad</label>
+            <select name="facultad_id" required>
+                <option value="">-- Seleccione una facultad --</option>
+                {% for f in facultades %}
+                    <option value="{{ f.id }}">{{ f.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Asignar</button>
+        </form>
+    </div>
+
+</main>
