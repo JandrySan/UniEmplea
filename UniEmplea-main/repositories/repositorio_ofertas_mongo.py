@@ -14,7 +14,8 @@ class RepositorioOfertasMongo:
             "descripcion": oferta.descripcion,
             "empresa_id": oferta.empresa_id,
             "carrera_id": oferta.carrera_id,
-            "activa": oferta.activa
+            "activa": oferta.activa,
+            "estado": oferta.estado
         })
         oferta.id = str(result.inserted_id)
         return oferta
@@ -29,7 +30,8 @@ class RepositorioOfertasMongo:
                     descripcion=o.get("descripcion"),
                     empresa_id=o.get("empresa_id"),
                     carrera_id=o.get("carrera_id"),
-                    activa=o.get("activa", True)
+                    activa=o.get("activa", True),
+                    estado=o.get("estado", "pendiente")
                 )
             )
         return ofertas
@@ -37,4 +39,26 @@ class RepositorioOfertasMongo:
     def eliminar(self, oferta_id):
         self.collection.delete_one(
             {"_id": ObjectId(oferta_id)}
+        )
+
+    def obtener_pendientes(self):
+        ofertas = []
+        for o in self.collection.find({"estado": "pendiente"}):
+            ofertas.append(
+                Oferta(
+                    id=str(o["_id"]),
+                    titulo=o.get("titulo"),
+                    descripcion=o.get("descripcion"),
+                    empresa_id=o.get("empresa_id"),
+                    carrera_id=o.get("carrera_id"),
+                    activa=o.get("activa", True),
+                    estado=o.get("estado", "pendiente")
+                )
+            )
+        return ofertas
+
+    def actualizar_estado(self, oferta_id, nuevo_estado):
+        self.collection.update_one(
+            {"_id": ObjectId(oferta_id)},
+            {"$set": {"estado": nuevo_estado}}
         )

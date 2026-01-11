@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Empresa | UniEmplea</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .register-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            ring: 2px solid #bfdbfe;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background .2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-card">
+        <h2>🏢 Registro de Empresa</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.registro_empresa') }}">
+
+            <div class="form-group">
+                <label>RUC</label>
+                <input type="text" name="ruc" placeholder="Ej: 1234567890001" required pattern="\d{10,13}"
+                    title="Ingrese un RUC válido (10-13 dígitos)">
+            </div>
+
+            <div class="form-group">
+                <label>Nombre de la Empresa</label>
+                <input type="text" name="nombre" placeholder="Ej: Tech Solutions S.A." required>
+            </div>
+
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" name="correo" placeholder="contacto@empresa.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input type="tel" name="telefono" placeholder="0991234567" required>
+            </div>
+
+            <div class="form-group">
+                <label>Dirección</label>
+                <input type="text" name="direccion" placeholder="Av. Principal 123" required>
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" name="password" placeholder="********" required minlength="6">
+            </div>
+
+            <button type="submit">Registrar Empresa</button>
+        </form>
+
+        <div class="links">
+            <a href="{{ url_for('auth.login') }}">⬅ Volver al Login</a>
+        </div>
+    </div>
+
+</body>
+
+</html>

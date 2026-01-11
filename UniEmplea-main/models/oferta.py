@@ -6,7 +6,8 @@ class Oferta:
         descripcion="",
         empresa_id=None,
         carrera_id=None,
-        activa=True
+        activa=True,
+        estado="pendiente"  # pendiente, aprobada, rechazada
     ):
         self.id = id
         self.titulo = titulo
@@ -14,5 +15,6 @@ class Oferta:
         self.empresa_id = empresa_id
         self.carrera_id = carrera_id
         self.activa = activa
+        self.estado = estado
 
 

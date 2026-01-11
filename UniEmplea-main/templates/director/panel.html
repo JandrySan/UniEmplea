@@ -1,30 +1,198 @@
-<h2>Panel Director</h2>
+<!DOCTYPE html>
+<html lang="es">
 
-<p>Total estudiantes: {{ metricas.total_estudiantes }}</p>
-<p>Con tutor: {{ metricas.con_tutor }} ({{ metricas.porcentaje_con_tutor }}%)</p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Director | UniEmplea</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1f2937;
+      --border: #e2e8f0;
+    }
 
-<table>
-  <tr>
-    <th>Estudiante</th>
-    <th>Tutor</th>
-    <th>Asignar</th>
-  </tr>
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
 
-  {% for e in estudiantes %}
-  <tr>
-    <td>{{ e.nombre }}</td>
-    <td>{{ e.tutor_id or "Sin tutor" }}</td>
-    <td>
-      <form method="POST" action="{{ url_for('director.asignar_tutor') }}">
-        <input type="hidden" name="estudiante_id" value="{{ e.id }}">
-        <select name="tutor_id">
-          {% for p in profesores %}
-            <option value="{{ p.id }}">{{ p.nombre }}</option>
-          {% endfor %}
-        </select>
-        <button>Asignar</button>
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      color: var(--primary);
+    }
+
+    .card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    input[type="file"] {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Panel Director</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div style="margin-bottom: 20px;">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <h3 style="margin-top: 0;">📤 Cargar Estudiantes (Excel)</h3>
+      <form method="POST" action="{{ url_for('director.cargar_estudiantes_excel') }}" enctype="multipart/form-data">
+        <input type="file" name="archivo" accept=".xlsx,.xls" required>
+        <button type="submit">Cargar y Procesar</button>
       </form>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value">{{ metricas.total_estudiantes }}</div>
+        <div>Total Estudiantes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ metricas.con_tutor }}</div>
+        <div>Con Tutor ({{ metricas.porcentaje_con_tutor }}%)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Asignación de Tutores</h3>
+      <table>
+        <tr>
+          <th>Estudiante</th>
+          <th>Tutor Actual</th>
+          <th>Acción</th>
+        </tr>
+
+        {% for e in estudiantes %}
+        <tr>
+          <td>{{ e.nombre }}</td>
+          <td>{{ e.tutor_id or "Sin tutor" }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('director.asignar_tutor') }}"
+              style="display: flex; gap: 8px; align-items: center;">
+              <input type="hidden" name="estudiante_id" value="{{ e.id }}">
+              <select name="tutor_id" required>
+                <option value="" disabled selected>Seleccionar tutor...</option>
+                {% for p in profesores %}
+                <option value="{{ p.id }}">{{ p.nombre }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" style="padding: 6px 12px; font-size: 14px;">Asignar</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+</body>
+
+</html>

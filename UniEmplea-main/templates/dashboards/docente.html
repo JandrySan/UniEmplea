@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Docente | UniEmplea</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .logout {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>👨‍🏫 Panel Docente</h1>
+            <a href="{{ url_for('auth.logout') }}" class="logout">Cerrar Sesión</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div style="padding: 10px; margin-bottom: 15px; border-radius: 6px; background: #dcfce7; color: #166534;">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <h2>Mis Estudiantes</h2>
+            <p>Escribe una recomendación para destacar a tus mejores estudiantes.</p>
+
+            {% for est in estudiantes %}
+            <div class="student-item">
+                <div style="flex: 1; margin-right: 20px;">
+                    <strong>{{ est.nombre }}</strong> <br>
+                    <small>{{ est.correo }} | Semestre {{ est.semestre }}</small>
+                </div>
+                <div style="flex: 2;">
+                    <form action="{{ url_for('docente.recomendar', estudiante_id=est.id) }}" method="POST">
+                        <textarea name="texto" rows="2" placeholder="Escribe una recomendación..."></textarea>
+                        <button type="submit">Enviar Recomendación</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+
+</html>

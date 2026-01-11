@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Egresado</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>¡Bienvenido Colega, {{ usuario.nombre }}! 🎓</h1>
+        <a href="{{ url_for('auth.logout') }}" style="color: #dc2626; text-decoration: none; font-weight: bold;">Cerrar
+            Sesión</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div
+        style="padding: 10px; margin-bottom: 20px; background: {{ '#dcfce7' if category == 'success' else '#fee2e2' }}; color: {{ '#15803d' if category == 'success' else '#b91c1c' }}; border-radius: 6px;">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <h2>📄 Mi Hoja de Vida</h2>
+        {% if usuario.cv_path %}
+        <p style="color: green;">✅ CV Cargado</p>
+        <a href="/{{ usuario.cv_path }}" target="_blank">Ver mi CV actual</a>
+        {% else %}
+        <p style="color: orange;">⚠️ No has subido tu CV</p>
+        {% endif %}
+
+        <form action="{{ url_for('egresado.subir_cv') }}" method="POST" enctype="multipart/form-data"
+            style="margin-top: 15px;">
+            <input type="file" name="cv" accept=".pdf" required>
+            <button type="submit"
+                style="background: #4b5563; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Subir
+                PDF</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>📊 Historial de Calificaciones</h2>
+        {% if calificaciones %}
+        <table>
+            <tr>
+                <th>Semestre</th>
+                <th>Materia</th>
+                <th>Nota</th>
+            </tr>
+            {% for calif in calificaciones %}
+            <tr>
+                <td>{{ calif.semestre }}</td>
+                <td>{{ calif.materia }}</td>
+                <td>{{ calif.nota }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No hay registro de calificaciones.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>💼 Bolsa de Empleo</h2>
+        {% for oferta in ofertas %}
+        <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+            <h3>{{ oferta.titulo }}</h3>
+            <p>{{ oferta.descripcion }}</p>
+            <button
+                style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Aplicar</button>
+        </div>
+        {% else %}
+        <p>No hay ofertas disponibles.</p>
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        <h2>📜 Recomendaciones</h2>
+        {% for reco in recomendaciones %}
+        <div>
+            <p><em>"{{ reco.texto }}"</em></p>
+        </div>
+        {% else %}
+        <p>Aún no tienes recomendaciones.</p>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

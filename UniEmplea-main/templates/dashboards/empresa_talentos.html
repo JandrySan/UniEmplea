@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Talentos | UniEmplea</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .role-tag {
+            font-size: 12px;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color: #1f2937;">Talentos Disponibles</h1>
+        <a href="{{ url_for('empresa.dashboard') }}"
+            style="color: #6b7280; text-decoration: none; margin-bottom: 20px; display: block;">⬅ Volver al
+            Dashboard</a>
+
+        {% for user in candidatos %}
+        <div class="card">
+            <div>
+                <h3 style="margin: 0 0 5px 0;">{{ user.nombre }}</h3>
+                <span class="role-tag">{{ user.rol()|capitalize }}</span>
+                <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">{{ user.correo }}</p>
+                <!-- Include more details like carrera or status if available -->
+                {% if user.recos %}
+                <div
+                    style="margin-top: 10px; font-size: 13px; color: #059669; background: #ecfdf5; padding: 5px; border-radius: 4px;">
+                    ⭐ <strong>{{ user.recos|length }} Recomendaciones</strong>
+                    {% for rec in user.recos[:1] %}
+                    <br><em>"{{ rec.texto }}"</em>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <!-- Future: Link to full profile with grades/recommendations -->
+            <button class="btn">Ver Perfil</button>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Postulantes | UniEmplea</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-accept {
+            background: #10b981;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-link {
+            display: block;
+            margin-bottom: 20px;
+            color: #6b7280;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Postulantes para: {{ oferta.titulo }}</h1>
+        <a href="{{ url_for('empresa.dashboard') }}" class="back-link">⬅ Volver al Dashboard</a>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, msg in messages %}
+        <div style="padding: 10px; background: #d1fae5; color: #065f46; border-radius: 5px; margin-bottom: 15px;">{{ msg
+            }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% for p in postulantes %}
+        <div class="card">
+            <div>
+                <h3>{{ p.estudiante.nombre }}</h3>
+                <p>{{ p.estudiante.correo }}</p>
+                <small>Postulado el: {{ p.fecha }}</small>
+            </div>
+            <div>
+                <form action="{{ url_for('empresa.aceptar_postulante', postulacion_id=p.id) }}" method="POST">
+                    <button type="submit" class="btn-accept">✅ Aceptar & Notificar</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <p>No hay postulantes aún.</p>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

@@ -1,6 +1,110 @@
-<h1>Bienvenido {{ usuario.nombre }}</h1>
+<!DOCTYPE html>
+<html lang="es">
 
-<ul>
-  <li><a href="/estudiante/postular/practica">Postular a Práctica</a></li>
-  <li><a href="#">Postular a Empleo</a></li>
-</ul>
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Estudiante</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .offer {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .offer:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>¡Hola, {{ usuario.nombre }}! 👋</h1>
+    <a href="{{ url_for('auth.logout') }}" style="color: #dc2626; text-decoration: none; font-weight: bold;">Cerrar
+      Sesión</a>
+  </div>
+
+  <div class="card">
+    <h2>🎓 Tu Estado Académico</h2>
+    <p><strong>Semestre Actual:</strong> {{ usuario.semestre }}</p>
+    <p><strong>Estado de Prácticas:</strong> <span class="tag">{{ estado_practicas }}</span></p>
+  </div>
+
+  <div class="card">
+    <h2>🔔 Notificaciones</h2>
+    {% if notificaciones %}
+    {% for notif in notificaciones %}
+    <div
+      style="background: #ecfdf5; color: #065f46; padding: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 4px solid #10b981;">
+      {{ notif.mensaje }}
+    </div>
+    {% endfor %}
+    {% else %}
+    <p style="color: #6b7280;">No tienes nuevas notificaciones.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>💼 Ofertas Laborales Disponibles</h2>
+    {% for oferta in ofertas %}
+    <div class="offer">
+      <h3>{{ oferta.titulo }}</h3>
+      <p>{{ oferta.descripcion }}</p>
+      <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
+        <button type="submit"
+          style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Postular</button>
+      </form>
+    </div>
+    {% else %}
+    <p>No hay ofertas disponibles por el momento.</p>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h2>📜 Recomendaciones Docentes</h2>
+    {% for reco in recomendaciones %}
+    <div class="offer">
+      <p><em>"{{ reco.texto }}"</em></p>
+      <small style="color: #666;">- Profesor ID: {{ reco.profesor_id }}</small>
+    </div>
+    {% else %}
+    <p>Aún no tienes recomendaciones.</p>
+    {% endfor %}
+  </div>
+</body>
+
+</html>

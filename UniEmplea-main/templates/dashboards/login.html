@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Iniciar sesión - UniEmplea</title>
   <style>
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       height: 100vh;
@@ -30,7 +32,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       z-index: 0;
     }
 
@@ -40,7 +42,7 @@
       background-color: rgba(0, 0, 0, 0.7);
       padding: 45px 55px;
       border-radius: 25px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.7);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
       width: 320px;
       margin-top: 220px;
       text-align: center;
@@ -135,62 +137,71 @@
     }
   </style>
 </head>
+
 <body>
 
-<form id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
-  <img src="{{ url_for('static', filename='UniEmplea3.png') }}" alt="Imagen debajo del título" style="width:200px; margin: 20px 0;">
-  <h1>Iniciar sesión</h1>
+  <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
+    <img src="{{ url_for('static', filename='UniEmplea3.png') }}" alt="Imagen debajo del título"
+      style="width:200px; margin: 20px 0;">
+    <h1>Iniciar sesión</h1>
 
-  <!-- Correo con ícono -->
-  <div class="input-group">
-    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="input-icon" alt="Correo">
-    <input name="correo" type="email" placeholder="Correo" required>
-  </div>
+    <!-- Correo con ícono -->
+    <div class="input-group">
+      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="input-icon" alt="Correo">
+      <input name="correo" type="email" placeholder="Correo" required>
+    </div>
 
-  <!-- Contraseña con ícono y toggle -->
-  <div class="input-group password-container">
-    <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="input-icon" alt="Contraseña">
-    <input id="password" name="contrasena" type="password" placeholder="Contraseña" required>
-    <img src="https://cdn-icons-png.flaticon.com/512/159/159604.png" class="toggle-icon" alt="Mostrar/Ocultar" onclick="togglePassword()" title="Mostrar/Ocultar contraseña">
-  </div>
+    <!-- Contraseña con ícono y toggle -->
+    <div class="input-group password-container">
+      <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="input-icon" alt="Contraseña">
+      <input id="password" name="contrasena" type="password" placeholder="Contraseña" required>
+      <img src="https://cdn-icons-png.flaticon.com/512/159/159604.png" class="toggle-icon" alt="Mostrar/Ocultar"
+        onclick="togglePassword()" title="Mostrar/Ocultar contraseña">
+    </div>
 
-  <!-- CAPTCHA -->
-  <label id="captcha-label"></label>
-  <input type="number" id="captcha" placeholder="Escribe la respuesta" required>
+    <!-- CAPTCHA -->
+    <label id="captcha-label"></label>
+    <input type="number" id="captcha" placeholder="Escribe la respuesta" required>
 
-  <div class="error" id="captcha-error"></div>
+    <div class="error" id="captcha-error"></div>
 
-  <button type="submit">Entrar</button>
- 
-</form>
+    <button type="submit">Entrar</button>
 
-<script>
-  // Generar números aleatorios para el captcha
-  const num1 = Math.floor(Math.random() * 10) + 1;
-  const num2 = Math.floor(Math.random() * 10) + 1;
-  const resultado = num1 + num2;
+    <p style="margin-top: 20px;">
+      ¿Eres una empresa? <a href="{{ url_for('auth.registro_empresa') }}"
+        style="color: #60a5fa; font-weight: bold;">Regístrate aquí</a>
+    </p>
 
-  document.getElementById('captcha-label').innerText = `¿Cuánto es ${num1} + ${num2}?`;
+  </form>
 
-  // Validar el captcha antes de enviar
-  document.getElementById('loginForm').addEventListener('submit', function (e) {
-    const respuesta = parseInt(document.getElementById('captcha').value.trim());
-    const errorBox = document.getElementById('captcha-error');
+  <script>
+    // Generar números aleatorios para el captcha
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    const resultado = num1 + num2;
 
-    if (isNaN(respuesta) || respuesta !== resultado) {
-      e.preventDefault(); // Detiene el envío del formulario
-      errorBox.innerText = '❌ Captcha incorrecto. Intenta de nuevo.';
-    } else {
-      errorBox.innerText = '';
+    document.getElementById('captcha-label').innerText = `¿Cuánto es ${num1} + ${num2}?`;
+
+    // Validar el captcha antes de enviar
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      const respuesta = parseInt(document.getElementById('captcha').value.trim());
+      const errorBox = document.getElementById('captcha-error');
+
+      if (isNaN(respuesta) || respuesta !== resultado) {
+        e.preventDefault(); // Detiene el envío del formulario
+        errorBox.innerText = '❌ Captcha incorrecto. Intenta de nuevo.';
+      } else {
+        errorBox.innerText = '';
+      }
+    });
+
+    // Alternar visibilidad de la contraseña
+    function togglePassword() {
+      const input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
     }
-  });
-
-  // Alternar visibilidad de la contraseña
-  function togglePassword() {
-    const input = document.getElementById('password');
-    input.type = input.type === 'password' ? 'text' : 'password';
-  }
-</script>
+  </script>
 
 </body>
+
 </html>
