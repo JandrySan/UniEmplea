@@ -3,6 +3,10 @@ from bson import ObjectId
 from models.decano import Decano
 from models.profesor import Docente
 from models.usuario import Usuario
+from models.empresa import Empresa
+from models.director_carrera import DirectorCarrera
+from models.estudiante import Estudiante
+from models.egresado import Egresado
 
 
 class RepositorioUsuariosMongo:
@@ -44,7 +48,7 @@ class RepositorioUsuariosMongo:
         rol = data.get("rol")
         
         if rol == "estudiante":
-            from models.estudiante import Estudiante
+            
             return Estudiante(
                 id=str(data["_id"]),
                 nombre=data["nombre"],
@@ -55,7 +59,7 @@ class RepositorioUsuariosMongo:
             )
         
         if rol == "egresado":
-            from models.egresado import Egresado
+            
             return Egresado(
                 id=str(data["_id"]),
                 nombre=data["nombre"],
@@ -65,7 +69,7 @@ class RepositorioUsuariosMongo:
             )
 
         if rol == "empresa":
-            from models.empresa import Empresa
+            
             return Empresa(
                 id=str(data["_id"]),
                 nombre=data["nombre"],
@@ -75,16 +79,16 @@ class RepositorioUsuariosMongo:
                 ruc=data.get("ruc")
             )
             
-        if rol == "director":
-            from models.director_carrera import DirectorCarrera
-            return DirectorCarrera(
-                id=str(data["_id"]),
-                nombre=data["nombre"],
-                email=data["correo"],
-                password=data.get("password"),
-                facultad_id=data.get("facultad_id"),
-                carrera_id=data.get("carrera_id")
-            )
+        if rol == "director_carrera":
+                return DirectorCarrera(
+                    id=str(data["_id"]),
+                    nombre=data["nombre"],
+                    correo=data["correo"],
+                    facultad_id=data.get("facultad_id"),
+                    carrera_id=data.get("carrera_id"),
+                    password=data.get("password")
+                )
+
             
         if rol == "docente":
              return Docente(
@@ -102,14 +106,9 @@ class RepositorioUsuariosMongo:
                 facultad_id=data.get("facultad_id")
              )
 
-        # Fallback for admin or generic
-        return Usuario(
-            id=str(data["_id"]), 
-            nombre=data["nombre"], 
-            correo=data["correo"], 
-            password=data.get("password"),
-            rol=rol
-        )
+        
+        raise ValueError(f"Rol de usuario no soportado: {rol}")
+
 
     def obtener_docentes_por_facultad(self, facultad_id):
         docentes = []
@@ -212,11 +211,15 @@ class RepositorioUsuariosMongo:
             )
         return docentes
     
-    def convertir_a_director(self, usuario_id):
+    def convertir_a_director(self, usuario_id, carrera_id):
         self.collection.update_one(
             {"_id": ObjectId(usuario_id)},
-            {"$set": {"rol": "director"}}
+            {"$set": {
+                "rol": "director_carrera",
+                "carrera_id": carrera_id
+            }}
         )
+
 
     def obtener_todos(self):
         todos = []

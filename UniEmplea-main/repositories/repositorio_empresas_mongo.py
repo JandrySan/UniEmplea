@@ -14,6 +14,7 @@ class RepositorioEmpresasMongo:
             "correo": empresa.correo,
             "telefono": empresa.telefono,
             "direccion": empresa.direccion,
+            "ruc": empresa.ruc,
             "activo": True
         })
         empresa.id = str(result.inserted_id)
@@ -28,7 +29,8 @@ class RepositorioEmpresasMongo:
                     nombre=e["nombre"],
                     correo=e["correo"],
                     telefono=e["telefono"],
-                    direccion=e["direccion"]
+                    direccion=e["direccion"],
+                    ruc=e.get("ruc")
                 )
             )
         return empresas

@@ -3,8 +3,6 @@ from models.estudiante import Estudiante
 from models.egresado import Egresado
 from models.decano import Decano
 from models.profesor import Docente
-from models.decano import Decano
-from models.profesor import Docente
 from models.director_carrera import DirectorCarrera
 from models.empresa import Empresa
 from models.usuario import Usuario
@@ -63,7 +61,7 @@ class ServicioAutenticacion:
                 facultad_id=data.get("facultad_id")
             )
 
-        if rol == "director":
+        if rol == "director_carrera":
             return DirectorCarrera(
                 id=str(data["_id"]),
                 nombre=data["nombre"],
@@ -83,14 +81,7 @@ class ServicioAutenticacion:
                 ruc=data.get("ruc")
             )
         
-        if rol == "director_carrera":
-            return DirectorCarrera(
-                id=str(data["_id"]),
-                nombre=data["nombre"],
-                correo=data["correo"],
-                facultad_id=data.get("facultad_id"),
-                carrera_id=data.get("carrera_id")
-            )
+        
     
 
         raise ValueError("Rol no reconocido")

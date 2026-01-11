@@ -8,9 +8,9 @@ class DirectorCarrera(Usuario):
         self.password = password
 
     def rol(self):
-        return "director"
+        return "director_carrera"
 
     def obtener_dashboard(self):
-        return "director.dashboard_director"
+        return "dashboard/panel.html"
 
 

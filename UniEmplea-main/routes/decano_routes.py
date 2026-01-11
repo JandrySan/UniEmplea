@@ -55,7 +55,8 @@ def listar_carreras():
         if carrera.director_id:
             director = repo_usuarios.buscar_por_id(carrera.director_id)
             if director:
-                carrera.director_nombre = director["nombre"]
+                carrera.director_nombre = director.nombre
+
 
     return render_template(
         "dashboards/decano_carrera.html",

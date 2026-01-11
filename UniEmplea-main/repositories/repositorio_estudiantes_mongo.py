@@ -70,3 +70,22 @@ class RepositorioEstudiantesMongo:
 
     def buscar_por_correo(self, correo):
         return self.collection.find_one({"correo": correo})
+
+    def obtener_por_carrera(self, carrera_id):
+        return list(self.collection.find({
+            "carrera_id": carrera_id
+        }))
+    
+    def crear(self, estudiante):
+        self.collection.insert_one({
+            "nombre": estudiante.nombre,
+            "correo": estudiante.correo,
+            "rol": "estudiante",
+            "password": "123456",  
+            "carrera_id": estudiante.carrera_id,
+            "semestre": estudiante.semestre,
+            "tutor_id": estudiante.tutor_id,
+            "activo": True
+        })
+        
+

@@ -86,14 +86,16 @@ class RepositorioCarrerasMongo:
         return carrera
 
     def buscar_por_director(self, director_id):
-        c = self.collection.find_one({"director_id": director_id})
+        data = self.collection.find_one({
+            "director_id": director_id
+        })
 
-        if not c:
+        if not data:
             return None
 
         return Carrera(
-            id=str(c["_id"]),
-            nombre=c["nombre"],
-            facultad_id=c["facultad_id"],
-            director_id=c.get("director_id")
+            id=str(data["_id"]),
+            nombre=data["nombre"],
+            facultad_id=data.get("facultad_id"),
+            director_id=data.get("director_id")
         )
