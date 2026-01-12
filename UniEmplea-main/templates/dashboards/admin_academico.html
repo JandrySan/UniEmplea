@@ -127,11 +127,11 @@
         ⬅ Volver 
     </a>
 
-    <h2>🏫 Gestión Académica</h2>
+    <h2>Gestión Académica</h2>
 
     <!-- ================== CREAR FACULTAD ================== -->
     <div class="card">
-        <h3>➕ Crear Facultad</h3>
+        <h3>Crear Facultad</h3>
         <form method="POST">
             <input type="text" name="nombre_facultad"
                    placeholder="Nombre de la facultad" required>
@@ -143,7 +143,7 @@
     {% for item in facultades_data %}
         <div class="card">
 
-            <h3>🏫 {{ item.facultad.nombre }}</h3>
+            <h3>{{ item.facultad.nombre }}</h3>
 
             <!-- ====== EDITAR / ELIMINAR FACULTAD ====== -->
             <div class="acciones">
@@ -164,7 +164,7 @@
             <hr>
 
             <!-- ====== LISTADO DE CARRERAS ====== -->
-            <h4>📚 Carreras</h4>
+            <h4> Carreras</h4>
 
             {% if item.carreras %}
                 <ul>

@@ -131,12 +131,12 @@
 <body>
 
 <header>
-    <h1>🎓 Panel Egresado</h1>
+    <h1> Panel Egresado</h1>
     <div class="acciones-header">
         <a href="{{ url_for('auth.logout') }}"
            class="logout"
            onclick="return confirm('¿Desea cerrar sesión?')">
-           🚪 Cerrar sesión
+            Cerrar sesión
         </a>
     </div>
 </header>
@@ -155,7 +155,7 @@
 
     <!-- CV -->
     <div class="card">
-        <h2>📄 Mi Hoja de Vida</h2>
+        <h2> Mi Hoja de Vida</h2>
 
         {% if usuario.cv_path %}
             <p style="color: green; font-weight:bold;">✅ CV cargado</p>
@@ -175,30 +175,37 @@
 
     <!-- ESTADO ACADÉMICO -->
     <div class="card">
-        <h2>🎓 Tu Estado Académico</h2>
+        <h2> Tu Estado Académico</h2>
         <a href="{{ url_for('egresado.historial_academico') }}" class="btn btn-primary">
-            📄 Ver Historial Académico
+             Ver Historial Académico
         </a>
     </div>
 
     <!-- OFERTAS -->
     <div class="card">
-        <h2>💼 Bolsa de Empleo</h2>
+    <h2>💼 Ofertas Laborales</h2>
 
+    {% if ofertas %}
         {% for oferta in ofertas %}
-            <div class="oferta">
-                <h3>{{ oferta.titulo }}</h3>
-                <p>{{ oferta.descripcion }}</p>
-                <button class="btn btn-primary">Aplicar</button>
-            </div>
-        {% else %}
-            <p><em>No hay ofertas disponibles.</em></p>
+        <div class="oferta">
+            <h3>{{ oferta.titulo }}</h3>
+            <p>{{ oferta.descripcion }}</p>
+
+            <form method="POST"
+                action="{{ url_for('egresado.postular_oferta', oferta_id=oferta.id) }}">
+            <button type="submit">Postular</button>
+            </form>
+        </div>
         {% endfor %}
+    {% else %}
+        <p>No hay ofertas disponibles.</p>
+    {% endif %}
     </div>
+
 
     <!-- RECOMENDACIONES -->
     <div class="card">
-        <h2>📜 Recomendaciones</h2>
+        <h2> Recomendaciones</h2>
 
         {% for reco in recomendaciones %}
             <p><em>"{{ reco.texto }}"</em></p>

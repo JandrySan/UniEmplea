@@ -121,10 +121,10 @@
 <body>
 
 <header>
-    <h1>👨‍🏫 Panel Docente</h1>
+    <h1>Panel Docente</h1>
     <a href="{{ url_for('auth.logout') }}" class="logout"
        onclick="return confirm('¿Desea cerrar sesión?')">
-        🚪 Cerrar sesión
+        Cerrar sesión
     </a>
 </header>
 
@@ -132,7 +132,7 @@
 
     <!-- 🔹 MIS ESTUDIANTES ASIGNADOS -->
     <div class="card">
-        <h3>🎯 Mis Estudiantes Asignados</h3>
+        <h3>Mis Estudiantes Asignados</h3>
 
         {% if mis_estudiantes %}
             {% for e in mis_estudiantes %}
@@ -159,7 +159,7 @@
 
     <!-- 🔹 TODOS LOS ESTUDIANTES -->
     <div class="card">
-        <h3>📋 Todos los Estudiantes</h3>
+        <h3>Todos los Estudiantes</h3>
 
         <table>
             <tr>

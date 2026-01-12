@@ -18,6 +18,7 @@ repo_recos = RepositorioRecomendacionesMongo()
 repo_notifs = RepositorioNotificacionesMongo()
     
 
+ 
 @estudiante_bp.route("/dashboard")
 @requiere_rol("estudiante")
 def dashboard_estudiante():
@@ -29,23 +30,35 @@ def dashboard_estudiante():
     if not usuario:
         session.clear()
         return redirect(url_for("auth.login"))
-    
-    # Logic for status
-    estado_practicas = "Completadas" if usuario.semestre > 7 else "Pendientes"
-    
-    # Filter offers
+
+    estado_practicas = "Completadas" if usuario.semestre >= 8 else "Pendientes"
+
     todas_ofertas = repo_ofertas.obtener_todas()
-    ofertas = [o for o in todas_ofertas if o.estado == "aprobada"]
+
     
-    recommendaciones = repo_recos.obtener_por_estudiante(usuario_id)
+    ofertas_laborales = [
+        o for o in todas_ofertas
+        if o.tipo == "empleo" and o.estado == "aprobada"
+    ]
+
+    
+    ofertas_practicas = []
+    if usuario.semestre >= 7:
+        ofertas_practicas = [
+            o for o in todas_ofertas
+            if o.tipo == "practica" and o.estado == "aprobada"
+        ]
+
+    recomendaciones = repo_recos.obtener_por_estudiante(usuario_id)
     notificaciones = repo_notifs.obtener_por_usuario(usuario_id)
-    
+
     return render_template(
-        "dashboards/estudiante.html", 
+        "dashboards/estudiante.html",
         usuario=usuario,
         estado_practicas=estado_practicas,
-        ofertas=ofertas,
-        recomendaciones=recommendaciones,
+        ofertas_laborales=ofertas_laborales,
+        ofertas_practicas=ofertas_practicas,
+        recomendaciones=recomendaciones,
         notificaciones=notificaciones
     )
 
@@ -72,3 +85,21 @@ def postular_oferta(oferta_id):
         # flash("Postulación exitosa", "success")
         
     return redirect(url_for("estudiante.dashboard_estudiante"))
+
+
+@estudiante_bp.route("/practicas")
+@requiere_rol("estudiante")
+def practicas():
+    usuario_id = session.get("usuario_id")
+
+    # SOLO ofertas de prácticas y aprobadas
+    ofertas = repo_ofertas.collection.find({
+        "tipo": "practica",
+        "estado": "aprobada",
+        "activa": True
+    })
+
+    return render_template(
+        "dashboards/estudiante_practicas.html",
+        ofertas=ofertas
+    )

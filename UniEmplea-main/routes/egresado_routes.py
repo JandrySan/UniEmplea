@@ -8,6 +8,7 @@ from repositories.repositorio_calificaciones_mongo import RepositorioCalificacio
 
 egresado_bp = Blueprint("egresado", __name__)
 
+
 @egresado_bp.route("/dashboard")
 @requiere_rol("egresado")
 def dashboard_egresado():
@@ -19,24 +20,28 @@ def dashboard_egresado():
     repo_ofertas = RepositorioOfertasMongo()
     repo_recos = RepositorioRecomendacionesMongo()
     repo_calif = RepositorioCalificacionesMongo()
-    
+
     usuario = repo_usuarios.buscar_por_id(usuario_id)
-    
-    # Offers
+
     todas_ofertas = repo_ofertas.obtener_todas()
-    ofertas = [o for o in todas_ofertas if o.estado == "aprobada"]
+
     
-    # Recommendations & Grades
+    ofertas_laborales = [
+        o for o in todas_ofertas
+        if o.tipo == "empleo" and o.estado == "aprobada"
+    ]
+
     recomendaciones = repo_recos.obtener_por_estudiante(usuario_id)
     calificaciones = repo_calif.obtener_por_estudiante(usuario_id)
-    
+
     return render_template(
         "dashboards/egresado.html",
         usuario=usuario,
-        ofertas=ofertas,
+        ofertas=ofertas_laborales,
         recomendaciones=recomendaciones,
         calificaciones=calificaciones
     )
+
 
 @egresado_bp.route("/subir_cv", methods=["POST"])
 @requiere_rol("egresado")
@@ -80,3 +85,27 @@ def subir_cv():
 @requiere_rol("egresado")
 def historial_academico():
     return render_template("dashboards/cali.html")
+
+
+@egresado_bp.route("/postular/<oferta_id>", methods=["POST"])
+@requiere_rol("egresado")
+def postular_oferta(oferta_id):
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        return redirect(url_for("auth.login"))
+
+    from repositories.repositorio_postulaciones_mongo import RepositorioPostulacionesMongo
+    from models.postulacion import Postulacion
+
+    repo_post = RepositorioPostulacionesMongo()
+
+    if not repo_post.existe_postulacion(oferta_id, usuario_id):
+        nueva_post = Postulacion(
+            id=None,
+            oferta_id=oferta_id,
+            estudiante_id=usuario_id
+        )
+        repo_post.crear(nueva_post)
+
+    flash("Postulación realizada correctamente", "success")
+    return redirect(url_for("egresado.dashboard_egresado"))

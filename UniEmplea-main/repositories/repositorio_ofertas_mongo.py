@@ -14,6 +14,7 @@ class RepositorioOfertasMongo:
             "descripcion": oferta.descripcion,
             "empresa_id": oferta.empresa_id,
             "carrera_id": oferta.carrera_id,
+            "tipo": oferta.tipo, 
             "activa": oferta.activa,
             "estado": oferta.estado
         })
@@ -30,6 +31,7 @@ class RepositorioOfertasMongo:
                     descripcion=o.get("descripcion"),
                     empresa_id=o.get("empresa_id"),
                     carrera_id=o.get("carrera_id"),
+                    tipo=o.get("tipo", "empleo"),  
                     activa=o.get("activa", True),
                     estado=o.get("estado", "pendiente")
                 )

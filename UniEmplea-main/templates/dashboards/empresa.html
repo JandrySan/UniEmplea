@@ -192,13 +192,20 @@
             <label>Descripción</label>
             <textarea name="descripcion" rows="4" required></textarea>
 
-            <label>Carrera (opcional)</label>
+            <label>Carrera</label>
             <select name="carrera_id">
                 <option value="">Todas las carreras</option>
                 {% for c in carreras %}
                     <option value="{{ c._id }}">{{ c.nombre }}</option>
                 {% endfor %}
             </select>
+
+            <label>Tipo de Oferta</label>
+            <select name="tipo" required>
+                <option value="empleo">Empleo</option>
+                <option value="practica">Prácticas Profesionales</option>
+            </select>
+
 
             <button type="submit">Publicar Oferta</button>
         </form>

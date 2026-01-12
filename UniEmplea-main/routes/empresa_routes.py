@@ -45,53 +45,28 @@ def crear_oferta():
     if not titulo or not descripcion:
         flash("Título y descripción requeridos", "error")
         return redirect(url_for("empresa.dashboard"))
-    
+
     empresa_id = session["usuario_id"]
-    
+
+
+    carrera_oid = ObjectId(carrera_id) if carrera_id else None
+
     nueva_oferta = Oferta(
         id=None,
         titulo=titulo,
         descripcion=descripcion,
         empresa_id=empresa_id,
-        carrera_id=carrera_id, 
+        carrera_id=carrera_oid,
+        tipo=request.form.get("tipo"),  
         activa=True,
-        estado="aprobada"   
+        estado="aprobada"  
     )
+
     repo_ofertas.crear(nueva_oferta)
-    flash("Oferta creada exitosamente. Pendiente de aprobación.", "success")
+    flash("Oferta creada exitosamente", "success")
     return redirect(url_for("empresa.dashboard"))
 
 
-
-@empresa_bp.route("/talentos")
-@requiere_rol("empresa")
-def talentos():
-    from repositories.repositorio_recomendaciones_mongo import RepositorioRecomendacionesMongo
-    from repositories.repositorio_carreras_mongo import RepositorioCarrerasMongo
-    
-    repo_recos = RepositorioRecomendacionesMongo()
-    repo_carreras = RepositorioCarrerasMongo()
-    
-    carreras = repo_carreras.obtener_todas()
-    carrera_id_filter = request.args.get("carrera_id")
-
-    # Show students and graduates
-    todos = repo_estudiantes.obtener_todos()
-    
-    # Filter by role
-    candidatos = [u for u in todos if u.rol() in ["estudiante", "egresado"]]
-    
-    # Filter by Career if selected
-    if carrera_id_filter:
-        candidatos = [u for u in candidatos if getattr(u, 'carrera_id', None) == carrera_id_filter]
-    
-    # Attach recommendations count or list to each candidate (quick hack for display)
-    candidatos_con_recos = []
-    for cand in candidatos:
-        cand.recos = repo_recos.obtener_por_estudiante(cand.id)
-        candidatos_con_recos.append(cand)
-    
-    return render_template("dashboards/empresa_talentos.html", candidatos=candidatos_con_recos, carreras=carreras)
 
 @empresa_bp.route("/oferta/<oferta_id>/postulantes")
 @requiere_rol("empresa")

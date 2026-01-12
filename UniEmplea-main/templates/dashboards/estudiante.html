@@ -166,24 +166,52 @@
         {% endif %}
     </div>
 
-    <!-- OFERTAS -->
+    <!-- OFERTAS LABORALES -->
     <div class="card">
-        <h2>Ofertas Laborales Disponibles</h2>
+    <h2> Ofertas Laborales</h2>
 
-        {% for oferta in ofertas %}
-            <div class="oferta">
-                <h3>{{ oferta.titulo }}</h3>
-                <p>{{ oferta.descripcion }}</p>
+    {% if ofertas_laborales %}
+        {% for oferta in ofertas_laborales %}
+        <div class="oferta">
+            <h3>{{ oferta.titulo }}</h3>
+            <p>{{ oferta.descripcion }}</p>
 
-                <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}"
-                      method="POST">
-                    <button type="submit">Postular</button>
-                </form>
-            </div>
-        {% else %}
-            <p>No hay ofertas disponibles por el momento.</p>
+            <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
+            <button type="submit">Postular</button>
+            </form>
+        </div>
         {% endfor %}
+    {% else %}
+        <p>No hay ofertas laborales disponibles.</p>
+    {% endif %}
     </div>
+
+    <!-- PRÁCTICAS PROFESIONALES -->
+    <div class="card">
+    <h2>Prácticas Profesionales</h2>
+
+    {% if usuario.semestre < 7 %}
+        <p>Debes estar en 7mo semestre o superior para postular a prácticas.</p>
+    {% else %}
+        {% if ofertas_practicas %}
+        {% for oferta in ofertas_practicas %}
+            <div class="oferta">
+            <h3>{{ oferta.titulo }}</h3>
+            <p>{{ oferta.descripcion }}</p>
+
+            <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
+                <button type="submit">Postular</button>
+            </form>
+            </div>
+        {% endfor %}
+        {% else %}
+        <p>No hay prácticas disponibles.</p>
+        {% endif %}
+    {% endif %}
+    </div>
+
+
+
 
     <!-- RECOMENDACIONES -->
     <div class="card">
