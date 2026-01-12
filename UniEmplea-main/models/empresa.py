@@ -7,9 +7,10 @@ class Empresa:
         self.direccion = direccion
         self.ruc = ruc
         self.password = password
+        self.activo = True
 
     def rol(self):
         return "empresa"
 
     def obtener_dashboard(self):
-        return "dashboards/empresa.html" # Assuming we will have this, or reuse something
+        return "empresa.dashboard"

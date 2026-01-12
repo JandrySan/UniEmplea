@@ -2,69 +2,132 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Historial Académico</title>
+  <title>Historial Académico | UniEmplea</title>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f4f8;
       margin: 0;
-      padding: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f4f6f8;
     }
+
+    /* ===== HEADER ===== */
+    header {
+      background-color: #0d6efd;
+      color: white;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header a {
+      background: #dc3545;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    header a:hover {
+      opacity: 0.9;
+    }
+
+    /* ===== CONTENEDOR ===== */
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px;
+    }
+
     h2 {
-      text-align: left;
-      color: #2563eb;
+      color: #0d6efd;
+      margin-bottom: 10px;
     }
+
+    .subtitle {
+      color: #555;
+      margin-bottom: 25px;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    /* ===== TABLAS ===== */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 30px;
-    }
-    th, td {
-      border: 1px solid #d1d5db;
-      padding: 8px;
-      text-align: center;
       font-size: 14px;
     }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
     th {
-      background-color: #2563eb;
+      background-color: #0d6efd;
       color: white;
     }
+
     tr:nth-child(even) {
-      background-color: #f3f4f6;
+      background-color: #f9fafb;
     }
+
+    /* ===== ESTADOS ===== */
     .aprobado {
-      background-color: #10b981;
+      background: #198754;
       color: white;
       font-weight: bold;
     }
+
     .no-tomada {
-      background-color: #ef4444;
+      background: #dc3545;
       color: white;
       font-weight: bold;
     }
+
     .periodo-actual {
-      background-color: #fbbf24;
-      color: white;
+      background: #ffc107;
+      color: black;
       font-weight: bold;
     }
+
     .homologacion {
-      background-color: #6366f1;
+      background: #6f42c1;
       color: white;
       font-weight: bold;
     }
+
+    /* ===== TITULO NIVEL ===== */
     .nivel-title {
-      background-color: #1e40af;
+      background: #0b5ed7;
       color: white;
-      font-size: 16px;
-      text-align: left;
       padding: 10px;
+      font-weight: bold;
+      border-radius: 6px 6px 0 0;
     }
   </style>
 </head>
-<body>
+
+<body>  
+  <header>
+  <h1>📘 Historial Académico</h1>
   
-    <h2>Historial Académico - JANDRY PAUL SANCHEZ MURILLO</h2>
-    <h2>Carrera: SOFTWARE 2024 - NS.</h2>
+</header>
     
   <!-- Nivel 1 -->
   <div class="nivel-title">Nivel 1 - UNIDAD BÁSICA</div>
@@ -78,11 +141,11 @@
       <th>Estado</th>
       <th>Créditos (Aprobados/Necesarios)</th>
     </tr>
-    <tr><td>9901V01-R22</td><td>CÁTEDRA ALFARO</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>96/96</td></tr>
+    <tr><td>9901V01-R22</td><td>CÁTEDRA ALFARO</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>96/96</td></tr>
     <tr><td>IS-101</td><td>FUNDAMENTOS DE LA ING. DE SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-102</td><td>ARQUITECTURA DEL COMPUTADOR</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-103</td><td>ALGORITMOS Y LÓGICA DE PROGRAMACIÓN</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>192/192</td></tr>
-    <tr><td>IS-104</td><td>ÁLGEBRA LINEAL</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-104</td><td>ÁLGEBRA LINEAL</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td colspan="6"><strong>Créditos Nivel 1</strong></td><td>720/720</td></tr>
   </table>
 
@@ -99,9 +162,9 @@
       <th>Créditos (Aprobados/Necesarios)</th>
     </tr>
     <tr><td>IS-201</td><td>INGENIERÍA DE REQUISITOS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
-    <tr><td>IS-202</td><td>SISTEMAS OPERATIVOS</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-202</td><td>SISTEMAS OPERATIVOS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-203</td><td>PROGRAMACIÓN ESTRUCTURADA</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>192/192</td></tr>
-    <tr><td>IS-204</td><td>MATEMÁTICA DISCRETA</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-204</td><td>MATEMÁTICA DISCRETA</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-105</td><td>ADMINISTRACION EMPRESARIAL</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>96/96</td></tr>
     <tr><td colspan="6"><strong>Créditos Nivel 2</strong></td><td>720/720</td></tr>
   </table>
@@ -120,8 +183,8 @@
     </tr>
     <tr><td>IS-301</td><td>MODELADO ORIENTADO A OBJETOS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-302</td><td>REDES DE COMPUTADORAS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
-    <tr><td>IS-303</td><td>PROG. ORIENTADA A OBJETOS</td><td>-</td><td>-</td><td>-</td><td class="periodo-actual">Periodo actual</td><td>144/144</td></tr>
-    <tr><td>IS-304</td><td>ESTRUCTURA DE DATOS</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-303</td><td>PROG. ORIENTADA A OBJETOS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
+    <tr><td>IS-304</td><td>ESTRUCTURA DE DATOS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-305</td><td>BASES DE DATOS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td colspan="6"><strong>Créditos Nivel 3</strong></td><td>576/720</td></tr>
   </table>
@@ -140,8 +203,8 @@
     </tr>
     <tr><td>IS-402</td><td>ADMINISTRACION DE SERVIDORES</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-403</td><td>APLICACION PARA EL CLIENTE WEB</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
-    <tr><td>IS-404</td><td>ADMINISTRACION DE BASE DE DATOS DISTRI</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Periodo actual</td><td>144/144</td></tr>
-    <tr><td>IS-405</td><td>ESTADISTICA PARA INGENIERIA</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-404</td><td>ADMINISTRACION DE BASE DE DATOS DISTRI</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
+    <tr><td>IS-405</td><td>ESTADISTICA PARA INGENIERIA</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-401</td><td>PERPECTIVA DE LA INTELIGENCCIA ARTIFICIAL</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td colspan="6"><strong>Créditos Nivel 3</strong></td><td>576/720</td></tr>
   </table>
@@ -161,12 +224,12 @@
     </tr>
     <tr><td>IS-501</td><td>ARQUITECTURA DEL SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-502</td><td>INTERFAZ HUMANO- COMPUTADOR</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
-    <tr><td>IS-503</td><td>APLICACION PARA EL SERVIDOR WEB</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Periodo actual</td><td>144/144</td></tr>
-    <tr><td>IS-504</td><td>MINERIA DE DATOS</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-503</td><td>APLICACION PARA EL SERVIDOR WEB</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
+    <tr><td>IS-504</td><td>MINERIA DE DATOS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-505</td><td>MODELO AGIL DE SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td colspan="6"><strong>Créditos Nivel 3</strong></td><td>576/720</td></tr>
     <tr><td colspan="8"><strong>REQUISITOS DE TITULACION</tr>
-    <tr><td>IS-507</td><td>PRÁCTICAS DE SERVICIO COMUNITARIO I</td><td>-</td><td>-</td><td>-</td><td class="no-tomada">No tomada</td><td>48/48</td></tr>
+    <tr><td>IS-507</td><td>PRÁCTICAS DE SERVICIO COMUNITARIO I</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>48/48</td></tr>
     <tr><td colspan="6"><strong>Créditos Aprobados</strong></td><td>Créditos necesarios:48</td></tr>
   </table>
 
@@ -185,11 +248,11 @@
     <tr><td>IS-601</td><td>USABILIDAD Y ACCESIBILIDAD</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-602</td><td>CICLOS DE DESARROLLO DE SOFTWARE SEGURO</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-603</td><td>APLICACIONES MÓVILES NATIVAS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Periodo actual</td><td>144/144</td></tr>
-    <tr><td>IS-604</td><td>VISUALIZACIÓN DE DATOS</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-604</td><td>VISUALIZACIÓN DE DATOS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-605</td><td>METODOLOGÍA DE INVESTIGACIÓN</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td colspan="6"><strong>Créditos Nivel 3</strong></td><td>576/720</td></tr>
     <tr><td colspan="8"><strong>REQUISITOS DE TITULACION</tr>
-    <tr><td>IS-507</td><td>PRÁCTICAS DE SERVICIO COMUNITARIO II</td><td>-</td><td>-</td><td>-</td><td class="no-tomada">No tomada</td><td>48/48</td></tr>
+    <tr><td>IS-507</td><td>PRÁCTICAS DE SERVICIO COMUNITARIO II</td><td>-</td><td>-</td><td>-</td><td class="Aprobado">No tomada</td><td>48/48</td></tr>
     <tr><td colspan="6"><strong>Créditos Aprobados</strong></td><td>Créditos necesarios:48</td></tr>
   </table>
 
@@ -207,13 +270,13 @@
     </tr>
     <tr><td>IS-701</td><td>DISEÑO CENTRADO EN EL USUARIO</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-702</td><td>AUDITORÍA DE SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
-    <tr><td>IS-703</td><td>APLICACIONES MÓVILES HÍBRIDAS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Periodo actual</td><td>144/144</td></tr>
-    <tr><td>IS-704</td><td>ANALÍTICA DE NEGOCIO</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-703</td><td>APLICACIONES MÓVILES HÍBRIDAS</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
+    <tr><td>IS-704</td><td>ANALÍTICA DE NEGOCIO</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     
     <tr><td colspan="6"><strong>Créditos Nivel 3</strong></td><td>576/720</td></tr>
     <tr><td colspan="8"><strong>REQUISITOS DE TITULACION</tr>
-    <tr><td>IS-705</td><td>DISEÑO DEL TRABAJO DE INTEGRACIÓN CURRICULAR</td><td>-</td><td>-</td><td>-</td><td class="no-tomada">No tomada</td><td>48/48</td></tr>
-    <tr><td>IS-707</td><td>PRÁCTICAS LABORALES I</td><td>-</td><td>-</td><td>-</td><td class="no-tomada">No tomada</td><td>48/48</td></tr>
+    <tr><td>IS-705</td><td>DISEÑO DEL TRABAJO DE INTEGRACIÓN CURRICULAR</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>48/48</td></tr>
+    <tr><td>IS-707</td><td>PRÁCTICAS LABORALES I</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>48/48</td></tr>
     <tr><td colspan="6"><strong>Créditos Aprobados</strong></td><td>Créditos necesarios:48</td></tr>
   </table>
 
@@ -231,13 +294,13 @@
     </tr>
     <tr><td>IS-701</td><td>GESTIÓN DE PROYECTOS DE SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     <tr><td>IS-702</td><td>HACKING ÉTICO</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
-    <tr><td>IS-703</td><td>INTEGRACIÓN E IMPLEMENTACIÓN DE SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Periodo actual</td><td>144/144</td></tr>
-    <tr><td>IS-704</td><td>CALIDAD DE SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="homologacion">Homologación interna</td><td>144/144</td></tr>
+    <tr><td>IS-703</td><td>INTEGRACIÓN E IMPLEMENTACIÓN DE SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
+    <tr><td>IS-704</td><td>CALIDAD DE SOFTWARE</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>144/144</td></tr>
     
     <tr><td colspan="6"><strong>Créditos Nivel 3</strong></td><td>576/720</td></tr>
     <tr><td colspan="8"><strong>REQUISITOS DE TITULACION</tr>
-    <tr><td>IS-705</td><td>DESARROLLO DEL TRABAJO DE INTEGRACIÓN CURRICULAR</td><td>-</td><td>-</td><td>-</td><td class="no-tomada">No tomada</td><td>48/48</td></tr>
-    <tr><td>IS-707</td><td>PRÁCTICAS LABORALES II</td><td>-</td><td>-</td><td>-</td><td class="no-tomada">No tomada</td><td>48/48</td></tr>
+    <tr><td>IS-705</td><td>DESARROLLO DEL TRABAJO DE INTEGRACIÓN CURRICULAR</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>48/48</td></tr>
+    <tr><td>IS-707</td><td>PRÁCTICAS LABORALES II</td><td>-</td><td>-</td><td>-</td><td class="aprobado">Aprobado</td><td>48/48</td></tr>
     <tr><td colspan="6"><strong>Créditos Aprobados</strong></td><td>Créditos necesarios:48</td></tr>
   </table>
 

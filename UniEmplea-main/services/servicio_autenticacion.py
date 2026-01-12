@@ -2,7 +2,7 @@ from models.administrador import AdministradorGeneral
 from models.estudiante import Estudiante
 from models.egresado import Egresado
 from models.decano import Decano
-from models.profesor import Docente
+from models.docente import Docente
 from models.director_carrera import DirectorCarrera
 from models.empresa import Empresa
 from models.usuario import Usuario

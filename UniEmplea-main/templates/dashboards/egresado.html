@@ -1,133 +1,213 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Egresado</title>
+    <title>Dashboard Egresado | UniEmplea</title>
+
     <style>
         body {
-            font-family: sans-serif;
-            background: #f3f4f6;
             margin: 0;
-            padding: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
         }
 
-        .header {
+        /* ===== HEADER ===== */
+        header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
 
-        .card {
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .acciones-header a {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            color: #0d6efd;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .acciones-header a.logout {
+            background: #dc3545;
+            color: white;
+        }
+
+        .acciones-header a:hover {
+            opacity: 0.9;
+        }
+
+        /* ===== CONTENEDOR ===== */
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
         }
 
         h2 {
+            color: #0d6efd;
             margin-top: 0;
-            color: #333;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        /* ===== ALERTAS ===== */
+        .alert {
+            padding: 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: bold;
         }
 
-        th,
-        td {
-            text-align: left;
-            padding: 8px;
-            border-bottom: 1px solid #eee;
+        .alert-success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        /* ===== BOTONES ===== */
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0b5ed7;
+        }
+
+        .btn-secondary:hover {
+            background: #5c636a;
+        }
+
+        /* ===== OFERTAS ===== */
+        .oferta {
+            border-bottom: 1px solid #ddd;
+            padding: 12px 0;
+        }
+
+        .oferta:last-child {
+            border-bottom: none;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <h1>¡Bienvenido Colega, {{ usuario.nombre }}! 🎓</h1>
-        <a href="{{ url_for('auth.logout') }}" style="color: #dc2626; text-decoration: none; font-weight: bold;">Cerrar
-            Sesión</a>
+
+<header>
+    <h1>🎓 Panel Egresado</h1>
+    <div class="acciones-header">
+        <a href="{{ url_for('auth.logout') }}"
+           class="logout"
+           onclick="return confirm('¿Desea cerrar sesión?')">
+           🚪 Cerrar sesión
+        </a>
     </div>
+</header>
+
+<div class="container">
 
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    {% for category, message in messages %}
-    <div
-        style="padding: 10px; margin-bottom: 20px; background: {{ '#dcfce7' if category == 'success' else '#fee2e2' }}; color: {{ '#15803d' if category == 'success' else '#b91c1c' }}; border-radius: 6px;">
-        {{ message }}
-    </div>
-    {% endfor %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endif %}
     {% endwith %}
 
+    <!-- CV -->
     <div class="card">
         <h2>📄 Mi Hoja de Vida</h2>
+
         {% if usuario.cv_path %}
-        <p style="color: green;">✅ CV Cargado</p>
-        <a href="/{{ usuario.cv_path }}" target="_blank">Ver mi CV actual</a>
+            <p style="color: green; font-weight:bold;">✅ CV cargado</p>
+            <a href="/{{ usuario.cv_path }}" target="_blank" class="btn btn-secondary">
+                Ver mi CV
+            </a>
         {% else %}
-        <p style="color: orange;">⚠️ No has subido tu CV</p>
+            <p style="color: #d97706; font-weight:bold;">⚠️ No has subido tu CV</p>
         {% endif %}
 
-        <form action="{{ url_for('egresado.subir_cv') }}" method="POST" enctype="multipart/form-data"
-            style="margin-top: 15px;">
+        <form action="{{ url_for('egresado.subir_cv') }}" method="POST" enctype="multipart/form-data" style="margin-top:15px;">
             <input type="file" name="cv" accept=".pdf" required>
-            <button type="submit"
-                style="background: #4b5563; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Subir
-                PDF</button>
+            <br><br>
+            <button type="submit" class="btn btn-secondary">Subir PDF</button>
         </form>
     </div>
 
+    <!-- ESTADO ACADÉMICO -->
     <div class="card">
-        <h2>📊 Historial de Calificaciones</h2>
-        {% if calificaciones %}
-        <table>
-            <tr>
-                <th>Semestre</th>
-                <th>Materia</th>
-                <th>Nota</th>
-            </tr>
-            {% for calif in calificaciones %}
-            <tr>
-                <td>{{ calif.semestre }}</td>
-                <td>{{ calif.materia }}</td>
-                <td>{{ calif.nota }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
-        <p>No hay registro de calificaciones.</p>
-        {% endif %}
+        <h2>🎓 Tu Estado Académico</h2>
+        <a href="{{ url_for('egresado.historial_academico') }}" class="btn btn-primary">
+            📄 Ver Historial Académico
+        </a>
     </div>
 
+    <!-- OFERTAS -->
     <div class="card">
         <h2>💼 Bolsa de Empleo</h2>
+
         {% for oferta in ofertas %}
-        <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
-            <h3>{{ oferta.titulo }}</h3>
-            <p>{{ oferta.descripcion }}</p>
-            <button
-                style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Aplicar</button>
-        </div>
+            <div class="oferta">
+                <h3>{{ oferta.titulo }}</h3>
+                <p>{{ oferta.descripcion }}</p>
+                <button class="btn btn-primary">Aplicar</button>
+            </div>
         {% else %}
-        <p>No hay ofertas disponibles.</p>
+            <p><em>No hay ofertas disponibles.</em></p>
         {% endfor %}
     </div>
 
+    <!-- RECOMENDACIONES -->
     <div class="card">
         <h2>📜 Recomendaciones</h2>
+
         {% for reco in recomendaciones %}
-        <div>
             <p><em>"{{ reco.texto }}"</em></p>
-        </div>
         {% else %}
-        <p>Aún no tienes recomendaciones.</p>
+            <p><em>Aún no tienes recomendaciones.</em></p>
         {% endfor %}
     </div>
-</body>
 
+</div>
+
+</body>
 </html>

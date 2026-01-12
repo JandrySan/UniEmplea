@@ -11,6 +11,6 @@ class DirectorCarrera(Usuario):
         return "director_carrera"
 
     def obtener_dashboard(self):
-        return "dashboard/panel.html"
+        return "director.panel"
 
 

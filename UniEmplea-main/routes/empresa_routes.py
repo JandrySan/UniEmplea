@@ -14,14 +14,26 @@ repo_usuarios = RepositorioUsuariosMongo()
 repo_carreras = RepositorioCarrerasMongo()
 repo_estudiantes = RepositorioEstudiantesMongo() # Assuming this repo gets students/graduates
 
+
+
 @empresa_bp.route("/dashboard")
 @requiere_rol("empresa")
 def dashboard():
     empresa_id = session["usuario_id"]
-    # Get offers created by this company
-    ofertas = [o for o in repo_ofertas.obtener_todas() if o.empresa_id == empresa_id]
-    
-    return render_template("dashboards/empresa.html", ofertas=ofertas)
+
+    ofertas = [
+        o for o in repo_ofertas.obtener_todas()
+        if o.empresa_id == empresa_id
+    ]
+
+    carreras = repo_carreras.obtener_todas()  
+
+    return render_template(
+        "dashboards/empresa.html",
+        ofertas=ofertas,
+        carreras=carreras
+    )
+
 
 @empresa_bp.route("/ofertas/crear", methods=["POST"])
 @requiere_rol("empresa")
@@ -41,13 +53,15 @@ def crear_oferta():
         titulo=titulo,
         descripcion=descripcion,
         empresa_id=empresa_id,
-        carrera_id=carrera_id, # Optional, if they want to target a specific career
+        carrera_id=carrera_id, 
         activa=True,
-        estado="pendiente"
+        estado="aprobada"   
     )
     repo_ofertas.crear(nueva_oferta)
     flash("Oferta creada exitosamente. Pendiente de aprobación.", "success")
     return redirect(url_for("empresa.dashboard"))
+
+
 
 @empresa_bp.route("/talentos")
 @requiere_rol("empresa")

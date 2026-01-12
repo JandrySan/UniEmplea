@@ -96,29 +96,44 @@ button:hover {
 
 <div class="table-container">
     <table>
-        <thead>
-            <tr>
-                <th>Título</th>
-                <th>Empresa</th>
-                <th>Estado</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for o in ofertas %}
-            <tr>
-                <td>{{ o.titulo }}</td>
-                <td>{{ empresas.get(o.empresa_id, "Empresa no encontrada") }}</td>
-                <td>{{ "Activa" if o.activa else "Inactiva" }}</td>
-                <td>
-                    <form method="POST"
-                          action="{{ url_for('admin.eliminar_oferta', oferta_id=o.id) }}"
-                          onsubmit="return confirm('¿Eliminar esta oferta?')">
-                        <button class="btn-danger">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  <thead>
+    <tr>
+      <th>Título</th>
+      <th>Empresa</th>
+      <th>Estado</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for oferta in ofertas %}
+    <tr>
+      <td>{{ oferta.titulo }}</td>
+
+      <td>
+        {{ empresas.get(oferta.empresa_id, "Empresa no encontrada") }}
+      </td>
+
+      <td>{{ oferta.estado }}</td>
+
+      <td>
+        {% if oferta.estado == "pendiente" %}
+        <form method="POST"
+              action="{{ url_for('admin.aprobar_oferta', oferta_id=oferta.id) }}"
+              style="display:inline;">
+          <button type="submit">Aprobar</button>
+        </form>
+        {% endif %}
+
+        <form method="POST"
+              action="{{ url_for('admin.eliminar_oferta', oferta_id=oferta.id) }}"
+              style="display:inline;">
+          <button type="submit">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 </div>

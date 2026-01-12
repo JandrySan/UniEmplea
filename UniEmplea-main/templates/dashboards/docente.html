@@ -1,117 +1,184 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Docente | UniEmplea</title>
+    <title>Panel Docente | UniEmplea</title>
+
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f2f5;
             margin: 0;
-            padding: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .header {
+        /* ===== HEADER ===== */
+        header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
 
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .logout {
+            background: #dc3545;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logout:hover {
+            opacity: 0.9;
+        }
+
+        /* ===== CONTENEDOR ===== */
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        h2 {
+            color: #0d6efd;
+            margin-top: 0;
+        }
+
+        /* ===== CARD ===== */
         .card {
             background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            margin-bottom: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        .student-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 15px;
+        .card h3 {
+            margin-top: 0;
+            color: #0d6efd;
         }
 
-        .student-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+        /* ===== ESTUDIANTE ASIGNADO ===== */
+        .estudiante {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            background: #fafafa;
         }
 
         textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
+            padding: 8px;
+            margin-top: 8px;
+            resize: vertical;
         }
 
         button {
-            background: #2563eb;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background-color: #0d6efd;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            margin-top: 5px;
         }
 
-        .logout {
-            color: #dc2626;
-            text-decoration: none;
-            font-weight: bold;
+        button:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* ===== TABLA ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        tr:hover {
+            background: #f9fafb;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>👨‍🏫 Panel Docente</h1>
-            <a href="{{ url_for('auth.logout') }}" class="logout">Cerrar Sesión</a>
-        </div>
+<header>
+    <h1>👨‍🏫 Panel Docente</h1>
+    <a href="{{ url_for('auth.logout') }}" class="logout"
+       onclick="return confirm('¿Desea cerrar sesión?')">
+        🚪 Cerrar sesión
+    </a>
+</header>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div style="padding: 10px; margin-bottom: 15px; border-radius: 6px; background: #dcfce7; color: #166534;">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
+<div class="container">
 
-        <div class="card">
-            <h2>Mis Estudiantes</h2>
-            <p>Escribe una recomendación para destacar a tus mejores estudiantes.</p>
+    <!-- 🔹 MIS ESTUDIANTES ASIGNADOS -->
+    <div class="card">
+        <h3>🎯 Mis Estudiantes Asignados</h3>
 
-            {% for est in estudiantes %}
-            <div class="student-item">
-                <div style="flex: 1; margin-right: 20px;">
-                    <strong>{{ est.nombre }}</strong> <br>
-                    <small>{{ est.correo }} | Semestre {{ est.semestre }}</small>
-                </div>
-                <div style="flex: 2;">
-                    <form action="{{ url_for('docente.recomendar', estudiante_id=est.id) }}" method="POST">
-                        <textarea name="texto" rows="2" placeholder="Escribe una recomendación..."></textarea>
-                        <button type="submit">Enviar Recomendación</button>
+        {% if mis_estudiantes %}
+            {% for e in mis_estudiantes %}
+                <div class="estudiante">
+                    <strong>{{ e.nombre }}</strong><br>
+                    {{ e.correo }} | Semestre {{ e.semestre }}
+
+                    <form method="POST"
+                          action="{{ url_for('docente.recomendar_estudiante', estudiante_id=e._id) }}">
+
+                        <textarea name="mensaje"
+                                  rows="3"
+                                  placeholder="Escribe una recomendación..."
+                                  required></textarea>
+
+                        <button type="submit">Enviar recomendación</button>
                     </form>
                 </div>
-            </div>
             {% endfor %}
-        </div>
+        {% else %}
+            <p><em>No tienes estudiantes asignados aún.</em></p>
+        {% endif %}
     </div>
 
-</body>
+    <!-- 🔹 TODOS LOS ESTUDIANTES -->
+    <div class="card">
+        <h3>📋 Todos los Estudiantes</h3>
 
+        <table>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Semestre</th>
+            </tr>
+
+            {% for e in todos_estudiantes %}
+            <tr>
+                <td>{{ e.nombre }}</td>
+                <td>{{ e.correo }}</td>
+                <td>{{ e.semestre }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</div>
+
+</body>
 </html>

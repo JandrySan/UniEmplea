@@ -1,110 +1,209 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard Estudiante</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f3f4f6;
-      margin: 0;
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
+    <title>Dashboard Estudiante | UniEmplea</title>
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
+        }
 
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
+        /* ===== HEADER ===== */
+        header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    h2 {
-      margin-top: 0;
-      color: #333;
-    }
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
 
-    .tag {
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 14px;
-      background: #e5e7eb;
-      color: #374151;
-    }
+        .logout {
+            background: #dc3545;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-    .offer {
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
+        .logout:hover {
+            opacity: 0.9;
+        }
 
-    .offer:last-child {
-      border-bottom: none;
-    }
-  </style>
+        /* ===== CONTENEDOR ===== */
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #0d6efd;
+        }
+
+        /* ===== TAG ===== */
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            background: #e7f1ff;
+            color: #0d6efd;
+            font-weight: bold;
+        }
+
+        /* ===== NOTIFICACIONES ===== */
+        .notificacion {
+            background: #e7f9f0;
+            color: #0f5132;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 5px solid #198754;
+        }
+
+        /* ===== OFERTAS ===== */
+        .oferta {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        .oferta:last-child {
+            border-bottom: none;
+        }
+
+        .oferta h3 {
+            margin: 0 0 5px;
+        }
+
+        .oferta p {
+            margin: 0 0 10px;
+            color: #555;
+        }
+
+        button {
+            padding: 6px 14px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* ===== RECOMENDACIONES ===== */
+        .recomendacion {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 4px solid #0d6efd;
+        }
+
+        .recomendacion small {
+            color: #666;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="header">
-    <h1>¡Hola, {{ usuario.nombre }}! 👋</h1>
-    <a href="{{ url_for('auth.logout') }}" style="color: #dc2626; text-decoration: none; font-weight: bold;">Cerrar
-      Sesión</a>
-  </div>
 
-  <div class="card">
-    <h2>🎓 Tu Estado Académico</h2>
-    <p><strong>Semestre Actual:</strong> {{ usuario.semestre }}</p>
-    <p><strong>Estado de Prácticas:</strong> <span class="tag">{{ estado_practicas }}</span></p>
-  </div>
+<header>
+    <h1> Panel del Estudiante</h1>
+    <a href="{{ url_for('auth.logout') }}" class="logout"
+       onclick="return confirm('¿Desea cerrar sesión?')">
+         Cerrar sesión
+    </a>
+</header>
 
-  <div class="card">
-    <h2>🔔 Notificaciones</h2>
-    {% if notificaciones %}
-    {% for notif in notificaciones %}
-    <div
-      style="background: #ecfdf5; color: #065f46; padding: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 4px solid #10b981;">
-      {{ notif.mensaje }}
+<div class="container">
+
+   <!-- ESTADO ACADÉMICO -->
+     
+    <div class="card">
+        <h2>Tu Estado Académico</h2>
+        <p><strong>Semestre actual:</strong> {{ usuario.semestre }}</p>
+        <p><strong>Estado de prácticas:</strong>
+            <span class="tag">{{ estado_practicas }}</span>
+        </p>
     </div>
-    {% endfor %}
-    {% else %}
-    <p style="color: #6b7280;">No tienes nuevas notificaciones.</p>
-    {% endif %}
-  </div>
 
-  <div class="card">
-    <h2>💼 Ofertas Laborales Disponibles</h2>
-    {% for oferta in ofertas %}
-    <div class="offer">
-      <h3>{{ oferta.titulo }}</h3>
-      <p>{{ oferta.descripcion }}</p>
-      <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
-        <button type="submit"
-          style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Postular</button>
-      </form>
-    </div>
-    {% else %}
-    <p>No hay ofertas disponibles por el momento.</p>
-    {% endfor %}
-  </div>
 
-  <div class="card">
-    <h2>📜 Recomendaciones Docentes</h2>
-    {% for reco in recomendaciones %}
-    <div class="offer">
-      <p><em>"{{ reco.texto }}"</em></p>
-      <small style="color: #666;">- Profesor ID: {{ reco.profesor_id }}</small>
+    <!-- NOTIFICACIONES -->
+    <div class="card">
+        <h2>Notificaciones</h2>
+
+        {% if notificaciones %}
+            {% for notif in notificaciones %}
+                <div class="notificacion">
+                    {{ notif.mensaje }}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p><em>No tienes nuevas notificaciones.</em></p>
+        {% endif %}
     </div>
-    {% else %}
-    <p>Aún no tienes recomendaciones.</p>
-    {% endfor %}
-  </div>
+
+    <!-- OFERTAS -->
+    <div class="card">
+        <h2>Ofertas Laborales Disponibles</h2>
+
+        {% for oferta in ofertas %}
+            <div class="oferta">
+                <h3>{{ oferta.titulo }}</h3>
+                <p>{{ oferta.descripcion }}</p>
+
+                <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}"
+                      method="POST">
+                    <button type="submit">Postular</button>
+                </form>
+            </div>
+        {% else %}
+            <p>No hay ofertas disponibles por el momento.</p>
+        {% endfor %}
+    </div>
+
+    <!-- RECOMENDACIONES -->
+    <div class="card">
+        <h2>Recomendaciones Docentes</h2>
+
+        {% if recomendaciones %}
+            {% for reco in recomendaciones %}
+                <div class="recomendacion">
+                    <p><em>"{{ reco.mensaje }}"</em></p>
+                    <small>
+                        — {{ reco.docente_nombre }} | {{ reco.fecha.strftime("%d/%m/%Y") }}
+                    </small>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p><em>Aún no tienes recomendaciones.</em></p>
+        {% endif %}
+    </div>
+
+</div>
+
 </body>
-
 </html>

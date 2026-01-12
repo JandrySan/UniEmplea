@@ -1,13 +1,15 @@
 from database.mongo_connection import MongoDB
 from bson import ObjectId
 from models.decano import Decano
-from models.profesor import Docente
+from models.docente import Docente
 from models.usuario import Usuario
+from models.estudiante import Estudiante
+from models.egresado import Egresado
 from models.empresa import Empresa
 from models.director_carrera import DirectorCarrera
 from models.estudiante import Estudiante
 from models.egresado import Egresado
-
+from models.administrador import AdministradorGeneral
 
 class RepositorioUsuariosMongo:
 
@@ -76,7 +78,8 @@ class RepositorioUsuariosMongo:
                 correo=data["correo"],
                 telefono=data.get("telefono"),
                 direccion=data.get("direccion"),
-                ruc=data.get("ruc")
+                ruc=data.get("ruc"),
+                password=data.get("password")
             )
             
         if rol == "director_carrera":
@@ -105,6 +108,14 @@ class RepositorioUsuariosMongo:
                 correo=data["correo"],
                 facultad_id=data.get("facultad_id")
              )
+        
+        elif rol == "administrador":
+            return AdministradorGeneral(
+                id=str(data["_id"]),
+                nombre=data["nombre"],
+                correo=data["correo"]
+            )
+
 
         
         raise ValueError(f"Rol de usuario no soportado: {rol}")

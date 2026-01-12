@@ -271,10 +271,6 @@ def asignar_decano():
     )
 
 
-# cargar estudiantes desde excel
-
-
-
 # facultad y carrera 
 
 
@@ -375,32 +371,6 @@ def asignar_director(carrera_id):
     return redirect(url_for("admin.gestion_academica"))
 
 
-# empresas 
-
-@admin_bp.route("/empresas", methods=["GET", "POST"])
-@requiere_rol("administrador")
-def gestionar_empresas():
-
-    if request.method == "POST":
-        empresa = Empresa(
-            id=None,
-            nombre=request.form.get("nombre"),
-            correo=request.form.get("correo"),
-            telefono=request.form.get("telefono"),
-            direccion=request.form.get("direccion")
-        )
-        repo_empresas.crear(empresa)
-
-    empresas = repo_empresas.obtener_todas()
-    return render_template("dashboards/admin_empresas.html", empresas=empresas)
-
-
-@admin_bp.route("/empresas/<id>/eliminar", methods=["POST"])
-@requiere_rol("administrador")
-def eliminar_empresa(id):
-    repo_empresas.eliminar(id)
-    return redirect(url_for("admin.gestionar_empresas"))
-
 
 # gestionar ofertas
 
@@ -428,3 +398,12 @@ def eliminar_oferta(oferta_id):
     return redirect(url_for("admin.gestionar_ofertas"))
 
 
+@admin_bp.route("/ofertas/aprobar/<oferta_id>", methods=["POST"])
+@requiere_rol("administrador")
+def aprobar_oferta(oferta_id):
+    repo_ofertas = RepositorioOfertasMongo()
+    repo_ofertas.collection.update_one(
+        {"_id": ObjectId(oferta_id)},
+        {"$set": {"estado": "activa"}}
+    )
+    return redirect(url_for("admin.gestionar_ofertas"))

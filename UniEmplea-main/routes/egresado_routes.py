@@ -9,6 +9,7 @@ from repositories.repositorio_calificaciones_mongo import RepositorioCalificacio
 egresado_bp = Blueprint("egresado", __name__)
 
 @egresado_bp.route("/dashboard")
+@requiere_rol("egresado")
 def dashboard_egresado():
     usuario_id = session.get("usuario_id")
     if not usuario_id:
@@ -72,3 +73,10 @@ def subir_cv():
         
         flash("CV subido exitosamente", "success")
         return redirect(url_for("egresado.dashboard_egresado"))
+
+
+
+@egresado_bp.route("/historial_academico")
+@requiere_rol("egresado")
+def historial_academico():
+    return render_template("dashboards/cali.html")

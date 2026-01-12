@@ -2,25 +2,29 @@ from flask import Blueprint, render_template, session, redirect, url_for
 from patterns.estrategia_practicas import EstrategiaPracticas
 from patterns.estrategia_empleo import EstrategiaEmpleo
 from services.servicio_postulaciones import ServicioPostulaciones
+from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
+from repositories.repositorio_ofertas_mongo import RepositorioOfertasMongo
+from repositories.repositorio_recomendaciones_mongo import RepositorioRecomendacionesMongo
+from repositories.repositorio_notificaciones_mongo import RepositorioNotificacionesMongo
+from utils.decoradores import requiere_rol
+
 
 estudiante_bp = Blueprint("estudiante", __name__)
 
+
+repo_usuarios = RepositorioUsuariosMongo()
+repo_ofertas = RepositorioOfertasMongo()
+repo_recos = RepositorioRecomendacionesMongo()
+repo_notifs = RepositorioNotificacionesMongo()
+    
+
 @estudiante_bp.route("/dashboard")
+@requiere_rol("estudiante")
 def dashboard_estudiante():
     usuario_id = session.get("usuario_id")
     if not usuario_id:
         return redirect(url_for("auth.login"))
 
-    from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
-    from repositories.repositorio_ofertas_mongo import RepositorioOfertasMongo
-    from repositories.repositorio_recomendaciones_mongo import RepositorioRecomendacionesMongo
-    from repositories.repositorio_notificaciones_mongo import RepositorioNotificacionesMongo
-    
-    repo_usuarios = RepositorioUsuariosMongo()
-    repo_ofertas = RepositorioOfertasMongo()
-    repo_recos = RepositorioRecomendacionesMongo()
-    repo_notifs = RepositorioNotificacionesMongo()
-    
     usuario = repo_usuarios.buscar_por_id(usuario_id)
     if not usuario:
         session.clear()
@@ -45,7 +49,10 @@ def dashboard_estudiante():
         notificaciones=notificaciones
     )
 
+
+
 @estudiante_bp.route("/postular/<oferta_id>", methods=["POST"])
+@requiere_rol("estudiante")
 def postular_oferta(oferta_id):
     usuario_id = session.get("usuario_id")
     if not usuario_id:

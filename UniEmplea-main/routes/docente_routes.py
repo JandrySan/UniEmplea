@@ -3,39 +3,67 @@ from utils.decoradores import requiere_rol
 from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
 from repositories.repositorio_recomendaciones_mongo import RepositorioRecomendacionesMongo
 from models.recomendacion import Recomendacion
+from repositories.repositorio_recomendaciones_mongo import RepositorioRecomendacionesMongo
+from repositories.repositorio_estudiantes_mongo import RepositorioEstudiantesMongo
+from bson import ObjectId
+
 
 docente_bp = Blueprint("docente", __name__)
 
 repo_usuarios = RepositorioUsuariosMongo()
 repo_recos = RepositorioRecomendacionesMongo()
+repo_estudiantes = RepositorioEstudiantesMongo()
+
+
 
 @docente_bp.route("/dashboard")
 @requiere_rol("docente")
-def dashboard():
-    docente_id = session["usuario_id"]
-    # For now, list all students. Ideally filter by faculty or courses.
-    todos = repo_usuarios.obtener_todos()
-    estudiantes = [u for u in todos if u.rol() == "estudiante"]
-    
-    return render_template("dashboards/docente.html", estudiantes=estudiantes)
+def dashboard_docente():
+    docente_id = session.get("usuario_id")
+
+    if not docente_id:
+        return redirect(url_for("auth.login"))
+
+    docente_oid = ObjectId(docente_id)
+
+    # 🔹 SOLO mis estudiantes asignados
+    mis_estudiantes = list(
+        repo_estudiantes.collection.find({
+            "rol": "estudiante",
+            "tutor_id": docente_oid
+        })
+    )
+
+    # 🔹 TODOS los estudiantes
+    todos_estudiantes = list(
+        repo_estudiantes.collection.find({"rol": "estudiante"})
+    )
+
+    return render_template(
+        "dashboards/docente.html",
+        mis_estudiantes=mis_estudiantes,
+        todos_estudiantes=todos_estudiantes
+    )
+
+
 
 @docente_bp.route("/recomendar/<estudiante_id>", methods=["POST"])
 @requiere_rol("docente")
-def recomendar(estudiante_id):
-    texto = request.form.get("texto")
-    docente_id = session["usuario_id"]
-    
-    if not texto:
+def recomendar_estudiante(estudiante_id):
+    mensaje = request.form.get("mensaje")
+
+    if not mensaje:
         flash("La recomendación no puede estar vacía", "error")
-        return redirect(url_for("docente.dashboard"))
-        
+        return redirect(url_for("docente.dashboard_docente"))
+
     nueva_reco = Recomendacion(
         id=None,
         estudiante_id=estudiante_id,
-        profesor_id=docente_id,
-        texto=texto
+        docente_id=session["usuario_id"],
+        mensaje=mensaje
     )
+
     repo_recos.crear(nueva_reco)
-    
-    flash("Recomendación enviada exitosamente", "success")
-    return redirect(url_for("docente.dashboard"))
+
+    flash("Recomendación enviada correctamente", "success")
+    return redirect(url_for("docente.dashboard_docente"))

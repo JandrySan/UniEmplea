@@ -1,3 +1,4 @@
+from bson import ObjectId
 from flask import Blueprint, abort, render_template, request, redirect, url_for, session
 from repositories.repositorio_estudiantes_mongo import RepositorioEstudiantesMongo
 from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
@@ -5,12 +6,13 @@ from repositories.repositorio_carreras_mongo import RepositorioCarrerasMongo
 from services.servicio_tutores import ServicioTutores
 from services.servicio_metricas_director import ServicioMetricasDirector
 from utils.decoradores import requiere_rol
+from werkzeug.security import generate_password_hash
 import pandas as pd
 from flask import flash
 from models.usuario import Usuario
 from flask import render_template, request, redirect, url_for, session
 from models.estudiante import Estudiante
-
+from models.docente import Docente
 
 director_bp = Blueprint("director", __name__)
 
@@ -26,18 +28,58 @@ servicio_metricas = ServicioMetricasDirector(repo_estudiantes)
 @director_bp.route("/dashboard", endpoint="panel")
 @requiere_rol("director_carrera")
 def dashboard_director():
-    usuario_id = session["usuario_id"]
     carrera_id = session.get("carrera_id")
 
-    carrera = repo_carreras.buscar_por_director(usuario_id)
+    # 🔹 Todos los estudiantes de la carrera
+    todos_estudiantes = list(
+        repo_estudiantes.collection.find({
+            "rol": "estudiante",
+            "carrera_id": carrera_id
+        })
+    )
 
-    metricas = servicio_metricas.obtener_metricas(carrera_id)
+    # 🔹 Solo estudiantes desde 7mo semestre
+    estudiantes_7mo = [
+        e for e in todos_estudiantes if e.get("semestre", 0) >= 7
+    ]
+
+    # 🔹 Profesores (docentes)
+    profesores = list(
+        repo_usuarios.collection.find({"rol": "docente"})
+    )
+
+    # 🔹 Mapear IDs y tutores SOLO para los de 7mo
+    for e in estudiantes_7mo:
+        e["_id"] = str(e["_id"])
+
+        if e.get("tutor_id"):
+            tutor = repo_usuarios.collection.find_one(
+                {"_id": ObjectId(e["tutor_id"])}
+            )
+            e["tutor_nombre"] = tutor["nombre"] if tutor else "Sin tutor"
+        else:
+            e["tutor_nombre"] = "Sin tutor"
+
+    # 🔹 Métricas
+    total_estudiantes = len(todos_estudiantes)
+    total_7mo = len(estudiantes_7mo)
+    con_tutor = len([e for e in estudiantes_7mo if e.get("tutor_id")])
+    porcentaje = round((con_tutor / total_7mo) * 100, 2) if total_7mo > 0 else 0
+
+    metricas = {
+        "total_estudiantes": total_estudiantes,
+        "total_7mo": total_7mo,
+        "con_tutor": con_tutor,
+        "porcentaje_con_tutor": porcentaje
+    }
 
     return render_template(
         "dashboards/panel.html",
-        carrera=carrera,
+        estudiantes=estudiantes_7mo,  
+        profesores=profesores,
         metricas=metricas
     )
+
 
 
 
@@ -50,7 +92,7 @@ def ver_carrera():
 
     return render_template(
         "dashboards/director_carrera.html",
-        carrera=carrera
+        carrera=carrera 
     )
 
 @director_bp.route("/docentes")
@@ -65,14 +107,21 @@ def ver_docentes():
     )
 
 
-
-@director_bp.route("/asignar-tutor", methods=["POST"])
+@director_bp.route("/estudiantes/<estudiante_id>/asignar_tutor", methods=["POST"])
 @requiere_rol("director_carrera")
-def asignar_tutor():
-    servicio_tutores.asignar_tutor(
-        request.form["estudiante_id"],
-        request.form["tutor_id"]
+def asignar_tutor(estudiante_id):
+    tutor_id = request.form.get("tutor_id")
+
+    if not tutor_id:
+        flash("Debe seleccionar un tutor válido", "error")
+        return redirect(url_for("director.panel"))
+
+    repo_estudiantes.collection.update_one(
+        {"_id": ObjectId(estudiante_id)},
+        {"$set": {"tutor_id": ObjectId(tutor_id)}}
     )
+
+    flash("Tutor asignado correctamente", "success")
     return redirect(url_for("director.panel"))
 
 
@@ -85,40 +134,32 @@ def cargar_estudiantes_excel():
         flash("No se seleccionó ningún archivo", "error")
         return redirect(url_for("director.panel"))
 
-
-    try:
-        df = pd.read_excel(archivo)
-    except Exception as e:
-        flash("Error al leer el archivo Excel", "error")
-        return redirect(url_for("dashboard/panel"))
-
-    # Normalizar columnas
+    df = pd.read_excel(archivo)
     df.columns = df.columns.str.strip().str.lower()
-    columnas_requeridas = {"nombre", "correo", "semestre"} # Carrera is implicit now
-    if not columnas_requeridas.issubset(set(df.columns)):
+
+    columnas_requeridas = {"nombre", "correo", "semestre"}
+    if not columnas_requeridas.issubset(df.columns):
         flash("El archivo debe contener: nombre, correo, semestre", "error")
         return redirect(url_for("director.panel"))
 
     carrera_id = session.get("carrera_id")
     if not carrera_id:
-         flash("Error: No se identificó la carrera del director.", "error")
-         return redirect(url_for("dashboard/panel"))
+        flash("No se identificó la carrera", "error")
+        return redirect(url_for("director.panel"))
 
     cargados = 0
     ignorados = 0
 
     for _, row in df.iterrows():
-        nombre = str(row["nombre"]).strip()
-        correo = str(row["correo"]).strip().lower()
-        
         try:
+            nombre = row["nombre"].strip()
+            correo = row["correo"].strip().lower()
             semestre = int(row["semestre"])
         except:
             ignorados += 1
             continue
 
-        # Filter: Only students from 1st to 8th semester
-        if semestre < 1 or semestre > 8:
+        if not (1 <= semestre <= 8):
             ignorados += 1
             continue
 
@@ -126,17 +167,21 @@ def cargar_estudiantes_excel():
             ignorados += 1
             continue
 
-        estudiante = Estudiante(
-            id=None,
-            nombre=nombre,
-            correo=correo,
-            carrera_id=carrera_id,
-            semestre=semestre,
-            tutor_id=None
-        )
+        password_plano = "123456"  # o generar una aleatoria
+        password_hash = generate_password_hash(password_plano)
 
+        estudiante = {
+            "nombre": nombre,
+            "correo": correo,
+            "password": password_hash,
+            "rol": "estudiante",
+            "activo": True,
+            "carrera_id": carrera_id,
+            "semestre": semestre,
+            "tutor_id": None
+        }
 
-        repo_estudiantes.crear(estudiante)
+        repo_estudiantes.collection.insert_one(estudiante)
         cargados += 1
 
     flash(f"✔ {cargados} estudiantes cargados | ❌ {ignorados} ignorados", "success")

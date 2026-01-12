@@ -2,15 +2,15 @@ from flask import Blueprint, render_template, request, redirect, session, url_fo
 from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
 from repositories.repositorio_auth_mongo import RepositorioAuthMongo
 from services.servicio_autenticacion import ServicioAutenticacion
-
+from repositories.repositorio_carreras_mongo import RepositorioCarrerasMongo
 auth_bp = Blueprint("auth", __name__)
 
 # Repositorios y servicios
 repo_usuarios = RepositorioUsuariosMongo()
 repo_auth = RepositorioAuthMongo(repo_usuarios)
 servicio_auth = ServicioAutenticacion(repo_auth)
-
-
+repo_carreras = RepositorioCarrerasMongo()
+repo_carreras = RepositorioCarrerasMongo()
 @auth_bp.route("/registro-empresa", methods=["GET", "POST"])
 def registro_empresa():
     if request.method == "POST":
@@ -67,15 +67,16 @@ def login():
             if usuario.rol() in ["decano", "docente"]:
                 session["facultad_id"] = usuario.facultad_id
             
-            if usuario.rol() == "director" or usuario.rol() == "director_carrera":
-                from repositories.repositorio_carreras_mongo import RepositorioCarrerasMongo
-                repo_carreras = RepositorioCarrerasMongo()
-                # Buscar la carrera donde este usuario es director
-                carrera = repo_carreras.collection.find_one({"director_id": usuario.id})
+            if usuario.rol() == "director_carrera":
+                
+                carrera = repo_carreras.collection.find_one(
+                    {"director_id": usuario.id}
+                )
+
                 if carrera:
                     session["carrera_id"] = str(carrera["_id"])
-                    # También podemos guardar la facultad si la carrera la tiene
                     session["facultad_id"] = carrera.get("facultad_id")
+
 
             return redirect(url_for(usuario.obtener_dashboard()))
 

@@ -1,200 +1,244 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Empresa | UniEmplea</title>
+
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f2f5;
             margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
         }
 
-        .navbar {
-            background: #fff;
-            padding: 15px 30px;
+        /* ===== HEADER ===== */
+        header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
-        .logo {
-            font-weight: bold;
-            font-size: 20px;
-            color: #2563eb;
+        header h1 {
+            margin: 0;
+            font-size: 22px;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .card {
+        .acciones-header a {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-        }
-
-        h2 {
-            margin-top: 0;
-            color: #1f2937;
-        }
-
-        .btn {
-            padding: 10px 20px;
+            color: #0d6efd;
+            padding: 8px 14px;
             border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
             text-decoration: none;
-            display: inline-block;
+            font-weight: bold;
+            margin-left: 8px;
         }
 
-        .btn-primary {
-            background: #2563eb;
+        .acciones-header a.logout {
+            background: #dc3545;
             color: white;
         }
 
-        .btn-secondary {
-            background: #e5e7eb;
-            color: #374151;
+        .acciones-header a:hover {
+            opacity: 0.9;
         }
 
+        /* ===== CONTENEDOR ===== */
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        h2 {
+            color: #0d6efd;
+            margin-top: 0;
+        }
+
+        /* ===== ALERTAS ===== */
+        .alert {
+            padding: 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* ===== TABLA ===== */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
         }
 
-        th,
-        td {
-            text-align: left;
+        th, td {
             padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
         }
 
         th {
-            color: #6b7280;
-            font-weight: 600;
-            font-size: 14px;
+            background: #f1f5f9;
         }
 
-        .status-badge {
+        /* ===== ESTADOS ===== */
+        .estado {
             padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: bold;
         }
 
-        .status-pendiente {
-            background: #fef3c7;
-            color: #d97706;
+        .estado-pendiente {
+            background: #fff3cd;
+            color: #664d03;
         }
 
-        .status-aprobada {
-            background: #dcfce7;
-            color: #166534;
+        .estado-aprobada {
+            background: #d1e7dd;
+            color: #0f5132;
         }
 
-        .status-rechazada {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            box-sizing: border-box;
+        .estado-rechazada {
+            background: #f8d7da;
+            color: #842029;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="navbar">
-        <div class="logo">UniEmplea Business</div>
-        <div>
-            <a href="{{ url_for('empresa.talentos') }}" class="btn btn-secondary" style="margin-right: 10px;">🔍 Buscar
-                Taledos</a>
-            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Cerrar Sesión</a>
-        </div>
+<header>
+    <h1>Panel Empresa</h1>
+    <div class="acciones-header">
+        
+        <a href="{{ url_for('auth.logout') }}"
+           class="logout"
+           onclick="return confirm('¿Desea cerrar sesión?')">
+           Cerrar sesión
+        </a>
     </div>
+</header>
 
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
+<div class="container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
         {% for category, message in messages %}
-        <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; 
-                      background: {{ '#dcfce7' if category == 'success' else '#fee2e2' }}; 
-                      color: {{ '#166534' if category == 'success' else '#991b1b' }};">
-            {{ message }}
-        </div>
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
         {% endfor %}
-        {% endif %}
-        {% endwith %}
+    {% endif %}
+    {% endwith %}
 
-        <div class="card">
-            <h2>📢 Publicar Nueva Oferta</h2>
-            <form action="{{ url_for('empresa.crear_oferta') }}" method="POST">
-                <label>Título del Puesto</label>
-                <input type="text" name="titulo" placeholder="Ej: Desarrollador Junior" required>
+    <!-- PUBLICAR OFERTA -->
+    <div class="card">
+        <h2>Publicar Nueva Oferta</h2>
 
-                <label>Descripción</label>
-                <textarea name="descripcion" rows="4" placeholder="Requisitos y detalles..." required></textarea>
+        <form action="{{ url_for('empresa.crear_oferta') }}" method="POST">
 
-                <label>Carrera (Opcional)</label>
-                <!-- In a real app, populate this with API/DB data -->
-                <input type="text" name="carrera_id" placeholder="ID Carrera (si aplica)">
+            <label>Título del puesto</label>
+            <input type="text" name="titulo" required>
 
-                <button type="submit" class="btn btn-primary">Publicar Oferta</button>
-            </form>
-        </div>
+            <label>Descripción</label>
+            <textarea name="descripcion" rows="4" required></textarea>
 
-        <div class="card">
-            <h2>Mis Ofertas</h2>
-            {% if ofertas %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for oferta in ofertas %}
-                    <tr>
-                        <td>{{ oferta.titulo }}</td>
-                        <td>
-                            <span class="status-badge status-{{ oferta.estado }}">
-                                {{ oferta.estado|capitalize }}
-                            </span>
-                        </td>
-                        <td>
-                            <a href="{{ url_for('empresa.ver_postulantes', oferta_id=oferta.id) }}"
-                                style="color: #2563eb; font-weight: bold; text-decoration: none;">
-                                👥 Ver Postulantes
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p style="color: #6b7280;">No has publicado ofertas aún.</p>
-            {% endif %}
-        </div>
+            <label>Carrera (opcional)</label>
+            <select name="carrera_id">
+                <option value="">Todas las carreras</option>
+                {% for c in carreras %}
+                    <option value="{{ c._id }}">{{ c.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Publicar Oferta</button>
+        </form>
     </div>
+
+    <!-- LISTADO OFERTAS -->
+    <div class="card">
+        <h2>Mis Ofertas</h2>
+
+        {% if ofertas %}
+            <table>
+                <tr>
+                    <th>Título</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+
+                {% for oferta in ofertas %}
+                <tr>
+                    <td>{{ oferta.titulo }}</td>
+                    <td>
+                        <span class="estado estado-{{ oferta.estado }}">
+                            {{ oferta.estado|capitalize }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('empresa.ver_postulantes', oferta_id=oferta.id) }}"
+                           style="font-weight:bold; color:#0d6efd; text-decoration:none;">
+                           Ver postulantes
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p><em>No has publicado ofertas aún.</em></p>
+        {% endif %}
+    </div>
+
+</div>
 
 </body>
-
 </html>
