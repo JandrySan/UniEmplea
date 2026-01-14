@@ -25,6 +25,7 @@ from models.decano import Decano
 from models.egresado import Egresado   
 from models.administrador import AdministradorGeneral
 from werkzeug.security import generate_password_hash, check_password_hash
+from database.mongo_connection import MongoDB
 
 
 
@@ -51,6 +52,15 @@ servicio_auth = ServicioAutenticacion(repo_auth)
 @requiere_rol("administrador")
 def dashboard_admin():
 
+    db= MongoDB().db
+
+    total_facultades = db["facultades"].count_documents({})
+    total_estudiantes = db["usuarios"].count_documents({"rol": "estudiante"})
+    total_egresados = db["usuarios"].count_documents({"rol": "egresado"})
+    total_empresas = db["usuarios"].count_documents({"rol": "empresa"})
+    total_ofertas = db["ofertas"].count_documents({})
+    total_postulaciones = db["postulaciones"].count_documents({})
+
     estudiantes_facultad = servicio_metricas.estudiantes_por_facultad()
     en_practicas = servicio_metricas.estudiantes_en_practicas()
     egresados_trabajando = servicio_metricas.egresados_trabajando()
@@ -62,8 +72,16 @@ def dashboard_admin():
         estudiantes_facultad=estudiantes_facultad,
         en_practicas=en_practicas,
         egresados_trabajando=egresados_trabajando,
-        facultades=facultades
+        facultades=facultades,
+        total_facultades=total_facultades,
+        total_estudiantes=total_estudiantes,
+        total_egresados=total_egresados,
+        total_empresas=total_empresas,
+        total_ofertas=total_ofertas,
+        total_postulaciones=total_postulaciones
     )
+
+
 
 
 @admin_bp.route("/usuarios")
@@ -396,6 +414,9 @@ def eliminar_oferta(oferta_id):
     repo_ofertas = RepositorioOfertasMongo()
     repo_ofertas.eliminar(oferta_id)
     return redirect(url_for("admin.gestionar_ofertas"))
+
+
+
 
 
 @admin_bp.route("/ofertas/aprobar/<oferta_id>", methods=["POST"])

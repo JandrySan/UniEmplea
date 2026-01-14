@@ -10,24 +10,24 @@ class RepositorioPostulacionesMongo:
         result = self.collection.insert_one({
             "oferta_id": post.oferta_id,
             "estudiante_id": post.estudiante_id,
-            "fecha": post.fecha
+            "fecha": post.fecha,
+            "estado": "postulado"
         })
         post.id = str(result.inserted_id)
         return post
 
     def obtener_por_oferta(self, oferta_id):
-        posts = []
-        for p in self.collection.find({"oferta_id": oferta_id}):
-            posts.append(Postulacion(
-                id=str(p["_id"]),
-                oferta_id=p["oferta_id"],
-                estudiante_id=p["estudiante_id"],
-                fecha=p["fecha"]
-            ))
-        return posts
-        
+        return list(self.collection.find({"oferta_id": oferta_id}))
+
+    def obtener_por_oferta_y_estudiante(self, oferta_id, estudiante_id):
+        return self.collection.find_one({
+            "oferta_id": oferta_id,
+            "estudiante_id": estudiante_id
+        })
+    
     def existe_postulacion(self, oferta_id, estudiante_id):
         return self.collection.find_one({
-            "oferta_id": oferta_id, 
+            "oferta_id": oferta_id,
             "estudiante_id": estudiante_id
         }) is not None
+

@@ -93,8 +93,13 @@
 <header>
     <h1>Panel del Decano</h1>
     <p>Gestión académica de carreras</p>
+    
 </header>
 
+    <footer>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </footer>
+    
 <main>
     <div class="grid">
 
@@ -119,9 +124,7 @@
 
     </div>
 
-    <footer>
-        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-    </footer>
+    
 </main>
 
 </body>

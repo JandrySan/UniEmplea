@@ -10,34 +10,39 @@ class RepositorioEstudiantesMongo:
         
         self.collection = MongoDB().db["usuarios"]
 
+
     def obtener_todos(self):
         estudiantes = []
-
-        docs = self.collection.find({
-            "rol": {"$in": ["estudiante", "egresado"]}
-        })
+        docs = self.collection.find({"rol": "estudiante"})
 
         for doc in docs:
-            if doc["rol"] == "egresado":
-                estudiante = Egresado(
-                    id=str(doc["_id"]),
-                    nombre=doc.get("nombre", ""),
-                    correo=doc.get("correo", ""),
-                    trabajando=doc.get("trabajando", False)
-                )
-            else:
-                estudiante = Estudiante(
-                    id=str(doc["_id"]),
-                    nombre=doc.get("nombre", ""),
-                    correo=doc.get("correo", ""),
-                    carrera_id=doc.get("carrera_id"),
-                    semestre=doc.get("semestre", 1),
-                    tutor_id=doc.get("tutor_id")
-                )
-
+            estudiante = Estudiante(
+                id=str(doc["_id"]),
+                nombre=doc["nombre"],
+                correo=doc["correo"],
+                carrera_id=doc.get("carrera_id"),
+                semestre=doc.get("semestre", 1)
+            )
             estudiantes.append(estudiante)
 
         return estudiantes
+
+
+    def obtener_todos(self):
+        egresados = []
+        for data in self.collection.find({"rol": "egresado"}):
+            egresados.append(
+                Egresado(
+                    id=str(data["_id"]),
+                    nombre=data["nombre"],
+                    correo=data["correo"],
+                    carrera_id=None,   # 👈 clave
+                    trabajando=data.get("trabajando", False)
+                )
+            )
+        return egresados
+
+
 
     def buscar_por_id(self, id):
         doc = self.collection.find_one({"_id": ObjectId(id)})

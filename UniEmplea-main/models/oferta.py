@@ -5,10 +5,14 @@ class Oferta:
         titulo,
         descripcion,
         empresa_id,
-        carrera_id=None,
-        tipo="empleo",  
+        carrera_id,
+        tipo,
         activa=True,
-        estado="pendiente"
+        estado="aprobada",
+        ciudad=None,
+        modalidad=None,   # presencial | virtual | hibrido
+        salario=None,
+        jornada=None      # tiempo completo | medio tiempo
     ):
         self.id = id
         self.titulo = titulo
@@ -18,3 +22,7 @@ class Oferta:
         self.tipo = tipo
         self.activa = activa
         self.estado = estado
+        self.ciudad = ciudad
+        self.modalidad = modalidad
+        self.salario = salario
+        self.jornada = jornada

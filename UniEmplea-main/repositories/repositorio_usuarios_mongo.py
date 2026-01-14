@@ -43,7 +43,15 @@ class RepositorioUsuariosMongo:
         return self.collection.find_one({"correo": correo})
 
     def buscar_por_id(self, usuario_id):
-        data = self.collection.find_one({"_id": ObjectId(usuario_id)})
+        data = None
+        try:
+            data = self.collection.find_one({"_id": ObjectId(usuario_id)})
+        except:
+            pass
+
+        if not data:
+            data = self.collection.find_one({"usuario_id": usuario_id})
+
         if not data:
             return None
             
@@ -67,7 +75,8 @@ class RepositorioUsuariosMongo:
                 nombre=data["nombre"],
                 correo=data["correo"],
                 carrera_id=data.get("carrera_id"),
-                trabajando=data.get("trabajando", False)
+                trabajando=data.get("trabajando", False),
+                cv_path=data.get("cv_path")
             )
 
         if rol == "empresa":

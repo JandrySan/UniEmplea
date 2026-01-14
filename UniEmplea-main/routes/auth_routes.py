@@ -11,6 +11,8 @@ repo_auth = RepositorioAuthMongo(repo_usuarios)
 servicio_auth = ServicioAutenticacion(repo_auth)
 repo_carreras = RepositorioCarrerasMongo()
 repo_carreras = RepositorioCarrerasMongo()
+
+
 @auth_bp.route("/registro-empresa", methods=["GET", "POST"])
 def registro_empresa():
     if request.method == "POST":
@@ -51,6 +53,8 @@ def registro_empresa():
         return redirect(url_for("auth.login"))
 
     return render_template("dashboards/registro_empresa.html")
+
+
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():

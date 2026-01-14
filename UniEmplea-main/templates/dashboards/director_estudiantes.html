@@ -1,0 +1,28 @@
+<h2>Lista de Estudiantes</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Correo</th>
+      <th>Semestre</th>
+      <th>Tutor</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for e in estudiantes %}
+    <tr>
+      <td>{{ e.nombre }}</td>
+      <td>{{ e.correo }}</td>
+      <td>{{ e.semestre }}</td>
+      <td>{{ e.tutor.nombre if e.tutor else "Sin tutor" }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('director.eliminar_estudiante', id=e.id) }}">
+          <button class="btn btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

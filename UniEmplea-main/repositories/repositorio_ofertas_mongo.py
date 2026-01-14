@@ -9,16 +9,22 @@ class RepositorioOfertasMongo:
         self.collection = MongoDB().db["ofertas"]
 
     def crear(self, oferta):
-        result = self.collection.insert_one({
+        self.collection.insert_one({
             "titulo": oferta.titulo,
             "descripcion": oferta.descripcion,
             "empresa_id": oferta.empresa_id,
             "carrera_id": oferta.carrera_id,
-            "tipo": oferta.tipo, 
+            "tipo": oferta.tipo,
             "activa": oferta.activa,
-            "estado": oferta.estado
+            "estado": oferta.estado,
+            "ciudad": oferta.ciudad,
+            "modalidad": oferta.modalidad,
+            "jornada": oferta.jornada,
+            "salario": oferta.salario
         })
-        oferta.id = str(result.inserted_id)
+
+
+        oferta.id = str(self.collection.inserted_id)
         return oferta
 
     def obtener_todas(self):
@@ -33,7 +39,11 @@ class RepositorioOfertasMongo:
                     carrera_id=o.get("carrera_id"),
                     tipo=o.get("tipo", "empleo"),  
                     activa=o.get("activa", True),
-                    estado=o.get("estado", "pendiente")
+                    estado=o.get("estado", "pendiente"),
+                    ciudad=o.get("ciudad"),
+                    modalidad=o.get("modalidad"),
+                    jornada=o.get("jornada"),
+                    salario=o.get("salario")
                 )
             )
         return ofertas

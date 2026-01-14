@@ -5,83 +5,150 @@
     <title>Dashboard Administrador | UniEmplea</title>
 
     <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0b5ed7;
+            --danger: #dc3545;
+            --bg: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --radius: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f6f8;
+            background-color: var(--bg);
+            color: var(--text-dark);
         }
 
+        /* ===== HEADER ===== */
         header {
-            background-color: #0d6efd;
+            background-color: var(--primary);
             color: white;
-            padding: 20px;
-            text-align: center;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         header h1 {
             margin: 0;
+            font-size: 22px;
         }
 
         header p {
-            margin: 5px 0;
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
         }
 
-        .logout {
-            display: inline-block;
-            margin-top: 10px;
-            color: white;
+        header .acciones a {
+            background: white;
+            color: var(--primary);
+            padding: 8px 14px;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
+            margin-left: 8px;
+            font-size: 14px;
         }
 
+        header .acciones a.logout {
+            background: var(--danger);
+            color: white;
+        }
+
+        header .acciones a:hover {
+            opacity: 0.9;
+        }
+
+        /* ===== MAIN ===== */
         main {
             padding: 30px;
+            max-width: 1200px;
+            margin: auto;
         }
 
         h2 {
             margin-bottom: 20px;
+            color: var(--primary);
         }
 
-        .cards {
+        /* ===== GRID CARDS ===== */
+        .cards,
+        .metricas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
         }
 
+        /* ===== CARD ===== */
         .card {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
+            background-color: var(--card-bg);
+            padding: 22px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
         }
 
         .card h3 {
             margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--primary);
         }
 
         .card p {
-            color: #555;
+            color: var(--text-muted);
+            margin-bottom: 15px;
         }
 
         .card a {
+            display: inline-block;
             text-decoration: none;
-            color: #0d6efd;
+            color: var(--primary);
             font-weight: bold;
+            margin-top: 10px;
         }
 
+        .card a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== MÉTRICAS ===== */
+        .metricas-grid .card {
+            text-align: center;
+        }
+
+        .metricas-grid .card p {
+            font-size: 30px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        /* ===== LISTAS ===== */
         ul {
-            padding-left: 20px;
+            padding-left: 18px;
+            margin: 0;
         }
 
         li {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
         }
     </style>
+
 </head>
 <body>
 
@@ -92,6 +159,42 @@
 </header>
 
 <main>
+
+    <h2> Métricas del Sistema</h2>
+
+    <div class="metricas-grid">
+        <div class="card">
+            <h3>Facultades</h3>
+            <p>{{ total_facultades }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Estudiantes</h3>
+            <p>{{ total_estudiantes }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Egresados</h3>
+            <p>{{ total_egresados }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Empresas</h3>
+            <p>{{ total_empresas }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Ofertas</h3>
+            <p>{{ total_ofertas }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Postulaciones</h3>
+            <p>{{ total_postulaciones }}</p>
+        </div>
+    </div>
+
+
     <h2>Bienvenido Administrador </h2>
 
     

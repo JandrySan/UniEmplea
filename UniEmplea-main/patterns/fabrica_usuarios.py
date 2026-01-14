@@ -1,7 +1,7 @@
 from models.administrador import AdministradorGeneral
 from models.decano import Decano
 from models.director_carrera import DirectorCarrera
-from models.profesor import Profesor
+from models.docente import Docente
 from models.estudiante import Estudiante
 from models.egresado import Egresado
 from models.empresa import Empresa
@@ -19,8 +19,8 @@ class FabricaUsuarios:
         if rol == "director_carrera":
             return DirectorCarrera(id, nombre, correo)
 
-        if rol == "profesor":
-            return Profesor(id, nombre, correo)
+        if rol == "docente":
+            return Docente(id, nombre, correo)
 
         if rol == "estudiante":
             return Estudiante(id, nombre, correo)

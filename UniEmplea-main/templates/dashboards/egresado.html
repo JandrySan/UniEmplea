@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Egresado | UniEmplea</title>
+    <title>Panel Egresado | UniEmplea</title>
 
     <style>
         body {
@@ -33,6 +33,8 @@
             border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
+            margin-left: 8px;
+            font-size: 14px;
         }
 
         .acciones-header a.logout {
@@ -83,7 +85,16 @@
             margin-bottom: 25px;
         }
 
-        /* ===== BOTONES ===== */
+        /* ===== OFERTAS ===== */
+        .oferta {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        .oferta:last-child {
+            border-bottom: none;
+        }
+
         .btn {
             display: inline-block;
             padding: 8px 16px;
@@ -99,40 +110,31 @@
             color: white;
         }
 
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
         .btn-primary:hover {
             background: #0b5ed7;
-        }
-
-        .btn-secondary:hover {
-            background: #5c636a;
-        }
-
-        /* ===== OFERTAS ===== */
-        .oferta {
-            border-bottom: 1px solid #ddd;
-            padding: 12px 0;
-        }
-
-        .oferta:last-child {
-            border-bottom: none;
-        }
-
-        input[type="file"] {
-            margin-top: 10px;
         }
     </style>
 </head>
 
 <body>
 
+<!-- ===== HEADER ===== -->
 <header>
-    <h1> Panel Egresado</h1>
+    <h1>Panel Egresado</h1>
+
     <div class="acciones-header">
+        <a href="{{ url_for('egresado.dashboard_egresado') }}">
+            Ver Ofertas
+        </a>
+
+        <a href="{{ url_for('egresado.hoja_vida') }}">
+            Mi Hoja de Vida
+        </a>
+
+        <a href="{{ url_for('egresado.historial_academico') }}">
+            Estado Académico
+        </a>
+
         <a href="{{ url_for('auth.logout') }}"
            class="logout"
            onclick="return confirm('¿Desea cerrar sesión?')">
@@ -141,6 +143,7 @@
     </div>
 </header>
 
+<!-- ===== CONTENIDO ===== -->
 <div class="container">
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -153,68 +156,112 @@
     {% endif %}
     {% endwith %}
 
-    <!-- CV -->
-    <div class="card">
-        <h2> Mi Hoja de Vida</h2>
-
-        {% if usuario.cv_path %}
-            <p style="color: green; font-weight:bold;">✅ CV cargado</p>
-            <a href="/{{ usuario.cv_path }}" target="_blank" class="btn btn-secondary">
-                Ver mi CV
-            </a>
-        {% else %}
-            <p style="color: #d97706; font-weight:bold;">⚠️ No has subido tu CV</p>
-        {% endif %}
-
-        <form action="{{ url_for('egresado.subir_cv') }}" method="POST" enctype="multipart/form-data" style="margin-top:15px;">
-            <input type="file" name="cv" accept=".pdf" required>
-            <br><br>
-            <button type="submit" class="btn btn-secondary">Subir PDF</button>
-        </form>
-    </div>
-
-    <!-- ESTADO ACADÉMICO -->
-    <div class="card">
-        <h2> Tu Estado Académico</h2>
-        <a href="{{ url_for('egresado.historial_academico') }}" class="btn btn-primary">
-             Ver Historial Académico
-        </a>
-    </div>
-
     <!-- OFERTAS -->
     <div class="card">
-    <h2>💼 Ofertas Laborales</h2>
+        <h2>Ofertas Laborales</h2>
 
-    {% if ofertas %}
+        <!-- FILTROS -->
+        
+        <form method="GET" style="margin-bottom: 20px;">
+
+        <label>
+            Ciudad:
+            <input type="text" name="ciudad" value="{{ request.args.get('ciudad', '') }}">
+        </label>
+
+        <label style="margin-left:10px;">
+            Modalidad:
+            <select name="modalidad">
+                <option value="">Todas</option>
+                <option value="presencial" {% if request.args.get('modalidad') == 'presencial' %}selected{% endif %}>
+                    Presencial
+                </option>
+                <option value="virtual" {% if request.args.get('modalidad') == 'virtual' %}selected{% endif %}>
+                    Virtual
+                </option>
+                <option value="hibrido" {% if request.args.get('modalidad') == 'hibrido' %}selected{% endif %}>
+                    Híbrido
+                </option>
+            </select>
+        </label>
+
+        <label style="margin-left:10px;">
+            Jornada:
+            <select name="jornada">
+                <option value="">Todas</option>
+                <option value="tiempo_completo" {% if request.args.get('jornada') == 'tiempo_completo' %}selected{% endif %}>
+                    Tiempo completo
+                </option>
+                <option value="medio_tiempo" {% if request.args.get('jornada') == 'medio_tiempo' %}selected{% endif %}>
+                    Medio tiempo
+                </option>
+            </select>
+        </label>
+
+        <label style="margin-left:10px;">
+            Tipo:
+            <select name="tipo">
+                <option value="">Todos</option>
+                <option value="empleo" {% if request.args.get('tipo') == 'empleo' %}selected{% endif %}>
+                    Empleo
+                </option>
+                <option value="practica" {% if request.args.get('tipo') == 'practica' %}selected{% endif %}>
+                    Práctica
+                </option>
+            </select>
+        </label>
+
+        <button type="submit" class="btn btn-primary" style="margin-left:10px;">
+            🔍 Filtrar
+        </button>
+
+        <a href="{{ url_for('egresado.dashboard_egresado') }}"
+        class="btn btn-secondary"
+        style="margin-left:5px;">
+            Limpiar
+        </a>
+
+    </form>
+        {% if ofertas %}
         {% for oferta in ofertas %}
-        <div class="oferta">
-            <h3>{{ oferta.titulo }}</h3>
-            <p>{{ oferta.descripcion }}</p>
+            <div class="oferta">
+                <h3>{{ oferta.titulo }}</h3>
+                <p>{{ oferta.descripcion }}</p>
 
-            <form method="POST"
-                action="{{ url_for('egresado.postular_oferta', oferta_id=oferta.id) }}">
-            <button type="submit">Postular</button>
-            </form>
-        </div>
+                <p>
+                    <strong>Ciudad:</strong> {{ oferta.ciudad or 'No especificada' }} |
+                    <strong>Modalidad:</strong> {{ oferta.modalidad or 'N/A' }} |
+                    <strong>Jornada:</strong> {{ oferta.jornada or 'N/A' }}
+                </p>
+
+                <p>
+                    <strong>Salario:</strong> {{ oferta.salario or 'A convenir' }} |
+                    <strong>Tipo:</strong> {{ oferta.tipo }}
+                </p>
+
+                {% if oferta.ya_postulado %}
+                    <p>
+                        <strong>Estado:</strong>
+                        {% if oferta.estado_postulacion == 'postulado' %}
+                            En revisión
+                        {% elif oferta.estado_postulacion == 'aceptado' %}
+                            Aceptado
+                        {% elif oferta.estado_postulacion == 'rechazado' %}
+                            Rechazado
+                        {% else %}
+                            En revisión
+                        {% endif %}
+                    </p>
+                {% else %}
+                    <form method="POST"
+                        action="{{ url_for('egresado.postular_oferta', oferta_id=oferta.id) }}">
+                        <button type="submit" class="btn btn-primary">
+                            Postular
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
         {% endfor %}
     {% else %}
         <p>No hay ofertas disponibles.</p>
     {% endif %}
-    </div>
-
-
-    <!-- RECOMENDACIONES -->
-    <div class="card">
-        <h2> Recomendaciones</h2>
-
-        {% for reco in recomendaciones %}
-            <p><em>"{{ reco.texto }}"</em></p>
-        {% else %}
-            <p><em>Aún no tienes recomendaciones.</em></p>
-        {% endfor %}
-    </div>
-
-</div>
-
-</body>
-</html>

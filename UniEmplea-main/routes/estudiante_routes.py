@@ -38,7 +38,7 @@ def dashboard_estudiante():
     
     ofertas_laborales = [
         o for o in todas_ofertas
-        if o.tipo == "empleo" and o.estado == "aprobada"
+        if o.tipo == "empleo" and o.estado in ["aprobada", "activa"]
     ]
 
     
@@ -46,7 +46,7 @@ def dashboard_estudiante():
     if usuario.semestre >= 7:
         ofertas_practicas = [
             o for o in todas_ofertas
-            if o.tipo == "practica" and o.estado == "aprobada"
+            if o.tipo == "practica" and o.estado in ["aprobada", "activa"]
         ]
 
     recomendaciones = repo_recos.obtener_por_estudiante(usuario_id)

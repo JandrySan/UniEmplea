@@ -11,6 +11,7 @@ class Estudiante(Usuario):
     def rol(self):
         return "estudiante"
 
+    @property
     def puede_ver_practicas(self):
         return self.semestre >= 7
 

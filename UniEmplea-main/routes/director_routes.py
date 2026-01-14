@@ -83,7 +83,6 @@ def dashboard_director():
 
 
 
-
 @director_bp.route("/carrera")
 @requiere_rol("director_carrera")
 def ver_carrera():
@@ -209,3 +208,34 @@ def accion_oferta(oferta_id):
     flash(f"Oferta {nuevo_estado} exitosamente.", "success")
     return redirect(url_for("director.ofertas_pendientes"))
 
+
+
+@director_bp.route("/estudiantes")
+@requiere_rol("director_carrera")
+def lista_estudiantes():
+    filtro = request.args.get("filtro")
+
+    estudiantes = repo_estudiantes.obtener_todos()
+
+    if filtro == "practicas":
+        estudiantes = [e for e in estudiantes if e.en_practicas]
+
+    if filtro == "con_tutor":
+        estudiantes = [e for e in estudiantes if e.tutor_id]
+
+    if filtro == "sin_tutor":
+        estudiantes = [e for e in estudiantes if not e.tutor_id]
+
+    return render_template(
+        "dashboards/director_estudiantes.html",
+        estudiantes=estudiantes,
+        filtro=filtro
+    )
+
+
+@director_bp.route("/estudiantes/eliminar/<id>", methods=["POST"])
+@requiere_rol("director_carrera")
+def eliminar_estudiante(id):
+    repo_estudiantes.eliminar(id)
+    flash("Estudiante eliminado", "success")
+    return redirect(request.referrer)
