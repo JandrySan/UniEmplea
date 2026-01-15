@@ -74,3 +74,26 @@ class RepositorioOfertasMongo:
             {"_id": ObjectId(oferta_id)},
             {"$set": {"estado": nuevo_estado}}
         )
+
+    def buscar_por_id(self, oferta_id):
+        o = self.collection.find_one(
+            {"_id": ObjectId(oferta_id)}
+        )
+
+        if not o:
+            return None
+
+        return Oferta(
+            id=str(o["_id"]),
+            titulo=o.get("titulo"),
+            descripcion=o.get("descripcion"),
+            empresa_id=o.get("empresa_id"),
+            carrera_id=o.get("carrera_id"),
+            tipo=o.get("tipo", "empleo"),
+            activa=o.get("activa", True),
+            estado=o.get("estado", "pendiente"),
+            ciudad=o.get("ciudad"),
+            modalidad=o.get("modalidad"),
+            jornada=o.get("jornada"),
+            salario=o.get("salario")
+        )

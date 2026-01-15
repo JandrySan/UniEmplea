@@ -3,8 +3,6 @@ from bson import ObjectId
 from models.decano import Decano
 from models.docente import Docente
 from models.usuario import Usuario
-from models.estudiante import Estudiante
-from models.egresado import Egresado
 from models.empresa import Empresa
 from models.director_carrera import DirectorCarrera
 from models.estudiante import Estudiante
@@ -65,8 +63,13 @@ class RepositorioUsuariosMongo:
                 correo=data["correo"],
                 carrera_id=data.get("carrera_id"),
                 semestre=data.get("semestre", 1),
-                tutor_id=data.get("tutor_id")
+                tutor_id=data.get("tutor_id"),
+                practica_aprobada=data.get("practica_aprobada", False),
+                solicitud_practica=data.get("solicitud_practica", False),
+                empresa_practica_id=data.get("empresa_practica_id"),
+                practica_oferta_id=data.get("practica_oferta_id")
             )
+        
         
         if rol == "egresado":
             

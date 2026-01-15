@@ -11,7 +11,7 @@ import pandas as pd
 from flask import flash
 from models.usuario import Usuario
 from flask import render_template, request, redirect, url_for, session
-from models.estudiante import Estudiante
+from models.estudiante import Usuario
 from models.docente import Docente
 
 director_bp = Blueprint("director", __name__)
@@ -30,7 +30,7 @@ servicio_metricas = ServicioMetricasDirector(repo_estudiantes)
 def dashboard_director():
     carrera_id = session.get("carrera_id")
 
-    # 🔹 Todos los estudiantes de la carrera
+    
     todos_estudiantes = list(
         repo_estudiantes.collection.find({
             "rol": "estudiante",
@@ -38,17 +38,17 @@ def dashboard_director():
         })
     )
 
-    # 🔹 Solo estudiantes desde 7mo semestre
+    
     estudiantes_7mo = [
         e for e in todos_estudiantes if e.get("semestre", 0) >= 7
     ]
 
-    # 🔹 Profesores (docentes)
+    
     profesores = list(
         repo_usuarios.collection.find({"rol": "docente"})
     )
 
-    # 🔹 Mapear IDs y tutores SOLO para los de 7mo
+    
     for e in estudiantes_7mo:
         e["_id"] = str(e["_id"])
 
@@ -60,7 +60,14 @@ def dashboard_director():
         else:
             e["tutor_nombre"] = "Sin tutor"
 
-    # 🔹 Métricas
+
+    # Estudiantes que solicitaron prácticas
+    solicitudes_practicas = [
+        e for e in estudiantes_7mo if e.get("solicitud_practica") is True
+    ]
+
+
+    #  Métricas
     total_estudiantes = len(todos_estudiantes)
     total_7mo = len(estudiantes_7mo)
     con_tutor = len([e for e in estudiantes_7mo if e.get("tutor_id")])
@@ -76,6 +83,7 @@ def dashboard_director():
     return render_template(
         "dashboards/panel.html",
         estudiantes=estudiantes_7mo,  
+        solicitudes_practicas=solicitudes_practicas,
         profesores=profesores,
         metricas=metricas
     )
@@ -166,7 +174,7 @@ def cargar_estudiantes_excel():
             ignorados += 1
             continue
 
-        password_plano = "123456"  # o generar una aleatoria
+        password_plano = "123456"  
         password_hash = generate_password_hash(password_plano)
 
         estudiante = {
@@ -239,3 +247,86 @@ def eliminar_estudiante(id):
     repo_estudiantes.eliminar(id)
     flash("Estudiante eliminado", "success")
     return redirect(request.referrer)
+
+
+@director_bp.route("/practicas/solicitudes")
+@requiere_rol("director_carrera")
+def solicitudes_practicas():
+    carrera_id = session.get("carrera_id")
+
+    estudiantes = list(
+        repo_estudiantes.collection.find({
+            "carrera_id": carrera_id,
+            "solicitud_practica": True
+        })
+    )
+
+    for e in estudiantes:
+        e["_id"] = str(e["_id"])
+
+    return render_template(
+        "dashboards/director_practicas.html",
+        estudiantes=estudiantes
+    )
+
+
+
+@director_bp.route("/practicas/<estudiante_id>/accion", methods=["POST"])
+@requiere_rol("director_carrera")
+def accion_practica(estudiante_id):
+    accion = request.form.get("accion")  # aprobar / rechazar
+
+    if accion == "aprobar":
+        repo_estudiantes.collection.update_one(
+            {"_id": ObjectId(estudiante_id)},
+            {
+                "$set": {
+                    "practica_aprobada": True,
+                    "solicitud_practica": True
+                }
+            }
+        )
+        flash("Práctica aprobada", "success")
+
+    else:
+        repo_estudiantes.collection.update_one(
+            {"_id": ObjectId(estudiante_id)},
+            {
+                "$set": {
+                    "practica_aprobada": False,
+                    "solicitud_practica": False
+                }
+            }
+        )
+        flash("Práctica rechazada", "warning")
+
+    return redirect(url_for("director.solicitudes_practicas"))
+
+
+@director_bp.route("/practicas/aprobar/<estudiante_id>", methods=["POST"])
+@requiere_rol("director_carrera")
+def aprobar_practica(estudiante_id):
+    repo_estudiantes.collection.update_one(
+        {"_id": ObjectId(estudiante_id)},
+        {"$set": {
+            "practica_aprobada": True,
+            "solicitud_practica": True
+        }}
+    )
+    flash("Práctica aprobada", "success")
+    return redirect(url_for("director.panel"))
+
+
+@director_bp.route("/practicas/rechazar/<estudiante_id>", methods=["POST"])
+@requiere_rol("director_carrera")
+def rechazar_practica(estudiante_id):
+    repo_estudiantes.collection.update_one(
+        {"_id": ObjectId(estudiante_id)},
+        {"$set": {
+            "solicitud_practica": False
+        }}
+    )
+    flash("Solicitud de práctica rechazada", "error")
+    return redirect(url_for("director.panel"))
+
+

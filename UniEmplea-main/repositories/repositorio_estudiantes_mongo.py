@@ -1,8 +1,8 @@
 from bson import ObjectId
 from database.mongo_connection import MongoDB
-from models.estudiante import Estudiante
+from models.usuario import Usuario
 from models.egresado import Egresado
-
+from models.estudiante import Estudiante
 
 class RepositorioEstudiantesMongo:
 
@@ -11,12 +11,12 @@ class RepositorioEstudiantesMongo:
         self.collection = MongoDB().db["usuarios"]
 
 
-    def obtener_todos(self):
+    def obtener_estudiantes(self):
         estudiantes = []
         docs = self.collection.find({"rol": "estudiante"})
 
         for doc in docs:
-            estudiante = Estudiante(
+            estudiante = Usuario(
                 id=str(doc["_id"]),
                 nombre=doc["nombre"],
                 correo=doc["correo"],
@@ -28,7 +28,7 @@ class RepositorioEstudiantesMongo:
         return estudiantes
 
 
-    def obtener_todos(self):
+    def obtener_egresados(self):
         egresados = []
         for data in self.collection.find({"rol": "egresado"}):
             egresados.append(
@@ -36,7 +36,7 @@ class RepositorioEstudiantesMongo:
                     id=str(data["_id"]),
                     nombre=data["nombre"],
                     correo=data["correo"],
-                    carrera_id=None,   # 👈 clave
+                    carrera_id=None,   
                     trabajando=data.get("trabajando", False)
                 )
             )
@@ -64,7 +64,11 @@ class RepositorioEstudiantesMongo:
             correo=doc.get("correo", ""),
             carrera_id=doc.get("carrera_id"),
             semestre=doc.get("semestre", 1),
-            tutor_id=doc.get("tutor_id")
+            tutor_id=doc.get("tutor_id"),
+            practica_aprobada=doc.get("practica_aprobada", False),
+            solicitud_practica=doc.get("solicitud_practica", False),
+            empresa_practica_id=doc.get("empresa_practica_id"),
+            practica_oferta_id=doc.get("practica_oferta_id")
         )
 
     def actualizar(self, id, data):

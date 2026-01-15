@@ -20,7 +20,7 @@ class RepositorioRecomendacionesMongo:
         return recomendacion
 
     def obtener_por_estudiante(self, estudiante_id):
-        repo_usuarios = RepositorioUsuariosMongo()  # ✅ AQUÍ
+        repo_usuarios = RepositorioUsuariosMongo()  
 
         docs = self.collection.find({
             "estudiante_id": estudiante_id

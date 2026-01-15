@@ -10,9 +10,9 @@ class Oferta:
         activa=True,
         estado="aprobada",
         ciudad=None,
-        modalidad=None,   # presencial | virtual | hibrido
+        modalidad=None,   
         salario=None,
-        jornada=None      # tiempo completo | medio tiempo
+        jornada=None      
     ):
         self.id = id
         self.titulo = titulo

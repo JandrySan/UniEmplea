@@ -14,4 +14,4 @@ class RepositorioAuthMongo:
         if not verificar_password(contrasena, usuario["password"]):
             raise ValueError("Correo o contraseña incorrectos")
 
-        return usuario  # 👈 DEBE SER DICT
+        return usuario 

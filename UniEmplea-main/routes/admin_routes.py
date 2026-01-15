@@ -16,7 +16,7 @@ from bson.objectid import ObjectId
 from models.facultad import Facultad
 from models.carrera import Carrera
 import pandas as pd 
-from models.estudiante import Estudiante
+from models.estudiante import Usuario
 from werkzeug.utils import secure_filename
 from models.usuario import Usuario
 from models.empresa import Empresa
@@ -278,7 +278,7 @@ def asignar_decano():
         flash("Decano asignado correctamente", "success")
         return redirect(url_for("admin.dashboard_admin"))
 
-    # GET
+    
     decanos = repo_usuarios.obtener_decanos()
     facultades = repo_facultades.obtener_todas()
 
@@ -330,7 +330,7 @@ def editar_facultad(facultad_id):
     return redirect(url_for("admin.gestion_academica"))
 
 
-# ELIMINAR FACULTAD (VALIDADO EN PASO 2)
+# ELIMINAR FACULTAD 
 @admin_bp.route("/academico/facultad/<facultad_id>/eliminar", methods=["POST"])
 @requiere_rol("administrador")
 def eliminar_facultad(facultad_id):

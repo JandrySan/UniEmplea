@@ -34,7 +34,7 @@ def registro_empresa():
 
         # Create Company Object
         from models.empresa import Empresa
-        from werkzeug.security import generate_password_hash # Ensure imported
+        from werkzeug.security import generate_password_hash 
 
         empresa = Empresa(
             id=None,
@@ -43,7 +43,7 @@ def registro_empresa():
             telefono=telefono,
             direccion=direccion,
             ruc=ruc,
-            password=None # Password handled by repo with hash
+            password=None 
         )
         
         hashed_pw = generate_password_hash(password)

@@ -1,15 +1,11 @@
-from models.estudiante import Estudiante
+from models.usuario import Usuario
 
-class Egresado(Estudiante):
+class Egresado(Usuario):
 
     def __init__(self, id, nombre, correo, carrera_id=None, trabajando=False, cv_path=None):
-        super().__init__(
-            id=id,
-            nombre=nombre,
-            correo=correo,
-            carrera_id=carrera_id,
-            semestre=0
-        )
+        super().__init__(id, nombre, correo)
+
+        self.carrera_id = carrera_id
         self.trabajando = trabajando
         self.cv_path = cv_path
 

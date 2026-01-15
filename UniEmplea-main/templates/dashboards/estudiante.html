@@ -15,15 +15,37 @@
         header {
             background-color: #0d6efd;
             color: white;
-            padding: 20px 30px;
+            padding: 15px 30px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            gap: 20px;
         }
 
         header h1 {
             margin: 0;
-            font-size: 22px;
+            font-size: 20px;
+        }
+
+        .menu {
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .menu button:hover,
+        .menu button.activo {
+            background: white;
+            color: #0d6efd;
         }
 
         .logout {
@@ -35,10 +57,6 @@
             font-weight: bold;
         }
 
-        .logout:hover {
-            opacity: 0.9;
-        }
-
         /* ===== CONTENEDOR ===== */
         .container {
             max-width: 1100px;
@@ -46,7 +64,11 @@
             padding: 30px;
         }
 
-        /* ===== CARD ===== */
+        /* ===== SECCIONES ===== */
+        .seccion {
+            display: none;
+        }
+
         .card {
             background: white;
             padding: 20px;
@@ -60,28 +82,14 @@
             color: #0d6efd;
         }
 
-        /* ===== TAG ===== */
         .tag {
-            display: inline-block;
             padding: 4px 10px;
             border-radius: 12px;
-            font-size: 14px;
             background: #e7f1ff;
             color: #0d6efd;
             font-weight: bold;
         }
 
-        /* ===== NOTIFICACIONES ===== */
-        .notificacion {
-            background: #e7f9f0;
-            color: #0f5132;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            border-left: 5px solid #198754;
-        }
-
-        /* ===== OFERTAS ===== */
         .oferta {
             border-bottom: 1px solid #ddd;
             padding: 15px 0;
@@ -89,15 +97,6 @@
 
         .oferta:last-child {
             border-bottom: none;
-        }
-
-        .oferta h3 {
-            margin: 0 0 5px;
-        }
-
-        .oferta p {
-            margin: 0 0 10px;
-            color: #555;
         }
 
         button {
@@ -113,7 +112,15 @@
             background-color: #0b5ed7;
         }
 
-        /* ===== RECOMENDACIONES ===== */
+        .notificacion {
+            background: #e7f9f0;
+            color: #0f5132;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 5px solid #198754;
+        }
+
         .recomendacion {
             background: #fafafa;
             padding: 15px;
@@ -121,117 +128,144 @@
             margin-bottom: 12px;
             border-left: 4px solid #0d6efd;
         }
-
-        .recomendacion small {
-            color: #666;
-        }
     </style>
 </head>
 
 <body>
 
 <header>
-    <h1> Panel del Estudiante</h1>
+    <h1>Panel del Estudiante</h1>
+
+    <nav class="menu">
+        <button onclick="mostrarSeccion('estado', this)">Estado</button>
+        <button onclick="mostrarSeccion('notificaciones', this)">Notificaciones</button>
+        <button onclick="mostrarSeccion('laborales', this)">Ofertas</button>
+        <button onclick="mostrarSeccion('practicas', this)">Prácticas</button>
+        <button onclick="mostrarSeccion('recomendaciones', this)">Recomendaciones</button>
+    </nav>
+
     <a href="{{ url_for('auth.logout') }}" class="logout"
        onclick="return confirm('¿Desea cerrar sesión?')">
-         Cerrar sesión
+        Cerrar sesión
     </a>
 </header>
 
 <div class="container">
 
-   <!-- ESTADO ACADÉMICO -->
-     
-    <div class="card">
+    <!-- ESTADO -->
+    <div class="card seccion" id="estado">
         <h2>Tu Estado Académico</h2>
-        <p><strong>Semestre actual:</strong> {{ usuario.semestre }}</p>
+        <p><strong>Semestre:</strong> {{ usuario.semestre }}</p>
         <p><strong>Estado de prácticas:</strong>
             <span class="tag">{{ estado_practicas }}</span>
         </p>
     </div>
 
-
     <!-- NOTIFICACIONES -->
-    <div class="card">
+    <div class="card seccion" id="notificaciones">
         <h2>Notificaciones</h2>
-
         {% if notificaciones %}
             {% for notif in notificaciones %}
-                <div class="notificacion">
-                    {{ notif.mensaje }}
-                </div>
+                <div class="notificacion">{{ notif.mensaje }}</div>
             {% endfor %}
         {% else %}
-            <p><em>No tienes nuevas notificaciones.</em></p>
+            <p>No tienes notificaciones.</p>
         {% endif %}
     </div>
 
     <!-- OFERTAS LABORALES -->
-    <div class="card">
-    <h2> Ofertas Laborales</h2>
-
-    {% if ofertas_laborales %}
-        {% for oferta in ofertas_laborales %}
-        <div class="oferta">
-            <h3>{{ oferta.titulo }}</h3>
-            <p>{{ oferta.descripcion }}</p>
-
-            <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
-            <button type="submit">Postular</button>
-            </form>
-        </div>
-        {% endfor %}
-    {% else %}
-        <p>No hay ofertas laborales disponibles.</p>
-    {% endif %}
-    </div>
-
-    <!-- PRÁCTICAS PROFESIONALES -->
-    <div class="card">
-    <h2>Prácticas Profesionales</h2>
-
-    {% if usuario.semestre < 7 %}
-        <p>Debes estar en 7mo semestre o superior para postular a prácticas.</p>
-    {% else %}
-        {% if ofertas_practicas %}
-        {% for oferta in ofertas_practicas %}
-            <div class="oferta">
-            <h3>{{ oferta.titulo }}</h3>
-            <p>{{ oferta.descripcion }}</p>
-
-            <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
-                <button type="submit">Postular</button>
-            </form>
-            </div>
-        {% endfor %}
-        {% else %}
-        <p>No hay prácticas disponibles.</p>
-        {% endif %}
-    {% endif %}
-    </div>
-
-
-
-
-    <!-- RECOMENDACIONES -->
-    <div class="card">
-        <h2>Recomendaciones Docentes</h2>
-
-        {% if recomendaciones %}
-            {% for reco in recomendaciones %}
-                <div class="recomendacion">
-                    <p><em>"{{ reco.mensaje }}"</em></p>
-                    <small>
-                        — {{ reco.docente_nombre }} | {{ reco.fecha.strftime("%d/%m/%Y") }}
-                    </small>
+    <div class="card seccion" id="laborales">
+        <h2>Ofertas Laborales</h2>
+        {% if ofertas_laborales %}
+            {% for oferta in ofertas_laborales %}
+                <div class="oferta">
+                    <h3>{{ oferta.titulo }}</h3>
+                    <p>{{ oferta.descripcion }}</p>
+                    <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
+                        <button>Postular</button>
+                    </form>
                 </div>
             {% endfor %}
         {% else %}
-            <p><em>Aún no tienes recomendaciones.</em></p>
+            <p>No hay ofertas laborales.</p>
+        {% endif %}
+    </div>
+
+    <!-- PRÁCTICAS -->
+    <div class="card seccion" id="practicas">
+        <h2>Prácticas Profesionales</h2>
+
+        {% if usuario.semestre < 7 %}
+            <p>Debes estar en 7mo semestre o superior.</p>
+
+        {% elif not usuario.solicitud_practica %}
+            <p>Aún no has solicitado prácticas.</p>
+            <a href="{{ url_for('estudiante.practicas') }}">
+                <button>Solicitar</button>
+            </a>
+
+        {% elif usuario.solicitud_practica and not usuario.practica_aprobada %}
+            <p>Solicitud enviada. En espera de aprobación.</p>
+
+        {% elif usuario.practica_aprobada and empresa_practica and oferta_practica %}
+            <div class="card">
+                <h3>Práctica Asignada</h3>
+                <p><strong>Empresa:</strong> {{ empresa_practica.nombre }}</p>
+                <p><strong>Oferta:</strong> {{ oferta_practica.titulo }}</p>
+            </div>
+
+        {% else %}
+            {% for oferta in ofertas_practicas %}
+                <div class="oferta">
+                    <h3>{{ oferta.titulo }}</h3>
+                    <p>{{ oferta.descripcion }}</p>
+                    <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
+                        <button>Postular</button>
+                    </form>
+                </div>
+            {% else %}
+                <p>No hay prácticas disponibles.</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- RECOMENDACIONES -->
+    <div class="card seccion" id="recomendaciones">
+        <h2>Recomendaciones</h2>
+        {% if recomendaciones %}
+            {% for reco in recomendaciones %}
+                <div class="recomendacion">
+                    <p><em>{{ reco.mensaje }}</em></p>
+                    <small>{{ reco.docente_nombre }}</small>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No tienes recomendaciones.</p>
         {% endif %}
     </div>
 
 </div>
+
+<script>
+function mostrarSeccion(id, boton) {
+    document.querySelectorAll('.seccion').forEach(sec => {
+        sec.style.display = 'none';
+    });
+
+    document.getElementById(id).style.display = 'block';
+
+    document.querySelectorAll('.menu button').forEach(btn => {
+        btn.classList.remove('activo');
+    });
+
+    boton.classList.add('activo');
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const primerBoton = document.querySelector(".menu button");
+    primerBoton.click();
+});
+</script>
 
 </body>
 </html>

@@ -26,7 +26,7 @@ def dashboard_docente():
 
     docente_oid = ObjectId(docente_id)
 
-    # 🔹 SOLO mis estudiantes asignados
+    # SOLO mis estudiantes asignados
     mis_estudiantes = list(
         repo_estudiantes.collection.find({
             "rol": "estudiante",
@@ -34,7 +34,7 @@ def dashboard_docente():
         })
     )
 
-    # 🔹 TODOS los estudiantes
+    # TODOS los estudiantes
     todos_estudiantes = list(
         repo_estudiantes.collection.find({"rol": "estudiante"})
     )

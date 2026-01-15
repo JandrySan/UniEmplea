@@ -234,6 +234,44 @@
         </table>
     </div>
 
+    <!-- SOLICITUDES DE PRÁCTICAS -->
+    <div class="card">
+        <h3>Solicitudes de Prácticas</h3>
+
+        {% if solicitudes_practicas %}
+        <table>
+            <tr>
+                <th>Estudiante</th>
+                <th>Semestre</th>
+                <th>Acciones</th>
+            </tr>
+
+            {% for e in solicitudes_practicas %}
+            <tr>
+                <td>{{ e.nombre }}</td>
+                <td>{{ e.semestre }}</td>
+                <td>
+                    <form method="POST"
+                        action="{{ url_for('director.aprobar_practica', estudiante_id=e._id) }}"
+                        style="display:inline;">
+                        <button type="submit">Aprobar</button>
+                    </form>
+
+                    <form method="POST"
+                        action="{{ url_for('director.rechazar_practica', estudiante_id=e._id) }}"
+                        style="display:inline;">
+                        <button type="submit">Rechazar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>No hay solicitudes de prácticas pendientes.</p>
+        {% endif %}
+    </div>
+
+
 </main>
 
 </body>

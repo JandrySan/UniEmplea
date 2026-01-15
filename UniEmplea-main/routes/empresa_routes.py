@@ -111,43 +111,49 @@ def ver_postulantes(oferta_id):
 
 @empresa_bp.route("/postulacion/<postulacion_id>/aceptar", methods=["POST"])
 @requiere_rol("empresa")
-def aceptar_postulacion(postulacion_id):
-    repo_post = RepositorioPostulacionesMongo()
+def aceptar_postulante(postulacion_id):
 
+    # 1. Buscar postulación
+    postulacion = repo_post.collection.find_one({"_id": ObjectId(postulacion_id)})
+    if not postulacion:
+        flash("Postulación no encontrada", "error")
+        return redirect(url_for("empresa.dashboard"))
+
+    # 2. Buscar oferta
+    oferta = repo_ofertas.collection.find_one({"_id": ObjectId(postulacion["oferta_id"])})
+    if not oferta:
+        flash("Oferta no encontrada", "error")
+        return redirect(url_for("empresa.dashboard"))
+
+    # 3. Marcar postulación como aceptada
     repo_post.collection.update_one(
         {"_id": ObjectId(postulacion_id)},
         {"$set": {"estado": "aceptado"}}
     )
 
-    flash("Postulación aceptada", "success")
-    return redirect(request.referrer)
+    # 4. Guardar práctica en el ESTUDIANTE 
+    repo_estudiantes.collection.update_one(
+        {"_id": ObjectId(postulacion["estudiante_id"])},
+        {"$set": {
+            "practica_aprobada": True,
+            "practica_oferta_id": ObjectId(postulacion["oferta_id"]),
+            "empresa_practica_id": ObjectId(oferta["empresa_id"])
+        }}
+    )
 
+    # 5. Notificación
+    mensaje = f"¡Felicidades! Has sido aceptado para la práctica: {oferta['titulo']}"
+    repo_notif.crear(
+        Notificacion(
+            id=None,
+            usuario_id=postulacion["estudiante_id"],
+            mensaje=mensaje
+        )
+    )
 
+    flash("Postulante aceptado y práctica asignada", "success")
+    return redirect(url_for("empresa.ver_postulantes", oferta_id=postulacion["oferta_id"]))
 
-
-
-@empresa_bp.route("/postulacion/<postulacion_id>/aceptar", methods=["POST"])
-@requiere_rol("empresa")
-def aceptar_postulante(postulacion_id):
-    
-
-    # Find application
-    postulacion_data = repo_post.collection.find_one({"_id": ObjectId(postulacion_id)})
-    if not postulacion_data:
-         flash("Postulación no encontrada", "error")
-         return redirect(url_for("empresa.dashboard"))
-
-    oferta_data = repo_ofertas.collection.find_one({"_id": ObjectId(postulacion_data["oferta_id"])})
-    oferta_titulo = oferta_data["titulo"] if oferta_data else "una oferta"
-
-    # Create Notification
-    mensaje = f"¡Felicidades! Has sido aceptado para el puesto de: {oferta_titulo}"
-    nueva_notif = Notificacion(id=None, usuario_id=postulacion_data["estudiante_id"], mensaje=mensaje)
-    repo_notif.crear(nueva_notif)
-    
-    flash("Candidato aceptado y notificado exitosamente.", "success")
-    # Redirect back to the offers list or applicants list
-    return redirect(url_for("empresa.ver_postulantes", oferta_id=postulacion_data["oferta_id"]))
 
 
 @empresa_bp.route("/ofertas/nueva")

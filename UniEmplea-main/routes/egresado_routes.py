@@ -64,7 +64,6 @@ def dashboard_egresado():
             "salario": o.get("salario"),
             "tipo": o.get("tipo"),
             "ya_postulado": postulacion is not None,
-            # ✅ EVITA KeyError
             "estado_postulacion": postulacion.get("estado") if postulacion else None
         })
 
@@ -104,7 +103,7 @@ def subir_cv():
     full_path = os.path.join(upload_folder, filename)
     archivo.save(full_path)
 
-    # Guardar ruta RELATIVA (sin static/)
+    # Guardar ruta RELATIVA 
     cv_path = f"uploads/cvs/{filename}"
 
     repo_usuarios = RepositorioUsuariosMongo()
