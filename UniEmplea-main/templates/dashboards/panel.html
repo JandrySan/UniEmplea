@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel Director | UniEmplea</title>
+    <title>Panel del Director | UniEmplea</title>
 
     <style>
         body {
@@ -13,7 +13,7 @@
 
         /* ===== HEADER ===== */
         header {
-            background-color: #0d6efd;
+            background: #0d6efd;
             color: white;
             padding: 20px 30px;
             display: flex;
@@ -27,55 +27,40 @@
         }
 
         .logout {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
             background: #dc3545;
+            color: white;
             padding: 8px 14px;
             border-radius: 6px;
-        }
-
-        .logout:hover {
-            opacity: 0.9;
-        }
-
-        /* ===== MAIN ===== */
-        main {
-            padding: 30px;
-            max-width: 1100px;
-            margin: auto;
-        }
-
-        h2 {
-            color: #0d6efd;
-            margin-top: 0;
-        }
-
-        /* ===== ALERTAS ===== */
-        .alert {
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 15px;
+            text-decoration: none;
             font-weight: bold;
         }
 
-        .alert-success {
-            background: #d1e7dd;
-            color: #0f5132;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #842029;
-        }
-
-        /* ===== CARDS ===== */
-        .card {
+        /* ===== MENÚ ===== */
+        .menu {
+            display: flex;
+            gap: 10px;
+            padding: 15px 30px;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .menu button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #e9ecef;
+        }
+
+        .menu button.active {
+            background: #0d6efd;
+            color: white;
+        }
+
+        /* ===== CONTENIDO ===== */
+        main {
+            padding: 30px;
         }
 
         /* ===== MÉTRICAS ===== */
@@ -88,48 +73,44 @@
 
         .metrica {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 25px;
+            border-radius: 10px;
             text-align: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .metrica:hover {
+            transform: translateY(-5px);
         }
 
         .metrica h3 {
             margin: 0;
-            font-size: 28px;
+            font-size: 32px;
             color: #0d6efd;
         }
 
         .metrica p {
             margin: 5px 0 0;
+            font-weight: bold;
             color: #555;
         }
 
-        /* ===== FORM ===== */
-        form {
-            margin-top: 10px;
+        /* ===== SECCIONES ===== */
+        .seccion {
+            display: none;
         }
 
-        input[type="file"],
-        select {
-            padding: 6px;
-            margin-right: 5px;
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
         }
 
-        button {
-            padding: 6px 12px;
-            border: none;
-            background-color: #0d6efd;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0b5ed7;
-        }
-
-        /* ===== TABLA ===== */
+        /* ===== TABLAS ===== */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -143,7 +124,31 @@
         }
 
         th {
-            background: #f1f5f9;
+            background: #f1f3f5;
+        }
+
+        /* ===== BOTONES ===== */
+        button {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            background: #0d6efd;
+            color: white;
+        }
+
+        button.rechazar {
+            background: #dc3545;
+        }
+
+        /* ===== ESTADOS ===== */
+        .estado {
+            font-weight: bold;
+        }
+
+        .pendiente {
+            color: #d97706;
         }
     </style>
 </head>
@@ -151,61 +156,122 @@
 <body>
 
 <header>
-    <h1>Panel del Director</h1>
-    <a href="{{ url_for('auth.logout') }}" class="logout"
-       onclick="return confirm('¿Desea cerrar sesión?')">
-        🚪 Cerrar sesión
-    </a>
+    <h1> Panel del Director</h1>
+    <a href="{{ url_for('auth.logout') }}" class="logout">Cerrar sesión</a>
 </header>
+
+<!-- ===== MENÚ ===== -->
+<div class="menu">
+    <button class="active" onclick="mostrar('metricas', this)"> Métricas</button>
+    <button onclick="mostrar('carga', this)"> Cargar Estudiantes</button>
+    <button onclick="mostrar('tutores', this)"> Tutores</button>
+    <button onclick="mostrar('solicitudes', this)"> Solicitudes</button>
+</div>
 
 <main>
 
-    <h2>Bienvenido </h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
-
-    <!-- CARGA EXCEL -->
-    <div class="card">
-        <h3>Cargar Estudiantes (Excel)</h3>
-        <form method="POST"
-              action="{{ url_for('director.cargar_estudiantes_excel') }}"
-              enctype="multipart/form-data">
-            <input type="file" name="archivo" accept=".xlsx,.xls" required>
-            <button type="submit">Cargar</button>
-        </form>
-    </div>
-
-    <!-- MÉTRICAS -->
+<!-- ===== MÉTRICAS ===== -->
+<div id="metricas" class="seccion" style="display:block;">
     <div class="metricas">
-        <div class="metrica">
+        <div class="metrica" onclick="mostrarLista('lista-total')">
             <h3>{{ metricas.total_estudiantes }}</h3>
             <p>Total Estudiantes</p>
         </div>
 
-        <div class="metrica">
-            <h3>{{ metricas.total_7mo }}</h3>
-            <p>Estudiantes en prácticas</p>
+        <div class="metrica" onclick="mostrarLista('lista-practicas')">
+            <h3>{{ metricas.en_practicas }}</h3>
+            <p>En Prácticas</p>
         </div>
 
-
-        <div class="metrica">
+        <div class="metrica" onclick="mostrarLista('lista-tutor')">
             <h3>{{ metricas.con_tutor }}</h3>
-            <p>Con Tutor ({{ metricas.porcentaje_con_tutor }}%)</p>
+            <p>Con Tutor</p>
         </div>
     </div>
 
-    <!-- ASIGNACIÓN -->
-    <div class="card">
-        <h3>Asignación de Tutores</h3>
+    <!-- LISTA TOTAL -->
+    <div id="lista-total" class="card lista" style="display:none;">
+        <h3>Todos los estudiantes</h3>
+        <table>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+            {% for e in estudiantes_total %}
+            <tr>
+                <td>{{ e.nombre }}</td>
+                <td>{{ e.correo }}</td>
+                <td class="{{ 'activo' if e.activo else 'inactivo' }}">
+                    {{ 'Activo' if e.activo else 'Inactivo' }}
+                </td>
+                <td>
+                    <form method="POST"
+                        action="{{ url_for('director.toggle_acceso', estudiante_id=e._id) }}">
+                        <button class="{{ 'desactivar' if e.activo else 'activar' }}">
+                            {{ 'Desactivar' if e.activo else 'Activar' }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <!-- LISTA CON practica  -->
+    <div id="lista-practicas" class="card lista" style="display:none;">
+        <h3>Estudiantes en prácticas</h3>
+        <table>
+            <tr>
+                <th>Nombre</th>
+                <th>Semestre</th>
+            </tr>
+            {% for e in estudiantes_practicas %}
+            <tr>
+                <td>{{ e.nombre }}</td>
+                <td>{{ e.semestre }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <!-- LISTA CON TUTOR -->
+    <div id="lista-tutor" class="card lista" style="display:none;">
+        <h3>Estudiantes con tutor</h3>
+        <table>
+            <tr>
+                <th>Nombre</th>
+                <th>Tutor</th>
+            </tr>
+            {% for e in estudiantes_con_tutor %}
+            <tr>
+                <td>{{ e.nombre }}</td>
+                <td>{{ e.tutor_nombre }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 
+
+</div>
+
+<!-- ===== CARGA ESTUDIANTES ===== -->
+<div id="carga" class="seccion">
+    <div class="card">
+        <h3> Cargar Estudiantes (Excel)</h3>
+        <form method="POST"
+              action="{{ url_for('director.cargar_estudiantes_excel') }}"
+              enctype="multipart/form-data">
+            <input type="file" name="archivo" accept=".xlsx,.xls" required>
+            <br><br>
+            <button type="submit">Cargar</button>
+        </form>
+    </div>
+</div>
+
+<!-- ===== TUTORES ===== -->
+<div id="tutores" class="seccion">
+    <div class="card">
+        <h3> Asignación de Tutores</h3>
         <table>
             <tr>
                 <th>Estudiante</th>
@@ -213,10 +279,10 @@
                 <th>Asignar</th>
             </tr>
 
-            {% for e in estudiantes %}
+            {% for e in estudiantes_practicas %}
             <tr>
                 <td>{{ e.nombre }}</td>
-                <td>{{ e.tutor_nombre }}</td>
+                <td>{{ e.tutor_nombre or "Sin tutor" }}</td>
                 <td>
                     <form method="POST"
                           action="{{ url_for('director.asignar_tutor', estudiante_id=e._id) }}">
@@ -233,46 +299,65 @@
             {% endfor %}
         </table>
     </div>
+</div>
 
-    <!-- SOLICITUDES DE PRÁCTICAS -->
+
+<!-- ===== SOLICITUDES ===== -->
+<div id="solicitudes" class="seccion">
     <div class="card">
-        <h3>Solicitudes de Prácticas</h3>
+        <h3> Solicitudes de Prácticas</h3>
 
         {% if solicitudes_practicas %}
         <table>
             <tr>
                 <th>Estudiante</th>
                 <th>Semestre</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
-
             {% for e in solicitudes_practicas %}
             <tr>
                 <td>{{ e.nombre }}</td>
                 <td>{{ e.semestre }}</td>
+                <td class="estado pendiente">Pendiente</td>
                 <td>
                     <form method="POST"
-                        action="{{ url_for('director.aprobar_practica', estudiante_id=e._id) }}"
-                        style="display:inline;">
-                        <button type="submit">Aprobar</button>
+                          action="{{ url_for('director.aprobar_practica', estudiante_id=e._id) }}"
+                          style="display:inline;">
+                        <button>Aprobar</button>
                     </form>
 
                     <form method="POST"
-                        action="{{ url_for('director.rechazar_practica', estudiante_id=e._id) }}"
-                        style="display:inline;">
-                        <button type="submit">Rechazar</button>
+                          action="{{ url_for('director.rechazar_practica', estudiante_id=e._id) }}"
+                          style="display:inline;">
+                        <button class="rechazar">Rechazar</button>
                     </form>
                 </td>
             </tr>
             {% endfor %}
         </table>
         {% else %}
-            <p>No hay solicitudes de prácticas pendientes.</p>
+            <p>No hay solicitudes pendientes.</p>
         {% endif %}
     </div>
-
+</div>
 
 </main>
+
+<script>
+function mostrar(id, btn) {
+    document.querySelectorAll('.seccion').forEach(sec => sec.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+
+    document.querySelectorAll('.menu button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function mostrarLista(id) {
+    document.querySelectorAll('[id^="lista-"]').forEach(div => div.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+}
+</script>
 
 </body>
 </html>

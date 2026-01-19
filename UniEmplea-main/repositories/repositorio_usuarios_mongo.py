@@ -67,7 +67,8 @@ class RepositorioUsuariosMongo:
                 practica_aprobada=data.get("practica_aprobada", False),
                 solicitud_practica=data.get("solicitud_practica", False),
                 empresa_practica_id=data.get("empresa_practica_id"),
-                practica_oferta_id=data.get("practica_oferta_id")
+                practica_oferta_id=data.get("practica_oferta_id"),
+                cv_path=data.get("cv_path")
             )
         
         

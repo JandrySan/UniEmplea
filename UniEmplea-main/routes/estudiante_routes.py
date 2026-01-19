@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, render_template, session, redirect, url_for
+from flask import Blueprint, flash, render_template, request, session, redirect, url_for
 from patterns.estrategia_practicas import EstrategiaPracticas
 from patterns.estrategia_empleo import EstrategiaEmpleo
 from services.servicio_postulaciones import ServicioPostulaciones
@@ -9,7 +9,8 @@ from repositories.repositorio_notificaciones_mongo import RepositorioNotificacio
 from utils.decoradores import requiere_rol
 from bson import ObjectId
 from repositories.repositorio_estudiantes_mongo import RepositorioEstudiantesMongo
-
+import os
+from werkzeug.utils import secure_filename
 
 estudiante_bp = Blueprint("estudiante", __name__)
 
@@ -106,24 +107,7 @@ def postular_oferta(oferta_id):
         
     return redirect(url_for("estudiante.dashboard_estudiante"))
 
-"""
-@estudiante_bp.route("/practicas")
-@requiere_rol("estudiante")
-def practicas():
-    usuario_id = session.get("usuario_id")
 
-    # SOLO ofertas de prácticas y aprobadas
-    ofertas = repo_ofertas.collection.find({
-        "tipo": "practica",
-        "estado": "aprobada",
-        "activa": True
-    })
-
-    return render_template(
-        "dashboards/estudiante_practicas.html",
-        ofertas=ofertas
-    )
-    """
 
 @estudiante_bp.route("/practicas")
 @requiere_rol("estudiante")
@@ -151,3 +135,66 @@ def solicitar_practica():
     flash("Solicitud de prácticas enviada al director", "success")
     return redirect(url_for("estudiante.dashboard_estudiante"))
     
+
+@estudiante_bp.route("/subir_cv", methods=["POST"])
+@requiere_rol("estudiante")
+def subir_cv_estudiante():
+    if 'cv' not in request.files:
+        flash("No se seleccionó ningún archivo", "error")
+        return redirect(url_for("estudiante.dashboard_estudiante"))
+
+    archivo = request.files['cv']
+
+    if archivo.filename == '':
+        flash("No se seleccionó ningún archivo", "error")
+        return redirect(url_for("estudiante.dashboard_estudiante"))
+
+    if not archivo.filename.lower().endswith('.pdf'):
+        flash("Solo se permiten archivos PDF", "error")
+        return redirect(url_for("estudiante.dashboard_estudiante"))
+
+    import os
+    from werkzeug.utils import secure_filename
+
+    filename = secure_filename(f"cv_{session['usuario_id']}.pdf")
+
+    upload_folder = "static/uploads/cvs"
+    os.makedirs(upload_folder, exist_ok=True)
+
+    full_path = os.path.join(upload_folder, filename)
+    archivo.save(full_path)
+
+    cv_path = f"uploads/cvs/{filename}"
+
+    repo_usuarios = RepositorioUsuariosMongo()
+    repo_usuarios.collection.update_one(
+        {"_id": ObjectId(session["usuario_id"])},
+        {"$set": {"cv_path": cv_path}}
+    )
+
+    flash("CV subido correctamente", "success")
+    return redirect(url_for("estudiante.dashboard_estudiante"))
+
+
+@estudiante_bp.route("/eliminar_cv", methods=["POST"])
+@requiere_rol("estudiante")
+def eliminar_cv_estudiante():
+    usuario = repo_usuarios.buscar_por_id(session["usuario_id"])
+
+    if usuario and getattr(usuario, "cv_path", None):
+        import os
+        ruta = os.path.join("static", usuario.cv_path)
+
+        if os.path.exists(ruta):
+            os.remove(ruta)
+
+        repo_usuarios.collection.update_one(
+            {"_id": ObjectId(session["usuario_id"])},
+            {"$unset": {"cv_path": ""}}
+        )
+
+        flash("CV eliminado correctamente", "success")
+    else:
+        flash("No hay CV para eliminar", "error")
+
+    return redirect(url_for("estudiante.dashboard_estudiante"))

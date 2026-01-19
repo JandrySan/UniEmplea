@@ -12,7 +12,7 @@ class RepositorioOfertasMongo:
         self.collection.insert_one({
             "titulo": oferta.titulo,
             "descripcion": oferta.descripcion,
-            "empresa_id": oferta.empresa_id,
+            "empresa_id": ObjectId(oferta.empresa_id),
             "carrera_id": oferta.carrera_id,
             "tipo": oferta.tipo,
             "activa": oferta.activa,
@@ -30,14 +30,18 @@ class RepositorioOfertasMongo:
     def obtener_todas(self):
         ofertas = []
         for o in self.collection.find():
+            empresa_id = o.get("empresa_id")
+            if empresa_id:
+                empresa_id = str(empresa_id)
+
             ofertas.append(
                 Oferta(
                     id=str(o["_id"]),
                     titulo=o.get("titulo"),
                     descripcion=o.get("descripcion"),
-                    empresa_id=o.get("empresa_id"),
+                    empresa_id=empresa_id,
                     carrera_id=o.get("carrera_id"),
-                    tipo=o.get("tipo", "empleo"),  
+                    tipo=o.get("tipo", "empleo"),
                     activa=o.get("activa", True),
                     estado=o.get("estado", "pendiente"),
                     ciudad=o.get("ciudad"),
@@ -47,6 +51,8 @@ class RepositorioOfertasMongo:
                 )
             )
         return ofertas
+
+
 
     def eliminar(self, oferta_id):
         self.collection.delete_one(

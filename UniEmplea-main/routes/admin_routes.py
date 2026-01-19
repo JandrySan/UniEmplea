@@ -369,10 +369,9 @@ def eliminar_carrera(carrera_id):
 
 
 # EDITAR CARRERA
-@admin_bp.route("/academico/carrera/<carrera_id>/editar", methods=["POST"])
-@requiere_rol("administrador")
+@admin_bp.route("/editar_carrera/<carrera_id>", methods=["POST"])
 def editar_carrera(carrera_id):
-    nuevo_nombre = request.form.get("nombre")  
+    nuevo_nombre = request.form.get("nuevo_nombre")
 
     if nuevo_nombre:
         repo_carreras.actualizar(carrera_id, nuevo_nombre)
@@ -396,16 +395,22 @@ def asignar_director(carrera_id):
 @requiere_rol("administrador")
 def gestionar_ofertas():
     repo_ofertas = RepositorioOfertasMongo()
-    repo_empresas = RepositorioEmpresasMongo()
 
     ofertas = repo_ofertas.obtener_todas()
-    empresas = {e.id: e.nombre for e in repo_empresas.obtener_todas()}
+
+    empresas_cursor = repo_usuarios.collection.find({"rol": "empresa"})
+    empresas = {
+        str(e["_id"]): e["nombre"]
+        for e in empresas_cursor
+    }
 
     return render_template(
         "dashboards/admin_ofertas.html",
         ofertas=ofertas,
         empresas=empresas
     )
+
+
 
 
 @admin_bp.route("/ofertas/eliminar/<oferta_id>", methods=["POST"])

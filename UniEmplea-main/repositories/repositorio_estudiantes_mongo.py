@@ -68,7 +68,8 @@ class RepositorioEstudiantesMongo:
             practica_aprobada=doc.get("practica_aprobada", False),
             solicitud_practica=doc.get("solicitud_practica", False),
             empresa_practica_id=doc.get("empresa_practica_id"),
-            practica_oferta_id=doc.get("practica_oferta_id")
+            practica_oferta_id=doc.get("practica_oferta_id"),
+            
         )
 
     def actualizar(self, id, data):

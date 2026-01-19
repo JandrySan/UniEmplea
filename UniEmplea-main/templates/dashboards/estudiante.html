@@ -141,6 +141,7 @@
         <button onclick="mostrarSeccion('notificaciones', this)">Notificaciones</button>
         <button onclick="mostrarSeccion('laborales', this)">Ofertas</button>
         <button onclick="mostrarSeccion('practicas', this)">Prácticas</button>
+        <button onclick="mostrarSeccion('cv', this)">Mi CV</button>
         <button onclick="mostrarSeccion('recomendaciones', this)">Recomendaciones</button>
     </nav>
 
@@ -228,6 +229,42 @@
             {% endfor %}
         {% endif %}
     </div>
+
+   
+    <!-- CURRÍCULUM VITAE -->
+
+    <div class="card seccion" id="cv">
+        <h2>Currículum Vitae</h2>
+
+        {% if usuario.cv_path %}
+            <p class="tag">CV cargado</p>
+
+            <a href="{{ url_for('static', filename=usuario.cv_path) }}"
+            target="_blank">
+                <button>Ver CV</button>
+            </a>
+
+            <form method="POST"
+                action="{{ url_for('estudiante.eliminar_cv_estudiante') }}"
+                style="display:inline;"
+                onsubmit="return confirm('¿Eliminar CV?');">
+                <button style="background:#dc3545;">Eliminar</button>
+            </form>
+        {% else %}
+            <p>No has subido tu CV</p>
+        {% endif %}
+
+        <form method="POST"
+            action="{{ url_for('estudiante.subir_cv_estudiante') }}"
+            enctype="multipart/form-data">
+            <input type="file" name="cv" accept=".pdf" required>
+            <button>Subir CV</button>
+        </form>
+    </div>
+
+
+    
+
 
     <!-- RECOMENDACIONES -->
     <div class="card seccion" id="recomendaciones">

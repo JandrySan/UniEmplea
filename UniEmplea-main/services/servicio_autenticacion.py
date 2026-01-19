@@ -15,6 +15,9 @@ class ServicioAutenticacion:
 
     def login(self, correo, contrasena):
         data = self.repo_auth.autenticar(correo, contrasena)
+        if not data.get("activo", True):
+            raise ValueError("Usuario desactivado por el director")
+
 
         
         rol = data["rol"]

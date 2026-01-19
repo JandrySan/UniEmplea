@@ -5,15 +5,25 @@
     <title>Panel Egresado | UniEmplea</title>
 
     <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --gray: #6b7280;
+            --bg: #f1f5f9;
+        }
+
         body {
             margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg);
         }
 
         /* ===== HEADER ===== */
         header {
-            background-color: #0d6efd;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             color: white;
             padding: 20px 30px;
             display: flex;
@@ -28,17 +38,17 @@
 
         .acciones-header a {
             background: white;
-            color: #0d6efd;
+            color: var(--primary);
             padding: 8px 14px;
             border-radius: 6px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
             margin-left: 8px;
             font-size: 14px;
         }
 
         .acciones-header a.logout {
-            background: #dc3545;
+            background: var(--danger);
             color: white;
         }
 
@@ -54,7 +64,7 @@
         }
 
         h2 {
-            color: #0d6efd;
+            color: var(--primary);
             margin-top: 0;
         }
 
@@ -67,83 +77,121 @@
         }
 
         .alert-success {
-            background: #d1e7dd;
-            color: #0f5132;
+            background: #dcfce7;
+            color: #166534;
         }
 
         .alert-error {
-            background: #f8d7da;
-            color: #842029;
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         /* ===== CARD ===== */
         .card {
             background: white;
             padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             margin-bottom: 25px;
+            border-top: 4px solid var(--primary);
+        }
+
+        /* ===== FILTROS ===== */
+        .filtros label {
+            font-weight: 600;
+            margin-right: 10px;
+            color: var(--gray);
+        }
+
+        .filtros input,
+        .filtros select {
+            padding: 6px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
 
         /* ===== OFERTAS ===== */
         .oferta {
-            border-bottom: 1px solid #ddd;
-            padding: 15px 0;
+            padding: 18px 0;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .oferta:last-child {
             border-bottom: none;
         }
 
+        .oferta h3 {
+            margin: 0 0 5px;
+            color: var(--secondary);
+        }
+
+        /* ===== BOTONES ===== */
         .btn {
             display: inline-block;
             padding: 8px 16px;
-            border-radius: 4px;
+            border-radius: 6px;
             border: none;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             text-decoration: none;
         }
 
         .btn-primary {
-            background: #0d6efd;
+            background: var(--primary);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #0b5ed7;
+            background: var(--secondary);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        /* ===== BADGES ===== */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
         }
     </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER ===== -->
 <header>
     <h1>Panel Egresado</h1>
 
     <div class="acciones-header">
-        <a href="{{ url_for('egresado.dashboard_egresado') }}">
-            Ver Ofertas
-        </a>
-
-        <a href="{{ url_for('egresado.hoja_vida') }}">
-            Mi Hoja de Vida
-        </a>
-
-        <a href="{{ url_for('egresado.historial_academico') }}">
-            Estado Académico
-        </a>
-
-        <a href="{{ url_for('auth.logout') }}"
-           class="logout"
+        <a href="{{ url_for('egresado.dashboard_egresado') }}">Ofertas</a>
+        <a href="{{ url_for('egresado.hoja_vida') }}">Hoja de Vida</a>
+        <a href="{{ url_for('egresado.historial_academico') }}">Estado Académico</a>
+        <a href="{{ url_for('auth.logout') }}" class="logout"
            onclick="return confirm('¿Desea cerrar sesión?')">
             Cerrar sesión
         </a>
     </div>
 </header>
 
-<!-- ===== CONTENIDO ===== -->
 <div class="container">
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -156,112 +204,75 @@
     {% endif %}
     {% endwith %}
 
-    <!-- OFERTAS -->
     <div class="card">
         <h2>Ofertas Laborales</h2>
 
         <!-- FILTROS -->
-        
-        <form method="GET" style="margin-bottom: 20px;">
+        <form method="GET" class="filtros" style="margin-bottom:20px;">
+            <label>Ciudad:
+                <input type="text" name="ciudad" value="{{ request.args.get('ciudad', '') }}">
+            </label>
 
-        <label>
-            Ciudad:
-            <input type="text" name="ciudad" value="{{ request.args.get('ciudad', '') }}">
-        </label>
+            <label>Modalidad:
+                <select name="modalidad">
+                    <option value="">Todas</option>
+                    <option value="presencial" {% if request.args.get('modalidad')=='presencial' %}selected{% endif %}>Presencial</option>
+                    <option value="virtual" {% if request.args.get('modalidad')=='virtual' %}selected{% endif %}>Virtual</option>
+                    <option value="hibrido" {% if request.args.get('modalidad')=='hibrido' %}selected{% endif %}>Híbrido</option>
+                </select>
+            </label>
 
-        <label style="margin-left:10px;">
-            Modalidad:
-            <select name="modalidad">
-                <option value="">Todas</option>
-                <option value="presencial" {% if request.args.get('modalidad') == 'presencial' %}selected{% endif %}>
-                    Presencial
-                </option>
-                <option value="virtual" {% if request.args.get('modalidad') == 'virtual' %}selected{% endif %}>
-                    Virtual
-                </option>
-                <option value="hibrido" {% if request.args.get('modalidad') == 'hibrido' %}selected{% endif %}>
-                    Híbrido
-                </option>
-            </select>
-        </label>
+            <label>Jornada:
+                <select name="jornada">
+                    <option value="">Todas</option>
+                    <option value="tiempo_completo" {% if request.args.get('jornada')=='tiempo_completo' %}selected{% endif %}>Tiempo completo</option>
+                    <option value="medio_tiempo" {% if request.args.get('jornada')=='medio_tiempo' %}selected{% endif %}>Medio tiempo</option>
+                </select>
+            </label>
 
-        <label style="margin-left:10px;">
-            Jornada:
-            <select name="jornada">
-                <option value="">Todas</option>
-                <option value="tiempo_completo" {% if request.args.get('jornada') == 'tiempo_completo' %}selected{% endif %}>
-                    Tiempo completo
-                </option>
-                <option value="medio_tiempo" {% if request.args.get('jornada') == 'medio_tiempo' %}selected{% endif %}>
-                    Medio tiempo
-                </option>
-            </select>
-        </label>
+            <button class="btn btn-primary">🔍 Filtrar</button>
+            <a href="{{ url_for('egresado.dashboard_egresado') }}" class="btn btn-secondary">Limpiar</a>
+        </form>
 
-        <label style="margin-left:10px;">
-            Tipo:
-            <select name="tipo">
-                <option value="">Todos</option>
-                <option value="empleo" {% if request.args.get('tipo') == 'empleo' %}selected{% endif %}>
-                    Empleo
-                </option>
-                <option value="practica" {% if request.args.get('tipo') == 'practica' %}selected{% endif %}>
-                    Práctica
-                </option>
-            </select>
-        </label>
-
-        <button type="submit" class="btn btn-primary" style="margin-left:10px;">
-            🔍 Filtrar
-        </button>
-
-        <a href="{{ url_for('egresado.dashboard_egresado') }}"
-        class="btn btn-secondary"
-        style="margin-left:5px;">
-            Limpiar
-        </a>
-
-    </form>
         {% if ofertas %}
-        {% for oferta in ofertas %}
-            <div class="oferta">
-                <h3>{{ oferta.titulo }}</h3>
-                <p>{{ oferta.descripcion }}</p>
+            {% for oferta in ofertas %}
+                <div class="oferta">
+                    <h3>{{ oferta.titulo }}</h3>
+                    <p>{{ oferta.descripcion }}</p>
 
-                <p>
-                    <strong>Ciudad:</strong> {{ oferta.ciudad or 'No especificada' }} |
-                    <strong>Modalidad:</strong> {{ oferta.modalidad or 'N/A' }} |
-                    <strong>Jornada:</strong> {{ oferta.jornada or 'N/A' }}
-                </p>
-
-                <p>
-                    <strong>Salario:</strong> {{ oferta.salario or 'A convenir' }} |
-                    <strong>Tipo:</strong> {{ oferta.tipo }}
-                </p>
-
-                {% if oferta.ya_postulado %}
                     <p>
-                        <strong>Estado:</strong>
-                        {% if oferta.estado_postulacion == 'postulado' %}
-                            En revisión
-                        {% elif oferta.estado_postulacion == 'aceptado' %}
-                            Aceptado
-                        {% elif oferta.estado_postulacion == 'rechazado' %}
-                            Rechazado
-                        {% else %}
-                            En revisión
-                        {% endif %}
+                        <strong>Ciudad:</strong> {{ oferta.ciudad or 'No especificada' }} |
+                        <strong>Modalidad:</strong> {{ oferta.modalidad or 'N/A' }} |
+                        <strong>Jornada:</strong> {{ oferta.jornada or 'N/A' }}
                     </p>
-                {% else %}
-                    <form method="POST"
-                        action="{{ url_for('egresado.postular_oferta', oferta_id=oferta.id) }}">
-                        <button type="submit" class="btn btn-primary">
-                            Postular
-                        </button>
-                    </form>
-                {% endif %}
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>No hay ofertas disponibles.</p>
-    {% endif %}
+
+                    <p>
+                        <strong>Salario:</strong> {{ oferta.salario or 'A convenir' }} |
+                        <strong>Tipo:</strong> {{ oferta.tipo }}
+                    </p>
+
+                    {% if oferta.ya_postulado %}
+                        <strong>Estado:</strong>
+                        {% if oferta.estado_postulacion == 'aceptado' %}
+                            <span class="badge badge-success">Aceptado</span>
+                        {% elif oferta.estado_postulacion == 'rechazado' %}
+                            <span class="badge badge-danger">Rechazado</span>
+                        {% else %}
+                            <span class="badge badge-warning">En revisión</span>
+                        {% endif %}
+                    {% else %}
+                        <form method="POST" action="{{ url_for('egresado.postular_oferta', oferta_id=oferta.id) }}">
+                            <button class="btn btn-primary">Postular</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No hay ofertas disponibles.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

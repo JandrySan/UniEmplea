@@ -1,5 +1,5 @@
 from bson import ObjectId
-from flask import Blueprint, abort, render_template, request, redirect, url_for, session
+from flask import Blueprint, abort, jsonify, render_template, request, redirect, url_for, session
 from repositories.repositorio_estudiantes_mongo import RepositorioEstudiantesMongo
 from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
 from repositories.repositorio_carreras_mongo import RepositorioCarrerasMongo
@@ -25,13 +25,15 @@ servicio_tutores = ServicioTutores(repo_estudiantes, repo_usuarios)
 servicio_metricas = ServicioMetricasDirector(repo_estudiantes)
 
 
+
 @director_bp.route("/dashboard", endpoint="panel")
 @requiere_rol("director_carrera")
 def dashboard_director():
     carrera_id = session.get("carrera_id")
+    facultad_id = session.get("facultad_id")
 
     
-    todos_estudiantes = list(
+    estudiantes_total = list(
         repo_estudiantes.collection.find({
             "rol": "estudiante",
             "carrera_id": carrera_id
@@ -39,19 +41,30 @@ def dashboard_director():
     )
 
     
-    estudiantes_7mo = [
-        e for e in todos_estudiantes if e.get("semestre", 0) >= 7
+    estudiantes_practicas = [
+        e for e in estudiantes_total if e.get("semestre", 0) >= 7
+    ]
+
+    estudiantes_con_tutor = [
+        e for e in estudiantes_practicas if e.get("tutor_id")
+    ]
+
+    
+    solicitudes_practicas = [
+        e for e in estudiantes_practicas
+        if e.get("solicitud_practica") is True
     ]
 
     
     profesores = list(
-        repo_usuarios.collection.find({"rol": "docente"})
+        repo_usuarios.collection.find({
+            "rol": "docente",
+            "facultad_id": facultad_id
+        })
     )
 
-    
-    for e in estudiantes_7mo:
-        e["_id"] = str(e["_id"])
-
+    # Resolver nombre del tutor 
+    for e in estudiantes_practicas:
         if e.get("tutor_id"):
             tutor = repo_usuarios.collection.find_one(
                 {"_id": ObjectId(e["tutor_id"])}
@@ -60,35 +73,33 @@ def dashboard_director():
         else:
             e["tutor_nombre"] = "Sin tutor"
 
+    # Convertir IDs a string 
+    for lista in [
+        estudiantes_total,
+        estudiantes_practicas,
+        estudiantes_con_tutor,
+        solicitudes_practicas,
+        profesores
+    ]:
+        for item in lista:
+            item["_id"] = str(item["_id"])
 
-    # Estudiantes que solicitaron prácticas
-    solicitudes_practicas = [
-        e for e in estudiantes_7mo if e.get("solicitud_practica") is True
-    ]
-
-
-    #  Métricas
-    total_estudiantes = len(todos_estudiantes)
-    total_7mo = len(estudiantes_7mo)
-    con_tutor = len([e for e in estudiantes_7mo if e.get("tutor_id")])
-    porcentaje = round((con_tutor / total_7mo) * 100, 2) if total_7mo > 0 else 0
-
+    # MÉTRICAS 
     metricas = {
-        "total_estudiantes": total_estudiantes,
-        "total_7mo": total_7mo,
-        "con_tutor": con_tutor,
-        "porcentaje_con_tutor": porcentaje
+        "total_estudiantes": len(estudiantes_total),
+        "en_practicas": len(estudiantes_practicas),
+        "con_tutor": len(estudiantes_con_tutor)
     }
 
     return render_template(
         "dashboards/panel.html",
-        estudiantes=estudiantes_7mo,  
+        estudiantes_total=estudiantes_total,
+        estudiantes_practicas=estudiantes_practicas,
+        estudiantes_con_tutor=estudiantes_con_tutor,
         solicitudes_practicas=solicitudes_practicas,
         profesores=profesores,
         metricas=metricas
     )
-
-
 
 
 @director_bp.route("/carrera")
@@ -330,3 +341,47 @@ def rechazar_practica(estudiante_id):
     return redirect(url_for("director.panel"))
 
 
+
+
+@director_bp.route("/estudiantes")
+@requiere_rol("director_carrera")
+def obtener_estudiantes():
+    filtro = request.args.get("filtro")
+    carrera_id = session["carrera_id"]
+
+    estudiantes = list(
+        repo_estudiantes.collection.find({"carrera_id": carrera_id})
+    )
+
+    if filtro == "practicas":
+        estudiantes = [e for e in estudiantes if e.get("practica_aprobada")]
+
+    if filtro == "con_tutor":
+        estudiantes = [e for e in estudiantes if e.get("tutor_id")]
+
+    for e in estudiantes:
+        e["_id"] = str(e["_id"])
+
+    return jsonify(estudiantes)
+
+
+@director_bp.route("/estudiantes/<estudiante_id>/toggle", methods=["POST"])
+@requiere_rol("director_carrera")
+def toggle_acceso(estudiante_id):
+    est = repo_estudiantes.collection.find_one(
+        {"_id": ObjectId(estudiante_id)}
+    )
+
+    nuevo_estado = not est.get("activo", True)
+
+    repo_estudiantes.collection.update_one(
+        {"_id": ObjectId(estudiante_id)},
+        {"$set": {"activo": nuevo_estado}}
+    )
+
+    flash(
+        "Acceso activado" if nuevo_estado else "Acceso desactivado",
+        "success"
+    )
+
+    return redirect(request.referrer)

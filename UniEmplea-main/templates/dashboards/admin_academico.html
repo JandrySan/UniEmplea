@@ -7,102 +7,130 @@
     <style>
         :root {
             --primary: #2563eb;
+            --primary-dark: #1e40af;
             --danger: #dc2626;
             --warning: #f59e0b;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --card: #ffffff;
             --border: #e5e7eb;
             --text: #1f2937;
+            --muted: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
+            margin: 0;
             font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg);
-            margin: 0;
-            padding: 30px;
             color: var(--text);
         }
 
-        h2, h3, h4 {
-            margin-top: 0;
-        }
-
-        .contenedor {
-            max-width: 1100px;
-            margin: auto;
-        }
-
-        .volver {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 14px;
-            background: var(--primary);
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: opacity .2s;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .volver:hover {
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        header a {
+            background: white;
+            color: var(--primary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        header a:hover {
             opacity: .9;
         }
 
+        /* ===== CONTENEDOR ===== */
+        .contenedor {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        /* ===== CARD ===== */
         .card {
             background: var(--card);
             padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
             margin-bottom: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
         }
 
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* ===== FORM ===== */
         form {
-            margin-top: 10px;
             margin-bottom: 10px;
         }
 
         input {
-            padding: 8px 10px;
-            width: 260px;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
             border: 1px solid var(--border);
+            width: 260px;
         }
 
         button {
             padding: 8px 14px;
             border: none;
-            background-color: var(--primary);
-            color: white;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
-            transition: transform .1s, opacity .2s;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            transition: all .2s;
         }
 
         button:hover {
-            transform: scale(1.03);
             opacity: .9;
+            transform: translateY(-1px);
         }
 
         button.eliminar {
-            background-color: var(--danger);
+            background: var(--danger);
         }
 
         button.editar {
-            background-color: var(--warning);
-            color: white;
+            background: var(--warning);
+            color: #111;
         }
 
-        ul {
-            list-style: none;
-            padding-left: 0;
+        /* ===== FACULTAD HEADER ===== */
+        .facultad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        li {
-            background: #f1f5f9;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 10px;
+        .acciones form {
+            display: inline-block;
+            margin-right: 6px;
         }
 
         hr {
@@ -112,24 +140,50 @@
             background: var(--border);
         }
 
-        .acciones form {
+        /* ===== CARRERAS ===== */
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        li {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .nombre-carrera {
+            font-weight: 500;
+        }
+
+        .acciones-carrera form {
             display: inline-block;
-            margin-right: 8px;
+            margin-left: 5px;
+        }
+
+        em {
+            color: var(--muted);
         }
     </style>
 </head>
+
 <body>
+
+<header>
+    <h1>Gestión Académica</h1>
+    <a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver</a>
+</header>
 
 <div class="contenedor">
 
-    <!-- BOTÓN VOLVER ARRIBA -->
-    <a href="{{ url_for('admin.dashboard_admin') }}" class="volver">
-        ⬅ Volver 
-    </a>
-
-    <h2>Gestión Académica</h2>
-
-    <!-- ================== CREAR FACULTAD ================== -->
+    <!-- CREAR FACULTAD -->
     <div class="card">
         <h3>Crear Facultad</h3>
         <form method="POST">
@@ -139,53 +193,53 @@
         </form>
     </div>
 
-    <!-- ================== LISTADO ================== -->
+    <!-- LISTADO FACULTADES -->
     {% for item in facultades_data %}
         <div class="card">
 
-            <h3>{{ item.facultad.nombre }}</h3>
+            <div class="facultad-header">
+                <h3>{{ item.facultad.nombre }}</h3>
 
-            <!-- ====== EDITAR / ELIMINAR FACULTAD ====== -->
-            <div class="acciones">
-                <form method="POST"
-                      action="{{ url_for('admin.editar_facultad', facultad_id=item.facultad.id) }}">
-                    <input type="text" name="nombre"
-                           value="{{ item.facultad.nombre }}" required>
-                    <button class="editar">✏ Editar</button>
-                </form>
+                <div class="acciones">
+                    <form method="POST"
+                          action="{{ url_for('admin.editar_facultad', facultad_id=item.facultad.id) }}">
+                        <input type="text" name="nombre"
+                               value="{{ item.facultad.nombre }}" required>
+                        <button class="editar">✏ Editar</button>
+                    </form>
 
-                <form method="POST"
-                      action="{{ url_for('admin.eliminar_facultad', facultad_id=item.facultad.id) }}"
-                      onsubmit="return confirm('¿Eliminar facultad?');">
-                    <button class="eliminar">🗑 Eliminar</button>
-                </form>
+                    <form method="POST"
+                          action="{{ url_for('admin.eliminar_facultad', facultad_id=item.facultad.id) }}"
+                          onsubmit="return confirm('¿Eliminar facultad?');">
+                        <button class="eliminar">🗑 Eliminar</button>
+                    </form>
+                </div>
             </div>
 
             <hr>
 
-            <!-- ====== LISTADO DE CARRERAS ====== -->
-            <h4> Carreras</h4>
+            <h4>Carreras</h4>
 
             {% if item.carreras %}
                 <ul>
                     {% for c in item.carreras %}
                         <li>
-                            {{ c.nombre }}
+                            <span class="nombre-carrera">{{ c.nombre }}</span>
 
-                            <form method="POST"
-                                  action="{{ url_for('admin.editar_carrera', carrera_id=c.id) }}"
-                                  style="display:inline">
-                                <input type="text" name="nuevo_nombre"
-                                       value="{{ c.nombre }}" required>
-                                <button class="editar">Editar</button>
-                            </form>
+                            <div class="acciones-carrera">
+                                <form method="POST"
+                                      action="{{ url_for('admin.editar_carrera', carrera_id=c.id) }}">
+                                    <input type="text" name="nuevo_nombre"
+                                           value="{{ c.nombre }}" required>
+                                    <button class="editar">Editar</button>
+                                </form>
 
-                            <form method="POST"
-                                  action="{{ url_for('admin.eliminar_carrera', carrera_id=c.id) }}"
-                                  style="display:inline"
-                                  onsubmit="return confirm('¿Eliminar carrera?');">
-                                <button class="eliminar">Eliminar</button>
-                            </form>
+                                <form method="POST"
+                                      action="{{ url_for('admin.eliminar_carrera', carrera_id=c.id) }}"
+                                      onsubmit="return confirm('¿Eliminar carrera?');">
+                                    <button class="eliminar">Eliminar</button>
+                                </form>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
@@ -193,7 +247,6 @@
                 <p><em>No hay carreras registradas</em></p>
             {% endif %}
 
-            <!-- ====== CREAR CARRERA ====== -->
             <form method="POST"
                   action="{{ url_for('admin.crear_carrera', facultad_id=item.facultad.id) }}">
                 <input type="text" name="nombre_carrera"
