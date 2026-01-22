@@ -151,6 +151,31 @@
             cursor: not-allowed;
             opacity: 0.8;
         }
+        .btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Botón Postular */
+        .btn-postular {
+            background-color: #0d6efd; 
+            color: white;
+        }
+
+        .btn-postular:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* Botón Ya postulado */
+        .btn-postulado {
+            background-color: #6c757d; 
+            color: white;
+            cursor: not-allowed;
+        }
 
     </style>
 </head>
@@ -201,27 +226,52 @@
     <!-- OFERTAS LABORALES -->
     <div class="card seccion" id="laborales">
         <h2>Ofertas Laborales</h2>
+
         {% if ofertas_laborales %}
             {% for oferta in ofertas_laborales %}
-                <div class="oferta">
-                    <h3>{{ oferta.titulo }}</h3>
-                    <p>{{ oferta.descripcion }}</p>
-                    {% if oferta.ya_postulado %}
-                        <button class="btn-postulado" disabled>
-                             Ya postulado
-                        </button>
-                    {% else %}
-                        <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
-                            <button class="btn-postular">Postular</button>
-                        </form>
-                    {% endif %}
+            <div class="oferta">
+                <h3>{{ oferta.titulo }}</h3>
+                <p>{{ oferta.descripcion }}</p>
 
-                </div>
+                <p>
+                    <strong>Ciudad:</strong> {{ oferta.ciudad or 'No especificada' }} |
+                    <strong>Modalidad:</strong> {{ oferta.modalidad }} |
+                    <strong>Jornada:</strong> {{ oferta.jornada }}
+                </p>
+
+                <p>
+                    <strong>Salario:</strong> {{ oferta.salario or 'A convenir' }} |
+                    <strong>Tipo:</strong> {{ oferta.tipo }}
+                </p>
+
+                {% if oferta.ya_postulado %}
+                    <strong>Estado:</strong>
+                    {% if oferta.estado_postulacion == 'aceptado' %}
+                        <span class="badge badge-success">Aceptado</span>
+                    {% elif oferta.estado_postulacion == 'cancelada' %}
+                        <span class="badge badge-secondary">
+                            Cancelado (aceptado en otra empresa)
+                        </span>
+                    {% elif oferta.estado_postulacion == 'rechazado' %}
+                        <span class="badge badge-danger">Rechazado</span>
+                    {% else %}
+                        <span class="badge badge-warning">En revisión</span>
+                    {% endif %}
+                {% else %}
+                    <form method="POST"
+                        action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}">
+                        <button class="btn btn-primary">Postular</button>
+                    </form>
+                {% endif %}
+            </div>
             {% endfor %}
+
+
         {% else %}
             <p>No hay ofertas laborales.</p>
         {% endif %}
     </div>
+
 
     <!-- PRÁCTICAS -->
     <div class="card seccion" id="practicas">
@@ -247,26 +297,45 @@
             </div>
 
         {% else %}
-            {% for oferta in ofertas_practicas %}
+            {% if ofertas_practicas %}
+                {% for oferta in ofertas_practicas %}
                 <div class="oferta">
                     <h3>{{ oferta.titulo }}</h3>
                     <p>{{ oferta.descripcion }}</p>
+
+                    <p>
+                        <strong>Ciudad:</strong> {{ oferta.ciudad or 'No especificada' }} |
+                        <strong>Modalidad:</strong> {{ oferta.modalidad }} |
+                        <strong>Jornada:</strong> {{ oferta.jornada }}
+                    </p>
+
                     {% if oferta.ya_postulado %}
-                        <button class="btn-postulado" disabled>
-                             Ya postulado
-                        </button>
+                        <strong>Estado:</strong>
+                        {% if oferta.estado_postulacion == 'aceptado' %}
+                            <span class="badge badge-success">Aceptado</span>
+                        {% elif oferta.estado_postulacion == 'cancelada' %}
+                            <span class="badge badge-secondary">
+                                Cancelado (aceptado en otra empresa)
+                            </span>
+                        {% else %}
+                            <span class="badge badge-warning">En revisión</span>
+                        {% endif %}
                     {% else %}
-                        <form action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}" method="POST">
-                            <button class="btn-postular">Postular</button>
+                        <form method="POST"
+                            action="{{ url_for('estudiante.postular_oferta', oferta_id=oferta.id) }}">
+                            <button class="btn btn-primary">Postular</button>
                         </form>
                     {% endif %}
-
                 </div>
+                {% endfor %}
+
+
             {% else %}
                 <p>No hay prácticas disponibles.</p>
-            {% endfor %}
+            {% endif %}
         {% endif %}
     </div>
+
 
    
     <!-- CURRÍCULUM VITAE -->
@@ -302,22 +371,34 @@
 
 
     
-
-
     <!-- RECOMENDACIONES -->
+
     <div class="card seccion" id="recomendaciones">
         <h2>Recomendaciones</h2>
+
         {% if recomendaciones %}
-            {% for reco in recomendaciones %}
-                <div class="recomendacion">
-                    <p><em>{{ reco.mensaje }}</em></p>
-                    <small>{{ reco.docente_nombre }}</small>
-                </div>
+            {% for r in recomendaciones %}
+            <div class="card">
+                <p><strong>Docente:</strong> {{ r.docente_nombre }}</p>
+
+                <p><strong>Mensaje:</strong> {{ r.mensaje_docente }}</p>
+
+                {% if r.estado == "pendiente" %}
+                <form method="POST"
+                    action="{{ url_for('estudiante.marcar_recomendacion_respondida',
+                                        recomendacion_id=r.id) }}">
+                    <button>Marcar como respondida</button>
+                </form>
+                {% else %}
+                <span style="color:green;"> Ya respondida</span>
+                {% endif %}
+            </div>
             {% endfor %}
         {% else %}
             <p>No tienes recomendaciones.</p>
         {% endif %}
     </div>
+
 
 </div>
 

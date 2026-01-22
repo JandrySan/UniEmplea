@@ -52,15 +52,50 @@ def dashboard_estudiante():
         o for o in todas_ofertas
         if o.tipo == "practica" and o.estado in ["aprobada", "activa"]
     ]
+    
+
+    ofertas_laborales_data = []
+
     for oferta in ofertas_laborales:
-        oferta.ya_postulado = repo_postulaciones.existe_postulacion(
+        postulacion = repo_postulaciones.obtener_por_oferta_y_estudiante(
             str(oferta.id), usuario_id
         )
 
+        ofertas_laborales_data.append({
+            "id": str(oferta.id),
+            "titulo": oferta.titulo,
+            "descripcion": oferta.descripcion,
+            "ciudad": getattr(oferta, "ciudad", None),
+            "modalidad": getattr(oferta, "modalidad", None),
+            "jornada": getattr(oferta, "jornada", None),
+            "salario": getattr(oferta, "salario", None),
+            "tipo": oferta.tipo,
+            "ya_postulado": postulacion is not None,
+            "estado_postulacion": postulacion["estado"] if postulacion else None
+        })
+
+
+    
+
+
+    ofertas_practicas_data = []
+
     for oferta in ofertas_practicas:
-        oferta.ya_postulado = repo_postulaciones.existe_postulacion(
+        postulacion = repo_postulaciones.obtener_por_oferta_y_estudiante(
             str(oferta.id), usuario_id
         )
+
+        ofertas_practicas_data.append({
+            "id": str(oferta.id),
+            "titulo": oferta.titulo,
+            "descripcion": oferta.descripcion,
+            "ciudad": getattr(oferta, "ciudad", None),
+            "modalidad": getattr(oferta, "modalidad", None),
+            "jornada": getattr(oferta, "jornada", None),
+            "tipo": oferta.tipo,
+            "ya_postulado": postulacion is not None,
+            "estado_postulacion": postulacion["estado"] if postulacion else None
+        })
 
 
     # Recomendaciones y notificaciones
@@ -88,13 +123,16 @@ def dashboard_estudiante():
         "dashboards/estudiante.html",
         usuario=usuario,
         estado_practicas=estado_practicas,
-        ofertas_laborales=ofertas_laborales,
-        ofertas_practicas=ofertas_practicas,
+        ofertas_laborales=ofertas_laborales_data,
+        ofertas_practicas=ofertas_practicas_data,
         recomendaciones=recomendaciones,
         notificaciones=notificaciones,
         empresa_practica=empresa_practica,
         oferta_practica=oferta_practica
     )
+
+
+
 
 
 @estudiante_bp.route("/postular/<oferta_id>", methods=["POST"])
@@ -214,4 +252,42 @@ def eliminar_cv_estudiante():
     else:
         flash("No hay CV para eliminar", "error")
 
+    return redirect(url_for("estudiante.dashboard_estudiante"))
+
+
+
+@estudiante_bp.route("/recomendacion/<reco_id>/responder", methods=["POST"])
+@requiere_rol("estudiante")
+def responder_recomendacion(reco_id):
+
+    repo = RepositorioRecomendacionesMongo()
+
+    repo.collection.update_one(
+        {"_id": ObjectId(reco_id)},
+        {"$set": {"respondida": True}}
+    )
+
+    flash("Recomendación marcada como respondida", "success")
+    return redirect(url_for("estudiante.dashboard_estudiante"))
+
+
+
+
+@estudiante_bp.route("/recomendacion/<recomendacion_id>/respondida", methods=["POST"])
+@requiere_rol("estudiante")
+def marcar_recomendacion_respondida(recomendacion_id):
+
+    repo = RepositorioRecomendacionesMongo()
+
+    repo.collection.update_one(
+        {"_id": ObjectId(recomendacion_id)},
+        {
+            "$set": {
+                "estado": "respondida",
+                "respuesta_estudiante": "visto"
+            }
+        }
+    )
+
+    flash("Recomendación marcada como respondida", "success")
     return redirect(url_for("estudiante.dashboard_estudiante"))

@@ -11,7 +11,6 @@
             background-color: #f4f6f8;
         }
 
-        /* ===== HEADER ===== */
         header {
             background-color: #0d6efd;
             color: white;
@@ -35,23 +34,12 @@
             font-weight: bold;
         }
 
-        .logout:hover {
-            opacity: 0.9;
-        }
-
-        /* ===== CONTENEDOR ===== */
         .container {
             max-width: 1100px;
             margin: auto;
             padding: 30px;
         }
 
-        h2 {
-            color: #0d6efd;
-            margin-top: 0;
-        }
-
-        /* ===== CARD ===== */
         .card {
             background: white;
             padding: 20px;
@@ -60,12 +48,6 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        .card h3 {
-            margin-top: 0;
-            color: #0d6efd;
-        }
-
-        /* ===== ESTUDIANTE ASIGNADO ===== */
         .estudiante {
             border: 1px solid #ddd;
             padding: 15px;
@@ -95,7 +77,16 @@
             background-color: #0b5ed7;
         }
 
-        /* ===== TABLA ===== */
+        .estado-ok {
+            color: green;
+            font-weight: bold;
+        }
+
+        .estado-pendiente {
+            color: orange;
+            font-weight: bold;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -110,10 +101,6 @@
 
         th {
             background: #f1f5f9;
-        }
-
-        tr:hover {
-            background: #f9fafb;
         }
     </style>
 </head>
@@ -130,7 +117,7 @@
 
 <div class="container">
 
-    <!-- 🔹 MIS ESTUDIANTES ASIGNADOS -->
+    <!-- 🔹 MIS ESTUDIANTES -->
     <div class="card">
         <h3>Mis Estudiantes Asignados</h3>
 
@@ -141,8 +128,7 @@
                     {{ e.correo }} | Semestre {{ e.semestre }}
 
                     <form method="POST"
-                          action="{{ url_for('docente.recomendar_estudiante', estudiante_id=e._id) }}">
-
+                          action="{{ url_for('docente.enviar_recomendacion', estudiante_id=e._id) }}">
                         <textarea name="mensaje"
                                   rows="3"
                                   placeholder="Escribe una recomendación..."
@@ -153,8 +139,26 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p><em>No tienes estudiantes asignados aún.</em></p>
+            <p><em>No tienes estudiantes asignados.</em></p>
         {% endif %}
+    </div>
+
+    <!-- 🔹 RECOMENDACIONES ENVIADAS -->
+    <div class="card">
+        <h3>Recomendaciones enviadas</h3>
+
+        {% for r in recomendaciones %}
+        <div class="card">
+            <p><strong>Mensaje:</strong> {{ r.mensaje_docente }}</p>
+
+            {% if r.estado == "respondida" %}
+            <span style="color:green;"> Estudiante respondió</span>
+            {% else %}
+            <span style="color:orange;"> Pendiente de respuesta</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+
     </div>
 
     <!-- 🔹 TODOS LOS ESTUDIANTES -->
