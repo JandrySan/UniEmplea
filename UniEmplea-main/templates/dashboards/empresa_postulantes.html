@@ -160,21 +160,42 @@
                     </td>
 
                     <td>
-                        <form method="POST"
-                            action="{{ url_for('empresa.aceptar_postulante', postulacion_id=p._id) }}">
-                            <button class="btn btn-success">Aceptar</button>
-                        </form>
+                    
+                    <td>
+                        {% if p.estado == "pendiente" %}
+                            <!-- BOTONES SOLO SI ESTÁ PENDIENTE -->
+                            <form method="POST"
+                                action="{{ url_for('empresa.aceptar_postulante', postulacion_id=p._id) }}"
+                                style="display:inline;">
+                                <button class="btn btn-accept">✔ Aceptar</button>
+                            </form>
 
+                            <form method="POST"
+                                action="{{ url_for('empresa.rechazar_postulante', postulacion_id=p._id) }}"
+                                style="display:inline;">
+                                <button class="btn btn-reject">✖ Rechazar</button>
+                            </form>
 
-                        <form action="{{ url_for('empresa.rechazar_postulante', postulacion_id=p._id) }}"
-                            method="POST"
-                            style="display:inline;">
-                            <button type="submit" class="btn btn-danger">
-                                ❌ Rechazar
-                            </button>
-                        </form>
+                        {% elif p.estado == "aceptado" %}
+                            <span style="color: green; font-weight: bold;">
+                                ✔ Aceptado
+                            </span>
 
+                        {% elif p.estado == "cancelada" %}
+                            <span style="color: gray; font-style: italic;">
+                                Cancelado (aceptado en otra empresa)
+                            </span>
+
+                        {% elif p.estado == "rechazada" %}
+                            <span style="color: red; font-weight: bold;">
+                                ✖ Rechazado
+                            </span>
+                        {% endif %}
                     </td>
+
+                        
+
+
                 </tr>
                 {% endfor %}
             </tbody>

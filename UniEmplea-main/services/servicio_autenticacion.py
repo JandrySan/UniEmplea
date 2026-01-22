@@ -67,7 +67,8 @@ class ServicioAutenticacion:
                 id=str(data["_id"]),
                 nombre=data["nombre"],
                 correo=data["correo"],
-                facultad_id=data.get("facultad_id")
+                facultad_id=data.get("facultad_id"),
+                es_tutor=data.get("es_tutor", False)
             )
 
         if rol == "director_carrera":

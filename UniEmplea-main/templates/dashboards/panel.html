@@ -303,6 +303,7 @@
 
 
 <!-- ===== SOLICITUDES ===== -->
+
 <div id="solicitudes" class="seccion">
     <div class="card">
         <h3> Solicitudes de Prácticas</h3>
@@ -315,24 +316,57 @@
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
+
             {% for e in solicitudes_practicas %}
             <tr>
                 <td>{{ e.nombre }}</td>
                 <td>{{ e.semestre }}</td>
-                <td class="estado pendiente">Pendiente</td>
+
+                <!-- ===== ESTADO ===== -->
+                <td class="estado
+                    {% if e.practica_aprobada == True %}
+                        aprobada
+                    {% elif e.practica_aprobada == False %}
+                        rechazada
+                    {% else %}
+                        pendiente
+                    {% endif %}
+                ">
+                    {% if e.practica_aprobada == True %}
+                        Aprobada
+                    {% elif e.practica_aprobada == False %}
+                        Rechazada
+                    {% else %}
+                        Pendiente
+                    {% endif %}
+                </td>
+
+
+                <!-- ===== ACCIONES ===== -->
+                
                 <td>
                     <form method="POST"
-                          action="{{ url_for('director.aprobar_practica', estudiante_id=e._id) }}"
-                          style="display:inline;">
-                        <button>Aprobar</button>
+                        action="{{ url_for('director.accion_practica', estudiante_id=e._id) }}"
+                        style="display:inline;">
+                        <input type="hidden" name="accion" value="aprobar">
+                        <button 
+                            {% if e.practica_aprobada == True %} disabled {% endif %}>
+                            Aprobar
+                        </button>
                     </form>
 
                     <form method="POST"
-                          action="{{ url_for('director.rechazar_practica', estudiante_id=e._id) }}"
-                          style="display:inline;">
-                        <button class="rechazar">Rechazar</button>
+                        action="{{ url_for('director.accion_practica', estudiante_id=e._id) }}"
+                        style="display:inline;">
+                        <input type="hidden" name="accion" value="rechazar">
+                        <button class="rechazar"
+                            {% if e.practica_aprobada == False %} disabled {% endif %}>
+                            Rechazar
+                        </button>
                     </form>
                 </td>
+
+
             </tr>
             {% endfor %}
         </table>
@@ -341,6 +375,8 @@
         {% endif %}
     </div>
 </div>
+
+
 
 </main>
 

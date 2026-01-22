@@ -113,46 +113,63 @@ def ver_postulantes(oferta_id):
 @requiere_rol("empresa")
 def aceptar_postulante(postulacion_id):
 
-    # 1. Buscar postulación
+    repo_post = RepositorioPostulacionesMongo()
+    repo_ofertas = RepositorioOfertasMongo()
+    repo_estudiantes = RepositorioUsuariosMongo()
+    repo_notif = RepositorioNotificacionesMongo()
+
     postulacion = repo_post.collection.find_one({"_id": ObjectId(postulacion_id)})
     if not postulacion:
         flash("Postulación no encontrada", "error")
         return redirect(url_for("empresa.dashboard"))
 
-    # 2. Buscar oferta
-    oferta = repo_ofertas.collection.find_one({"_id": ObjectId(postulacion["oferta_id"])})
+    oferta = repo_ofertas.collection.find_one(
+        {"_id": ObjectId(postulacion["oferta_id"])}
+    )
     if not oferta:
         flash("Oferta no encontrada", "error")
         return redirect(url_for("empresa.dashboard"))
 
-    # 3. Marcar postulación como aceptada
+    # 1️⃣ Aceptar esta postulación
     repo_post.collection.update_one(
         {"_id": ObjectId(postulacion_id)},
         {"$set": {"estado": "aceptado"}}
     )
 
-    # 4. Guardar práctica en el ESTUDIANTE 
-    repo_estudiantes.collection.update_one(
-        {"_id": ObjectId(postulacion["estudiante_id"])},
-        {"$set": {
-            "practica_aprobada": True,
-            "practica_oferta_id": ObjectId(postulacion["oferta_id"]),
-            "empresa_practica_id": ObjectId(oferta["empresa_id"])
-        }}
+    # 2️⃣ Cancelar SOLO postulaciones del MISMO TIPO
+    repo_post.collection.update_many(
+        {
+            "estudiante_id": postulacion["estudiante_id"],
+            "tipo_oferta": postulacion["tipo_oferta"],
+            "estado": "pendiente",
+            "_id": {"$ne": ObjectId(postulacion_id)}
+        },
+        {"$set": {"estado": "cancelada"}}
     )
 
-    # 5. Notificación
-    mensaje = f"¡Felicidades! Has sido aceptado para la práctica: {oferta['titulo']}"
-    repo_notif.crear(
-        Notificacion(
-            id=None,
-            usuario_id=postulacion["estudiante_id"],
-            mensaje=mensaje
+    # 3️⃣ Si es PRÁCTICA → guardar datos en estudiante
+    if postulacion["tipo_oferta"] == "practica":
+        repo_estudiantes.collection.update_one(
+            {"_id": ObjectId(postulacion["estudiante_id"])},
+            {"$set": {
+                "practica_aprobada": True,
+                "practica_oferta_id": ObjectId(postulacion["oferta_id"]),
+                "empresa_practica_id": ObjectId(oferta["empresa_id"])
+            }}
         )
+
+    # 4️⃣ Notificación
+    repo_notif.crear(Notificacion(
+        id=None,
+        usuario_id=postulacion["estudiante_id"],
+        mensaje=f"Has sido aceptado en: {oferta['titulo']}"
+    ))
+
+    flash("Postulante aceptado correctamente", "success")
+    return redirect(
+        url_for("empresa.ver_postulantes", oferta_id=postulacion["oferta_id"])
     )
 
-    flash("Postulante aceptado y práctica asignada", "success")
-    return redirect(url_for("empresa.ver_postulantes", oferta_id=postulacion["oferta_id"]))
 
 
 
@@ -187,32 +204,13 @@ def eliminar_oferta(oferta_id):
 @empresa_bp.route("/postulacion/<postulacion_id>/rechazar", methods=["POST"])
 @requiere_rol("empresa")
 def rechazar_postulante(postulacion_id):
+
     repo_post = RepositorioPostulacionesMongo()
-    repo_notif = RepositorioNotificacionesMongo()
-    repo_ofertas = RepositorioOfertasMongo()
 
-    postulacion = repo_post.collection.find_one({"_id": ObjectId(postulacion_id)})
-    if not postulacion:
-        flash("Postulación no encontrada", "error")
-        return redirect(url_for("empresa.dashboard"))
-
-    oferta = repo_ofertas.collection.find_one({"_id": ObjectId(postulacion["oferta_id"])})
-    titulo = oferta["titulo"] if oferta else "la oferta"
-
-    # eliminar o marcar como rechazada
     repo_post.collection.update_one(
         {"_id": ObjectId(postulacion_id)},
         {"$set": {"estado": "rechazada"}}
     )
 
-    mensaje = f"Tu postulación para {titulo} ha sido rechazada."
-    repo_notif.crear(
-        Notificacion(
-            id=None,
-            usuario_id=postulacion["estudiante_id"],
-            mensaje=mensaje
-        )
-    )
-
-    flash("Postulante rechazado", "success")
-    return redirect(url_for("empresa.ver_postulantes", oferta_id=postulacion["oferta_id"]))
+    flash("Postulación rechazada", "success")
+    return redirect(request.referrer)

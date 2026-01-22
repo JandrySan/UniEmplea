@@ -7,7 +7,7 @@ from repositories.repositorio_recomendaciones_mongo import RepositorioRecomendac
 from repositories.repositorio_calificaciones_mongo import RepositorioCalificacionesMongo
 from models.usuario import Usuario
 from repositories.repositorio_postulaciones_mongo import RepositorioPostulacionesMongo 
-
+from datetime import datetime 
 
 egresado_bp = Blueprint("egresado", __name__)
 
@@ -127,25 +127,30 @@ def historial_academico():
     return render_template("dashboards/cali.html")
 
 
+
 @egresado_bp.route("/postular/<oferta_id>", methods=["POST"])
 @requiere_rol("egresado")
 def postular_oferta(oferta_id):
     usuario_id = session.get("usuario_id")
-    if not usuario_id:
-        return redirect(url_for("auth.login"))
-
-    from repositories.repositorio_postulaciones_mongo import RepositorioPostulacionesMongo
-    from models.postulacion import Postulacion
 
     repo_post = RepositorioPostulacionesMongo()
+    repo_ofertas = RepositorioOfertasMongo()
 
-    if not repo_post.existe_postulacion(oferta_id, usuario_id):
-        nueva_post = Postulacion(
-            id=None,
-            oferta_id=oferta_id,
-            estudiante_id=usuario_id
-        )
-        repo_post.crear(nueva_post)
+    if repo_post.existe_postulacion(oferta_id, usuario_id):
+        flash("Ya estás postulado a esta oferta", "info")
+        return redirect(url_for("egresado.dashboard_egresado"))
+
+    oferta = repo_ofertas.collection.find_one({"_id": ObjectId(oferta_id)})
+
+    nueva_postulacion = {
+        "estudiante_id": usuario_id,
+        "oferta_id": oferta_id,
+        "tipo_oferta": oferta["tipo"],  # 🔴 FUNDAMENTAL
+        "fecha": datetime.now(),
+        "estado": "pendiente"
+    }
+
+    repo_post.collection.insert_one(nueva_postulacion)
 
     flash("Postulación realizada correctamente", "success")
     return redirect(url_for("egresado.dashboard_egresado"))

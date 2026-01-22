@@ -1,106 +1,116 @@
-<style>
-:root {
-    --primary: #2563eb;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --text: #1f2937;
-    --danger: #dc2626;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Docentes</title>
 
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background: var(--bg);
-    margin: 0;
-    color: var(--text);
-}
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #1f2937;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
 
-main {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            color: var(--text);
+        }
 
-h2, h3 {
-    margin-bottom: 20px;
-}
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
 
-.card {
-    background: var(--card);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
-    margin-bottom: 30px;
-}
+        h2, h3 {
+            margin-bottom: 20px;
+        }
 
-label {
-    display: block;
-    margin-top: 15px;
-    font-weight: 600;
-}
+        .card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
 
-input {
-    width: 100%;
-    padding: 10px 12px;
-    margin-top: 6px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    font-size: 14px;
-}
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+        }
 
-input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+        }
 
-button {
-    margin-top: 25px;
-    width: 100%;
-    padding: 12px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity .2s, transform .1s;
-}
+        button {
+            margin-top: 20px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
-button:hover {
-    opacity: .9;
-    transform: scale(1.02);
-}
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
 
-ul {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 15px;
-}
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
 
-li {
-    padding: 10px 12px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
 
-.volver {
-    display: inline-block;
-    margin-bottom: 20px;
-    padding: 8px 14px;
-    background: var(--primary);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 500;
-}
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
 
-.volver:hover {
-    opacity: .9;
-}
-</style>
+        li {
+            padding: 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 10px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .volver {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 14px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
 
 <main>
 
@@ -108,8 +118,13 @@ li {
 
     <h2>Gestión de Docentes</h2>
 
+    <!-- CREAR DOCENTE -->
     <div class="card">
+        <h3>Crear Docente</h3>
+
         <form method="POST">
+            <input type="hidden" name="crear_docente" value="1">
+
             <label>Nombre</label>
             <input type="text" name="nombre" required>
 
@@ -119,18 +134,46 @@ li {
             <label>Contraseña</label>
             <input type="password" name="password" required>
 
-            <button type="submit">Crear Docente</button>
+            <button type="submit" class="btn-primary">
+                Crear Docente
+            </button>
         </form>
     </div>
 
+    <!-- LISTA DOCENTES -->
     <h3>Docentes de la Facultad</h3>
 
     <ul>
         {% for d in docentes %}
-            <li>{{ d.nombre }} – {{ d.correo }}</li>
+        <li>
+            <div>
+                <strong>{{ d.nombre }}</strong><br>
+                {{ d.correo }}<br>
+                <small>
+                    Estado tutor:
+                    {% if d.es_tutor %}
+                        <strong style="color:green;">Habilitado</strong>
+                    {% else %}
+                        <strong style="color:red;">No habilitado</strong>
+                    {% endif %}
+                </small>
+            </div>
+
+            <!-- BOTÓN HABILITAR / QUITAR TUTOR -->
+            <form method="POST" action="{{ url_for('decano.toggle_tutor', docente_id=d.id) }}">
+                {% if d.es_tutor %}
+                    <button class="btn-danger">Quitar tutor</button>
+                {% else %}
+                    <button class="btn-success">Habilitar tutor</button>
+                {% endif %}
+            </form>
+        </li>
         {% else %}
-            <li>No hay docentes registrados</li>
+        <li>No hay docentes registrados</li>
         {% endfor %}
     </ul>
 
 </main>
+
+</body>
+</html>

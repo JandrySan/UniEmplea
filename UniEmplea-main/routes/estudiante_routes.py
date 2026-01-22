@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, flash, render_template, request, session, redirect, url_for
 from patterns.estrategia_practicas import EstrategiaPracticas
 from patterns.estrategia_empleo import EstrategiaEmpleo
@@ -6,6 +7,7 @@ from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
 from repositories.repositorio_ofertas_mongo import RepositorioOfertasMongo
 from repositories.repositorio_recomendaciones_mongo import RepositorioRecomendacionesMongo
 from repositories.repositorio_notificaciones_mongo import RepositorioNotificacionesMongo
+from repositories.repositorio_postulaciones_mongo import RepositorioPostulacionesMongo
 from utils.decoradores import requiere_rol
 from bson import ObjectId
 from repositories.repositorio_estudiantes_mongo import RepositorioEstudiantesMongo
@@ -20,6 +22,7 @@ repo_ofertas = RepositorioOfertasMongo()
 repo_recos = RepositorioRecomendacionesMongo()
 repo_notifs = RepositorioNotificacionesMongo()
 repo_estudiantes = RepositorioEstudiantesMongo()    
+repo_postulaciones = RepositorioPostulacionesMongo()
 
 
 @estudiante_bp.route("/dashboard")
@@ -49,6 +52,16 @@ def dashboard_estudiante():
         o for o in todas_ofertas
         if o.tipo == "practica" and o.estado in ["aprobada", "activa"]
     ]
+    for oferta in ofertas_laborales:
+        oferta.ya_postulado = repo_postulaciones.existe_postulacion(
+            str(oferta.id), usuario_id
+        )
+
+    for oferta in ofertas_practicas:
+        oferta.ya_postulado = repo_postulaciones.existe_postulacion(
+            str(oferta.id), usuario_id
+        )
+
 
     # Recomendaciones y notificaciones
     recomendaciones = repo_recos.obtener_por_estudiante(usuario_id)
@@ -84,27 +97,31 @@ def dashboard_estudiante():
     )
 
 
-
 @estudiante_bp.route("/postular/<oferta_id>", methods=["POST"])
 @requiere_rol("estudiante")
 def postular_oferta(oferta_id):
     usuario_id = session.get("usuario_id")
-    if not usuario_id:
-        return redirect(url_for("auth.login"))
-        
-    from repositories.repositorio_postulaciones_mongo import RepositorioPostulacionesMongo
-    from models.postulacion import Postulacion
-    
+
     repo_post = RepositorioPostulacionesMongo()
-    
+    repo_ofertas = RepositorioOfertasMongo()
+
     if repo_post.existe_postulacion(oferta_id, usuario_id):
-        # Ya te has postulado a esta oferta
-        pass
-    else:
-        nueva_post = Postulacion(id=None, oferta_id=oferta_id, estudiante_id=usuario_id)
-        repo_post.crear(nueva_post)
-        # Postulación exitosa
-        
+        flash("Ya estás postulado a esta oferta", "info")
+        return redirect(url_for("estudiante.dashboard_estudiante"))
+
+    oferta = repo_ofertas.collection.find_one({"_id": ObjectId(oferta_id)})
+
+    nueva_postulacion = {
+        "estudiante_id": usuario_id,
+        "oferta_id": oferta_id,
+        "tipo_oferta": oferta["tipo"],  
+        "fecha": datetime.now(),
+        "estado": "pendiente"
+    }
+
+    repo_post.collection.insert_one(nueva_postulacion)
+
+    flash("Postulación realizada correctamente", "success")
     return redirect(url_for("estudiante.dashboard_estudiante"))
 
 

@@ -55,13 +55,8 @@ def dashboard_director():
         if e.get("solicitud_practica") is True
     ]
 
-    
-    profesores = list(
-        repo_usuarios.collection.find({
-            "rol": "docente",
-            "facultad_id": facultad_id
-        })
-    )
+
+    profesores = repo_usuarios.obtener_tutores_por_facultad(facultad_id)
 
     # Resolver nombre del tutor 
     for e in estudiantes_practicas:
@@ -74,15 +69,20 @@ def dashboard_director():
             e["tutor_nombre"] = "Sin tutor"
 
     # Convertir IDs a string 
+
     for lista in [
         estudiantes_total,
         estudiantes_practicas,
         estudiantes_con_tutor,
-        solicitudes_practicas,
-        profesores
+        solicitudes_practicas
     ]:
         for item in lista:
             item["_id"] = str(item["_id"])
+
+            if "practica_aprobada" not in item:
+                item["practica_aprobada"] = None
+
+
 
     # MÉTRICAS 
     metricas = {
@@ -117,12 +117,15 @@ def ver_carrera():
 @requiere_rol("director_carrera")
 def ver_docentes():
     facultad_id = session["facultad_id"]
-    docentes = repo_usuarios.obtener_docentes_por_facultad(facultad_id)
+
+
+    docentes = repo_usuarios.obtener_tutores_por_facultad(facultad_id)
 
     return render_template(
         "dashboards/director_docentes.html",
         docentes=docentes
     )
+
 
 
 @director_bp.route("/estudiantes/<estudiante_id>/asignar_tutor", methods=["POST"])
@@ -275,9 +278,13 @@ def solicitudes_practicas():
     for e in estudiantes:
         e["_id"] = str(e["_id"])
 
+        # 🔴 CLAVE: si no existe, forzar a None
+        if "practica_aprobada" not in e:
+            e["practica_aprobada"] = None
+
     return render_template(
         "dashboards/director_practicas.html",
-        estudiantes=estudiantes
+        solicitudes_practicas=estudiantes
     )
 
 
@@ -290,28 +297,24 @@ def accion_practica(estudiante_id):
     if accion == "aprobar":
         repo_estudiantes.collection.update_one(
             {"_id": ObjectId(estudiante_id)},
-            {
-                "$set": {
-                    "practica_aprobada": True,
-                    "solicitud_practica": True
-                }
-            }
+            {"$set": {
+                "practica_aprobada": True,
+                "solicitud_practica": True
+            }}
         )
         flash("Práctica aprobada", "success")
 
-    else:
+    elif accion == "rechazar":
         repo_estudiantes.collection.update_one(
             {"_id": ObjectId(estudiante_id)},
-            {
-                "$set": {
-                    "practica_aprobada": False,
-                    "solicitud_practica": False
-                }
-            }
+            {"$set": {
+                "practica_aprobada": False,
+                "solicitud_practica": True
+            }}
         )
         flash("Práctica rechazada", "warning")
 
-    return redirect(url_for("director.solicitudes_practicas"))
+    return redirect(url_for("director.panel"))
 
 
 @director_bp.route("/practicas/aprobar/<estudiante_id>", methods=["POST"])
@@ -320,12 +323,13 @@ def aprobar_practica(estudiante_id):
     repo_estudiantes.collection.update_one(
         {"_id": ObjectId(estudiante_id)},
         {"$set": {
-            "practica_aprobada": True,
-            "solicitud_practica": True
+            "practica_aprobada": True
         }}
     )
     flash("Práctica aprobada", "success")
     return redirect(url_for("director.panel"))
+
+
 
 
 @director_bp.route("/practicas/rechazar/<estudiante_id>", methods=["POST"])
@@ -334,12 +338,11 @@ def rechazar_practica(estudiante_id):
     repo_estudiantes.collection.update_one(
         {"_id": ObjectId(estudiante_id)},
         {"$set": {
-            "solicitud_practica": False
+            "practica_aprobada": False
         }}
     )
-    flash("Solicitud de práctica rechazada", "error")
+    flash("Práctica rechazada", "warning")
     return redirect(url_for("director.panel"))
-
 
 
 

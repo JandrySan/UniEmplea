@@ -9,3 +9,4 @@ class MongoDB:
             client = MongoClient("mongodb://localhost:27017/")
             cls._instancia.db = client["uniemplea_db"]
         return cls._instancia
+
