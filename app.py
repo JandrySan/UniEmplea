@@ -19,7 +19,9 @@ import os
 load_dotenv()  # Carga variables de entorno desde .env
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "clave_secreta_por_defecto")  # Asegúrate de definir SECRET_KEY en tu .env
+app.secret_key = os.getenv("SECRET_KEY")
+if not app.secret_key:
+    raise ValueError("La variable de entorno SECRET_KEY no está configurada")
 
 
 # =====================================================
