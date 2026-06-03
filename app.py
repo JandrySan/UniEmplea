@@ -12,9 +12,14 @@ from repositorios import (
 
 import pandas as pd
 from bson.objectid import ObjectId
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()  # Carga variables de entorno desde .env
 
 app = Flask(__name__)
-app.secret_key = "clave_segura_universidad"
+app.secret_key = os.getenv("SECRET_KEY", "clave_secreta_por_defecto")  # Asegúrate de definir SECRET_KEY en tu .env
 
 
 # =====================================================
