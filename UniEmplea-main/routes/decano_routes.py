@@ -16,7 +16,7 @@ servicio = ServicioDirectores(repo_usuarios, repo_carreras)
 repo_usuarios = RepositorioUsuariosMongo()
 
 
-@decano_bp.route("/dashboard")
+@decano_bp.route("/dashboard", methods=["GET"])
 @requiere_rol("decano")
 def dashboard_decano():
     facultad_id = session.get("facultad_id")
@@ -45,7 +45,7 @@ def asignar_director():
 
 
 
-@decano_bp.route("/carreras")
+@decano_bp.route("/carreras", methods=["GET"])
 @requiere_rol("decano")
 def listar_carreras():
     facultad_id = session["facultad_id"]
@@ -190,7 +190,7 @@ def toggle_tutor(docente_id):
     return redirect(url_for("decano.gestionar_docentes"))
 
 
-@decano_bp.route("/directores")
+@decano_bp.route("/directores", methods=["GET"])
 @requiere_rol("decano")
 def ver_directores():
     facultad_id = session["facultad_id"]
@@ -219,7 +219,7 @@ def ver_directores():
     )
 
 
-@decano_bp.route("/directores")
+@decano_bp.route("/directores", methods=["GET"])
 @requiere_rol("decano")
 def listar_directores():
     facultad_id = session["facultad_id"]

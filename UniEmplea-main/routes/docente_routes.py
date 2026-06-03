@@ -1,9 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash
 from utils.decoradores import requiere_rol
 from repositories.repositorio_recomendaciones_mongo import RepositorioRecomendacionesMongo
 from repositories.repositorio_estudiantes_mongo import RepositorioEstudiantesMongo
 from bson import ObjectId
+
 
 docente_bp = Blueprint("docente", __name__)
 
@@ -11,7 +12,7 @@ repo_recomendaciones = RepositorioRecomendacionesMongo()
 repo_estudiantes = RepositorioEstudiantesMongo()
 
 
-@docente_bp.route("/dashboard")
+@docente_bp.route("/dashboard", methods=["GET"])
 @requiere_rol("docente")
 def dashboard_docente():
 
@@ -61,7 +62,7 @@ def enviar_recomendacion(estudiante_id):
         "mensaje_docente": mensaje,
         "respuesta_estudiante": None,
         "estado": "pendiente",
-        "fecha": datetime.utcnow()
+        "fecha": datetime.now(timezone.utc)
     })
 
     flash("Recomendación enviada", "success")

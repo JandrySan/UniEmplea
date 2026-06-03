@@ -25,7 +25,7 @@ repo_notif = RepositorioNotificacionesMongo()
 repo_post = RepositorioPostulacionesMongo()
 
 
-@empresa_bp.route("/dashboard")
+@empresa_bp.route("/dashboard", methods=["GET"])
 @requiere_rol("empresa")
 def dashboard():
     empresa_id = session["usuario_id"]
@@ -81,7 +81,7 @@ def crear_oferta():
     return redirect(url_for("empresa.dashboard"))
 
 
-@empresa_bp.route("/oferta/<oferta_id>/postulantes")
+@empresa_bp.route("/oferta/<oferta_id>/postulantes", methods=["GET"])
 @requiere_rol("empresa")
 def ver_postulantes(oferta_id):
 
@@ -173,7 +173,7 @@ def aceptar_postulante(postulacion_id):
 
 
 
-@empresa_bp.route("/ofertas/nueva")
+@empresa_bp.route("/ofertas/nueva", methods=["GET"])
 @requiere_rol("empresa")
 def publicar_oferta():
     carreras = repo_carreras.obtener_todas()

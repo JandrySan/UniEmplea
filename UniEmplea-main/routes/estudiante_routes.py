@@ -25,7 +25,7 @@ repo_estudiantes = RepositorioEstudiantesMongo()
 repo_postulaciones = RepositorioPostulacionesMongo()
 
 
-@estudiante_bp.route("/dashboard")
+@estudiante_bp.route("/dashboard", methods=["GET"])
 @requiere_rol("estudiante")
 def dashboard_estudiante():
     usuario_id = session.get("usuario_id")
@@ -164,7 +164,7 @@ def postular_oferta(oferta_id):
 
 
 
-@estudiante_bp.route("/practicas")
+@estudiante_bp.route("/practicas", methods=["GET"])
 @requiere_rol("estudiante")
 def practicas():
     usuario_id = session.get("usuario_id")

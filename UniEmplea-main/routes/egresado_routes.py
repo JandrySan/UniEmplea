@@ -21,7 +21,7 @@ repo_post = RepositorioPostulacionesMongo()
 
 
 
-@egresado_bp.route("/dashboard")
+@egresado_bp.route("/dashboard", methods=["GET"])
 @requiere_rol("egresado")
 def dashboard_egresado():
 
@@ -121,7 +121,7 @@ def subir_cv():
 
 
 
-@egresado_bp.route("/historial_academico")
+@egresado_bp.route("/historial_academico", methods=["GET"])
 @requiere_rol("egresado")
 def historial_academico():
     return render_template("dashboards/cali.html")
@@ -156,7 +156,7 @@ def postular_oferta(oferta_id):
     return redirect(url_for("egresado.dashboard_egresado"))
 
 
-@egresado_bp.route("/hoja_vida")
+@egresado_bp.route("/hoja_vida", methods=["GET"])
 @requiere_rol("egresado")
 def hoja_vida():
     repo = RepositorioUsuariosMongo()

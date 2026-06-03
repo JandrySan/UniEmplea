@@ -26,7 +26,7 @@ servicio_metricas = ServicioMetricasDirector(repo_estudiantes)
 
 
 
-@director_bp.route("/dashboard", endpoint="panel")
+@director_bp.route("/dashboard", endpoint="panel", methods=["GET"])
 @requiere_rol("director_carrera")
 def dashboard_director():
     carrera_id = session.get("carrera_id")
@@ -102,7 +102,7 @@ def dashboard_director():
     )
 
 
-@director_bp.route("/carrera")
+@director_bp.route("/carrera", methods=["GET"])
 @requiere_rol("director_carrera")
 def ver_carrera():
     carrera_id = session["carrera_id"]
@@ -113,7 +113,7 @@ def ver_carrera():
         carrera=carrera 
     )
 
-@director_bp.route("/docentes")
+@director_bp.route("/docentes", methods=["GET"])
 @requiere_rol("director_carrera")
 def ver_docentes():
     facultad_id = session["facultad_id"]
@@ -209,7 +209,7 @@ def cargar_estudiantes_excel():
     return redirect(url_for("director.panel"))
 
 
-@director_bp.route("/ofertas/pendientes")
+@director_bp.route("/ofertas/pendientes", methods=["GET"])
 @requiere_rol("director_carrera")
 def ofertas_pendientes():
     from repositories.repositorio_ofertas_mongo import RepositorioOfertasMongo
@@ -232,7 +232,7 @@ def accion_oferta(oferta_id):
 
 
 
-@director_bp.route("/estudiantes")
+@director_bp.route("/estudiantes", methods=["GET"])
 @requiere_rol("director_carrera")
 def lista_estudiantes():
     filtro = request.args.get("filtro")
@@ -263,7 +263,7 @@ def eliminar_estudiante(id):
     return redirect(request.referrer)
 
 
-@director_bp.route("/practicas/solicitudes")
+@director_bp.route("/practicas/solicitudes", methods=["GET"])
 @requiere_rol("director_carrera")
 def solicitudes_practicas():
     carrera_id = session.get("carrera_id")
@@ -346,7 +346,7 @@ def rechazar_practica(estudiante_id):
 
 
 
-@director_bp.route("/estudiantes")
+@director_bp.route("/estudiantes", methods=["GET"])
 @requiere_rol("director_carrera")
 def obtener_estudiantes():
     filtro = request.args.get("filtro")
