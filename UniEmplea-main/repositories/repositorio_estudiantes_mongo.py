@@ -3,6 +3,8 @@ from database.mongo_connection import MongoDB
 from models.usuario import Usuario
 from models.egresado import Egresado
 from models.estudiante import Estudiante
+from werkzeug.security import generate_password_hash
+
 
 class RepositorioEstudiantesMongo:
 
@@ -87,11 +89,13 @@ class RepositorioEstudiantesMongo:
         }))
     
     def crear(self, estudiante):
+        password_segura = generate_password_hash("123456")  
+        # Contraseña por defecto, se recomienda cambiarla después
         self.collection.insert_one({
             "nombre": estudiante.nombre,
             "correo": estudiante.correo,
             "rol": "estudiante",
-            "password": "123456",  
+            "password": password_segura,  # Asegúrate de generar un hash de la contraseña
             "carrera_id": estudiante.carrera_id,
             "semestre": estudiante.semestre,
             "tutor_id": estudiante.tutor_id,

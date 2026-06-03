@@ -1,5 +1,5 @@
 # modelos.py
-from datetime import datetime
+from datetime import datetime, timezone
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from abc import ABC, abstractmethod
@@ -12,7 +12,7 @@ from typing import List, Optional, Dict, Any
 class ModeloBase:
     """Clase base para todos los modelos. Añade meta-información básica."""
     def a_diccionario(self) -> Dict[str, Any]:
-        return {"_creado_en": datetime.utcnow()}
+        return {"_creado_en": datetime.now(timezone.utc)}
 
 
 # =============================================================
