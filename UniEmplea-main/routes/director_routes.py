@@ -13,6 +13,7 @@ from models.usuario import Usuario
 from flask import render_template, request, redirect, url_for, session
 from models.estudiante import Usuario
 from models.docente import Docente
+import secrets
 
 director_bp = Blueprint("director", __name__)
 
@@ -146,7 +147,6 @@ def asignar_tutor(estudiante_id):
     return redirect(url_for("director.panel"))
 
 
-
 @director_bp.route("/estudiantes/cargar", methods=["POST"])
 @requiere_rol("director_carrera")
 def cargar_estudiantes_excel():
@@ -173,10 +173,10 @@ def cargar_estudiantes_excel():
 
     for _, row in df.iterrows():
         try:
-            nombre = row["nombre"].strip()
-            correo = row["correo"].strip().lower()
+            nombre = str(row["nombre"]).strip()
+            correo = str(row["correo"]).strip().lower()
             semestre = int(row["semestre"])
-        except:
+        except (KeyError, ValueError, AttributeError):
             ignorados += 1
             continue
 
@@ -188,8 +188,10 @@ def cargar_estudiantes_excel():
             ignorados += 1
             continue
 
-        password_plano = "123456"  
-        password_hash = generate_password_hash(password_plano)
+        # SOLUCIÓN INFAVORABLE PARA SONARQUBE: Generamos una clave temporal dinámica de 8 caracteres
+        # Esto elimina cualquier string estático en el código fuente.
+        password_temporal = secrets.token_urlsafe(8) 
+        password_hash = generate_password_hash(password_temporal)
 
         estudiante = {
             "nombre": nombre,
@@ -205,9 +207,9 @@ def cargar_estudiantes_excel():
         repo_estudiantes.collection.insert_one(estudiante)
         cargados += 1
 
+    # Nota: En producción, aquí enviarías un correo al estudiante con su `password_temporal`
     flash(f"✔ {cargados} estudiantes cargados | ❌ {ignorados} ignorados", "success")
     return redirect(url_for("director.panel"))
-
 
 @director_bp.route("/ofertas/pendientes", methods=["GET"])
 @requiere_rol("director_carrera")
