@@ -3,6 +3,7 @@ from database.mongo_connection import MongoDB
 from models.usuario import Usuario
 from models.egresado import Egresado
 from models.estudiante import Estudiante
+import os 
 from werkzeug.security import generate_password_hash
 
 
@@ -89,7 +90,8 @@ class RepositorioEstudiantesMongo:
         }))
     
     def crear(self, estudiante):
-        password_segura = generate_password_hash("123456")  
+        clave_defecto = os.getenv("PASSWORD_ESTUDIANTE_DEFECTO", "ClaveTemporalSeguraULEAM2026*")
+        password_segura = generate_password_hash(clave_defecto)  
         # Contraseña por defecto, se recomienda cambiarla después
         self.collection.insert_one({
             "nombre": estudiante.nombre,
