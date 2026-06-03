@@ -58,7 +58,7 @@ def login():
         return redirect(url_for("panel"))
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
     return redirect(url_for("login"))
@@ -67,7 +67,7 @@ def logout():
 # =====================================================
 # PANEL ADMINISTRADOR GENERAL
 # =====================================================
-@app.route("/admin")
+@app.route("/admin", methods=["GET"])
 def panel_admin():
     if session.get("rol") != "administrador":
         return redirect(url_for("login"))
@@ -129,7 +129,7 @@ def cargar_estudiantes():
     return redirect(url_for("panel_admin"))
 
 
-@app.route("/panel")
+@app.route("/panel", methods=["GET"])
 def panel():
     rol = session.get("rol")
     if not rol:
@@ -170,7 +170,7 @@ def crear_decano():
 # ----------------------------
 # DECANO: panel (ver carreras, asignar director)
 # ----------------------------
-@app.route("/decanos/panel")
+@app.route("/decanos/panel", methods=["GET"])
 def panel_decano():
     if session.get("rol") != "decano":
         return redirect(url_for("login"))
@@ -225,7 +225,7 @@ def decano_asignar_director():
 # ----------------------------
 # DIRECTOR: panel (ver estudiantes de la carrera, asignar tutor)
 # ----------------------------
-@app.route("/director/panel", )
+@app.route("/director/panel", methods=["GET"])
 def panel_director():
     if session.get("rol") != "director":
         return redirect(url_for("login"))
@@ -302,7 +302,7 @@ def crear_profesor():
     return redirect(url_for("panel_admin"))
 
 
-@app.route("/profesor/panel")
+@app.route("/profesor/panel", methods=["GET"])
 def panel_profesor():
     if session.get("rol") != "profesor":
         return redirect(url_for("login"))
