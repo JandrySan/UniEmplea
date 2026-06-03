@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ofertas Pendientes | UniEmplea</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-approve {
+            background: #16a34a;
+        }
+
+        .btn-reject {
+            background: #dc2626;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Ofertas Pendientes de Aprobación</h1>
+    <a href="{{ url_for('director.panel') }}">Volver al Panel</a>
+
+    {% for oferta in ofertas %}
+    <div class="card">
+        <h3>{{ oferta.titulo }}</h3>
+        <p>{{ oferta.descripcion }}</p>
+        <div class="actions">
+            <form action="{{ url_for('director.accion_oferta', oferta_id=oferta.id) }}" method="POST"
+                style="display:inline;">
+                <input type="hidden" name="accion" value="aprobar">
+                <button type="submit" class="btn-approve">Aprobar</button>
+            </form>
+            <form action="{{ url_for('director.accion_oferta', oferta_id=oferta.id) }}" method="POST"
+                style="display:inline;">
+                <input type="hidden" name="accion" value="rechazar">
+                <button type="submit" class="btn-reject">Rechazar</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <p>No hay ofertas pendientes.</p>
+    {% endfor %}
+</body>
+
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Carreras | Decano</title>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            color: var(--text);
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,.06);
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .info {
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        a.btn {
+            display: inline-block;
+            padding: 8px 14px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        a.btn:hover {
+            opacity: 0.9;
+        }
+
+        a.volver {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Gestión de Carreras</h1>
+    <p>Asignación de directores</p>
+</header>
+
+<main>
+
+    {% if carreras|length == 0 %}
+        <p>No existen carreras registradas.</p>
+    {% endif %}
+
+    {% for carrera in carreras %}
+        <div class="card">
+            <h3>{{ carrera.nombre }}</h3>
+
+            <div class="info">
+                <strong>Director actual:</strong>
+                {% if carrera.director_nombre %}
+                    {{ carrera.director_nombre }}
+                {% else %}
+                    <em>No asignado</em>
+                {% endif %}
+            </div>
+
+            <a
+                href="{{ url_for('decano.form_asignar_director', carrera_id=carrera.id) }}"
+                class="btn"
+            >
+                Asignar / Cambiar director
+            </a>
+        </div>
+    {% endfor %}
+
+    <a href="{{ url_for('decano.dashboard_decano') }}" class="volver">
+        ⬅ Volver al panel
+    </a>
+
+</main>
+
+</body>
+</html>

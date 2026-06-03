@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Publicar Oferta | UniEmplea</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 15px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        a {
+            display: inline-block;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: #0d6efd;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <a href="{{ url_for('empresa.dashboard') }}"> Volver al panel</a>
+
+    <div class="card">
+        <h2> Publicar Nueva Oferta</h2>
+
+        <form action="{{ url_for('empresa.crear_oferta') }}" method="POST">
+            <label>Título</label>
+            <input type="text" name="titulo" required>
+
+            <label>Descripción</label>
+            <textarea name="descripcion" rows="4" required></textarea>
+
+            <label>Ciudad</label>
+            <input type="text" name="ciudad">
+
+            <label>Modalidad</label>
+            <select name="modalidad">
+                <option value="presencial">Presencial</option>
+                <option value="virtual">Virtual</option>
+                <option value="hibrido">Híbrido</option>
+            </select>
+
+            <label>Jornada</label>
+            <select name="jornada">
+                <option value="tiempo_completo">Tiempo completo</option>
+                <option value="medio_tiempo">Medio tiempo</option>
+            </select>
+
+            <label>Salario</label>
+            <input type="number" name="salario">
+
+            <label>Carrera</label>
+            <select name="carrera_id">
+                <option value="">Todas</option>
+                {% for c in carreras %}
+                    <option value="{{ c._id }}">{{ c.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Tipo</label>
+            <select name="tipo">
+                <option value="empleo">Empleo</option>
+                <option value="practica">Prácticas</option>
+            </select>
+
+            <button type="submit">Publicar Oferta</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

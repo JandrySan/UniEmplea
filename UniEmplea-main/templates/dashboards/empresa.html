@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Empresa | UniEmplea</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav a {
+            background: white;
+            color: #0d6efd;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 8px;
+            font-size: 14px;
+        }
+
+        .nav a.logout {
+            background: #dc3545;
+            color: white;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .oferta {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .oferta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .estado {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .estado-pendiente { background: #fff3cd; color: #664d03; }
+        .estado-aprobada { background: #d1e7dd; color: #0f5132; }
+        .estado-rechazada { background: #f8d7da; color: #842029; }
+
+        .acciones a {
+            background: #0d6efd;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1> Panel Empresa</h1>
+    <nav class="nav">
+        <a href="{{ url_for('empresa.publicar_oferta') }}">Publicar Oferta</a>
+        <a href="{{ url_for('auth.logout') }}" class="logout">Cerrar sesión</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2> Mis Ofertas</h2>
+
+        {% if ofertas %}
+            {% for oferta in ofertas %}
+            <div class="oferta">
+                <div class="oferta-header">
+                    <h3>{{ oferta.titulo }}</h3>
+                    <span class="estado estado-{{ oferta.estado }}">
+                        {{ oferta.estado|capitalize }}
+                    </span>
+                </div>
+
+                <p>{{ oferta.descripcion }}</p>
+                
+                
+                <p>
+                    <strong>Ciudad:</strong> {{ oferta.ciudad or 'No especificada' }} |
+                    <strong>Modalidad:</strong> {{ oferta.modalidad }} |
+                    <strong>Jornada:</strong> {{ oferta.jornada }}
+                </p>
+
+                <p>
+                    <strong>Salario:</strong> {{ oferta.salario or 'A convenir' }} |
+                    <strong>Carrera:</strong> {{ oferta.carrera_nombre or 'Todas' }} |
+                    <strong>Tipo:</strong> {{ oferta.tipo }}
+                </p>
+
+                <div class="acciones">
+                    <a href="{{ url_for('empresa.ver_postulantes', oferta_id=oferta.id) }}">
+                         Ver Postulantes
+                    </a>
+                </div>
+                
+                <p>
+                <form action="{{ url_for('empresa.eliminar_oferta', oferta_id=oferta.id) }}"
+                    method="POST"
+                    onsubmit="return confirm('¿Seguro que deseas eliminar esta oferta?')"
+                    style="display:inline;">
+                    <button style="background:#dc3545;"> Eliminar</button>
+                </form>
+                </p>
+
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <p><em>No has publicado ofertas aún.</em></p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

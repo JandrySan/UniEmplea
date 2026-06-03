@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión Académica | UniEmplea</title>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #1f2937;
+            --muted: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        header a {
+            background: white;
+            color: var(--primary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        header a:hover {
+            opacity: .9;
+        }
+
+        /* ===== CONTENEDOR ===== */
+        .contenedor {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* ===== FORM ===== */
+        form {
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            width: 260px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            transition: all .2s;
+        }
+
+        button:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        button.eliminar {
+            background: var(--danger);
+        }
+
+        button.editar {
+            background: var(--warning);
+            color: #111;
+        }
+
+        /* ===== FACULTAD HEADER ===== */
+        .facultad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .acciones form {
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        hr {
+            margin: 25px 0;
+            border: none;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ===== CARRERAS ===== */
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        li {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .nombre-carrera {
+            font-weight: 500;
+        }
+
+        .acciones-carrera form {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        em {
+            color: var(--muted);
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Gestión Académica</h1>
+    <a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver</a>
+</header>
+
+<div class="contenedor">
+
+    <!-- CREAR FACULTAD -->
+    <div class="card">
+        <h3>Crear Facultad</h3>
+        <form method="POST">
+            <input type="text" name="nombre_facultad"
+                   placeholder="Nombre de la facultad" required>
+            <button>Crear</button>
+        </form>
+    </div>
+
+    <!-- LISTADO FACULTADES -->
+    {% for item in facultades_data %}
+        <div class="card">
+
+            <div class="facultad-header">
+                <h3>{{ item.facultad.nombre }}</h3>
+
+                <div class="acciones">
+                    <form method="POST"
+                          action="{{ url_for('admin.editar_facultad', facultad_id=item.facultad.id) }}">
+                        <input type="text" name="nombre"
+                               value="{{ item.facultad.nombre }}" required>
+                        <button class="editar">✏ Editar</button>
+                    </form>
+
+                    <form method="POST"
+                          action="{{ url_for('admin.eliminar_facultad', facultad_id=item.facultad.id) }}"
+                          onsubmit="return confirm('¿Eliminar facultad?');">
+                        <button class="eliminar">🗑 Eliminar</button>
+                    </form>
+                </div>
+            </div>
+
+            <hr>
+
+            <h4>Carreras</h4>
+
+            {% if item.carreras %}
+                <ul>
+                    {% for c in item.carreras %}
+                        <li>
+                            <span class="nombre-carrera">{{ c.nombre }}</span>
+
+                            <div class="acciones-carrera">
+                                <form method="POST"
+                                      action="{{ url_for('admin.editar_carrera', carrera_id=c.id) }}">
+                                    <input type="text" name="nuevo_nombre"
+                                           value="{{ c.nombre }}" required>
+                                    <button class="editar">Editar</button>
+                                </form>
+
+                                <form method="POST"
+                                      action="{{ url_for('admin.eliminar_carrera', carrera_id=c.id) }}"
+                                      onsubmit="return confirm('¿Eliminar carrera?');">
+                                    <button class="eliminar">Eliminar</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p><em>No hay carreras registradas</em></p>
+            {% endif %}
+
+            <form method="POST"
+                  action="{{ url_for('admin.crear_carrera', facultad_id=item.facultad.id) }}">
+                <input type="text" name="nombre_carrera"
+                       placeholder="Nueva carrera" required>
+                <button>➕ Agregar carrera</button>
+            </form>
+
+        </div>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

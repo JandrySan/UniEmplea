@@ -1,0 +1,251 @@
+from bson import ObjectId
+from flask import Blueprint, flash, render_template, request, redirect, session, url_for
+from repositories.repositorio_usuarios_mongo import RepositorioUsuariosMongo
+from repositories.repositorio_carreras_mongo import RepositorioCarrerasMongo
+from services.servicio_directores import ServicioDirectores
+from utils.decoradores import requiere_rol
+from werkzeug.security import generate_password_hash
+
+decano_bp = Blueprint("decano", __name__, url_prefix="/decano")
+
+
+repo_usuarios = RepositorioUsuariosMongo()
+repo_carreras = RepositorioCarrerasMongo()
+repo_facultades = RepositorioCarrerasMongo()
+servicio = ServicioDirectores(repo_usuarios, repo_carreras)
+repo_usuarios = RepositorioUsuariosMongo()
+
+
+@decano_bp.route("/dashboard")
+@requiere_rol("decano")
+def dashboard_decano():
+    facultad_id = session.get("facultad_id")
+
+    if not facultad_id:
+        return "Error: el decano no tiene facultad asignada", 400
+
+    facultad = repo_facultades.buscar_por_id(facultad_id)
+
+    return render_template(
+        "dashboards/decano_dashboard.html",
+        facultad=facultad
+    )
+
+
+
+@decano_bp.route("/carreras/asignar-director", methods=["POST"])
+@requiere_rol("decano")
+def asignar_director():
+    carrera_id = request.form.get("carrera_id")
+    director_id = request.form.get("director_id")
+
+    servicio.asignar_director(carrera_id, director_id)
+
+    return redirect(url_for("decano.listar_carreras"))
+
+
+
+@decano_bp.route("/carreras")
+@requiere_rol("decano")
+def listar_carreras():
+    facultad_id = session["facultad_id"]
+    carreras = repo_carreras.obtener_por_facultad(facultad_id)
+
+    for carrera in carreras:
+        carrera.director_nombre = None
+
+        if carrera.director_id:
+            director = repo_usuarios.buscar_por_id(carrera.director_id)
+            if director:
+                carrera.director_nombre = director.nombre
+
+
+    return render_template(
+        "dashboards/decano_carrera.html",
+        carreras=carreras
+    )
+
+
+
+
+
+@decano_bp.route("/carreras/<carrera_id>/asignar-director", methods=["GET", "POST"])
+@requiere_rol("decano")
+def form_asignar_director(carrera_id):
+
+    if request.method == "POST":
+        director_id = request.form.get("director_id")
+        servicio.asignar_director(carrera_id, director_id)
+        return redirect(url_for("decano.listar_carreras"))
+
+    carrera = repo_carreras.buscar_por_id(carrera_id)
+    docentes = repo_usuarios.obtener_docentes_por_facultad(
+        session["facultad_id"]
+    )
+
+
+
+    return render_template(
+        "dashboards/decano_asignar_director.html",
+        carrera=carrera,
+        docentes=docentes
+    )
+
+
+
+# gestion docente 
+
+@decano_bp.route("/docentes", methods=["GET", "POST"])
+@requiere_rol("decano")
+def gestionar_docentes():
+    facultad_id = session.get("facultad_id")
+
+    # Crear docente
+    if request.method == "POST" and "crear_docente" in request.form:
+        nombre = request.form.get("nombre")
+        correo = request.form.get("correo")
+        password = generate_password_hash(request.form.get("password"))
+
+        repo_usuarios.crear_docente(
+            nombre=nombre,
+            correo=correo,
+            password=password,
+            facultad_id=facultad_id
+        )
+        return redirect(url_for("decano.gestionar_docentes"))
+
+    # Cambiar estado tutor
+    if request.method == "POST" and "toggle_tutor" in request.form:
+        docente_id = request.form.get("docente_id")
+        estado = request.form.get("estado") == "true"
+
+        repo_usuarios.collection.update_one(
+            {"_id": ObjectId(docente_id)},
+            {"$set": {"es_tutor": estado}}
+        )
+        return redirect(url_for("decano.gestionar_docentes"))
+
+    docentes = repo_usuarios.obtener_docentes_por_facultad(facultad_id)
+
+    return render_template(
+        "dashboards/decano_docentes.html",
+        docentes=docentes
+    )
+
+
+
+@decano_bp.route("/docentes/crear", methods=["GET", "POST"])
+@requiere_rol("decano")
+def crear_docente():
+    if request.method == "POST":
+        nombre = request.form.get("nombre")
+        correo = request.form.get("correo")
+        password = request.form.get("password")
+
+        if not nombre or not correo or not password:
+            return render_template(
+                "dashboards/decano_crear_docente.html",
+                error="Todos los campos son obligatorios"
+            )
+
+        if repo_usuarios.buscar_por_correo(correo):
+            return render_template(
+                "dashboards/decano_crear_docente.html",
+                error="El correo ya existe"
+            )
+
+        repo_usuarios.crear({
+            "nombre": nombre,
+            "correo": correo,
+            "password": generate_password_hash(password),
+            "rol": "docente",
+            "activo": True,
+            "facultad_id": session["facultad_id"]
+        })
+
+        return redirect(url_for("decano.listar_docentes"))
+
+    return render_template("dashboards/decano_crear_docente.html")
+
+
+@decano_bp.route("/docentes/<docente_id>/toggle-tutor", methods=["POST"])
+@requiere_rol("decano")
+def toggle_tutor(docente_id):
+    docente = repo_usuarios.buscar_por_id(docente_id)
+
+    if not docente:
+        flash("Docente no encontrado", "error")
+        return redirect(url_for("decano.gestionar_docentes"))
+
+    repo_usuarios.collection.update_one(
+        {"_id": ObjectId(docente_id)},
+        {"$set": {"es_tutor": not docente.es_tutor}}
+    )
+
+    flash(
+        "Tutor habilitado" if not docente.es_tutor else "Tutor retirado",
+        "success"
+    )
+
+    return redirect(url_for("decano.gestionar_docentes"))
+
+
+@decano_bp.route("/directores")
+@requiere_rol("decano")
+def ver_directores():
+    facultad_id = session["facultad_id"]
+
+    # 🔹 Solo directores de carrera
+    directores = list(
+        repo_usuarios.collection.find({
+            "rol": "director_carrera",
+            "facultad_id": facultad_id
+        })
+    )
+
+    for d in directores:
+        d["_id"] = str(d["_id"])
+
+        # 🔹 Resolver nombre de la carrera
+        if d.get("carrera_id"):
+            carrera = repo_carreras.buscar_por_id(d["carrera_id"])
+            d["carrera_nombre"] = carrera.nombre if carrera else "Carrera no encontrada"
+        else:
+            d["carrera_nombre"] = "No asignada"
+
+    return render_template(
+        "dashboards/decano_directores.html",
+        directores=directores
+    )
+
+
+@decano_bp.route("/directores")
+@requiere_rol("decano")
+def listar_directores():
+    facultad_id = session["facultad_id"]
+
+    # Solo directores de carrera de esta facultad
+    directores = list(
+        repo_usuarios.collection.find({
+            "rol": "director_carrera",
+            "facultad_id": facultad_id,
+            "activo": True
+        })
+    )
+
+    # Resolver nombre de la carrera
+    for d in directores:
+        d["_id"] = str(d["_id"])
+
+        carrera_nombre = "No asignada"
+        if d.get("carrera_id"):
+            carrera = repo_carreras.buscar_por_id(d["carrera_id"])
+            if carrera:
+                carrera_nombre = carrera.nombre
+
+        d["carrera_nombre"] = carrera_nombre
+
+    return render_template(
+        "dashboards/decano_directores.html",
+        directores=directores
+    )

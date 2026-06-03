@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Docente | UniEmplea</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .logout {
+            background: #dc3545;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .estudiante {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0b5ed7;
+        }
+
+        .estado-ok {
+            color: green;
+            font-weight: bold;
+        }
+
+        .estado-pendiente {
+            color: orange;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Panel Docente</h1>
+    <a href="{{ url_for('auth.logout') }}" class="logout"
+       onclick="return confirm('¿Desea cerrar sesión?')">
+        Cerrar sesión
+    </a>
+</header>
+
+<div class="container">
+
+    <!-- 🔹 MIS ESTUDIANTES -->
+    <div class="card">
+        <h3>Mis Estudiantes Asignados</h3>
+
+        {% if mis_estudiantes %}
+            {% for e in mis_estudiantes %}
+                <div class="estudiante">
+                    <strong>{{ e.nombre }}</strong><br>
+                    {{ e.correo }} | Semestre {{ e.semestre }}
+
+                    <form method="POST"
+                          action="{{ url_for('docente.enviar_recomendacion', estudiante_id=e._id) }}">
+                        <textarea name="mensaje"
+                                  rows="3"
+                                  placeholder="Escribe una recomendación..."
+                                  required></textarea>
+
+                        <button type="submit">Enviar recomendación</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p><em>No tienes estudiantes asignados.</em></p>
+        {% endif %}
+    </div>
+
+    <!-- 🔹 RECOMENDACIONES ENVIADAS -->
+    <div class="card">
+        <h3>Recomendaciones enviadas</h3>
+
+        {% for r in recomendaciones %}
+        <div class="card">
+            <p><strong>Mensaje:</strong> {{ r.mensaje_docente }}</p>
+
+            {% if r.estado == "respondida" %}
+            <span style="color:green;"> Estudiante respondió</span>
+            {% else %}
+            <span style="color:orange;"> Pendiente de respuesta</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- 🔹 TODOS LOS ESTUDIANTES -->
+    <div class="card">
+        <h3>Todos los Estudiantes</h3>
+
+        <table>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Semestre</th>
+            </tr>
+
+            {% for e in todos_estudiantes %}
+            <tr>
+                <td>{{ e.nombre }}</td>
+                <td>{{ e.correo }}</td>
+                <td>{{ e.semestre }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

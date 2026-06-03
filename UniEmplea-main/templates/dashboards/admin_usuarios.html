@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuarios | Administrador</title>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            color: var(--text);
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header a {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background .2s;
+        }
+
+        header a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        main {
+            padding: 30px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .btn-crear {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 14px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity .2s;
+        }
+
+        .btn-crear:hover {
+            opacity: .9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .acciones a {
+            margin-right: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .editar { color: var(--primary); }
+        .activar { color: var(--success); }
+        .desactivar { color: var(--warning); }
+        .eliminar { color: var(--danger); }
+
+        .estado-activo {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .estado-inactivo {
+            color: var(--danger);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Usuarios del sistema</h1>
+    <a href="{{ url_for('admin.dashboard_admin') }}">⬅ Volver</a>
+</header>
+
+<main>
+
+    <a href="{{ url_for('admin.crear_usuario') }}" class="btn-crear">
+        ➕ Crear nuevo usuario
+    </a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for u in usuarios %}
+            <tr>
+                <td>{{ u.nombre }}</td>
+                <td>{{ u.correo }}</td>
+                <td>{{ u.rol }}</td>
+                <td>
+                    {% if u.activo %}
+                        <span class="estado-activo">Activo</span>
+                    {% else %}
+                        <span class="estado-inactivo">Inactivo</span>
+                    {% endif %}
+                </td>
+                <td class="acciones">
+                    <a class="editar"
+                       href="{{ url_for('admin.editar_usuario', id=u['_id']) }}">
+                       ✏ Editar
+                    </a>
+
+                    {% if u.activo %}
+                        <a class="desactivar"
+                           href="{{ url_for('admin.cambiar_estado_usuario', id=u['_id']) }}">
+                           🚫 Desactivar
+                        </a>
+                    {% else %}
+                        <a class="activar"
+                           href="{{ url_for('admin.toggle_usuario', id=u['_id']) }}"
+                           onclick="return confirm('¿Activar este usuario?')">
+                           ✅ Activar
+                        </a>
+                    {% endif %}
+
+                    <a class="eliminar"
+                       href="{{ url_for('admin.eliminar_usuario', id=u['_id']) }}"
+                       onclick="return confirm('⚠️ ¿Eliminar este usuario definitivamente?')">
+                       🗑 Eliminar
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5" style="text-align:center;">
+                    No hay usuarios registrados
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</main>
+
+</body>
+</html>

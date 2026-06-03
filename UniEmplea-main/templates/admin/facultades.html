@@ -1,0 +1,12 @@
+<h2>Facultades</h2>
+
+<form method="POST">
+  <input type="text" name="nombre" placeholder="Nombre de la facultad" required>
+  <button type="submit">Crear</button>
+</form>
+
+<ul>
+  {% for f in facultades %}
+    <li>{{ f.nombre }}</li>
+  {% endfor %}
+</ul>
