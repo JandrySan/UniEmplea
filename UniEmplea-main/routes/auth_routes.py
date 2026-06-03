@@ -94,7 +94,7 @@ def login():
 
 
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout", methods=["GET"])
 def logout():
     session.clear()
     return redirect(url_for("auth.login"))

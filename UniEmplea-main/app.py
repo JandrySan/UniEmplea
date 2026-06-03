@@ -1,3 +1,4 @@
+import os
 from flask import Flask, redirect, render_template, url_for
 from routes.auth_routes import auth_bp
 from routes.admin_routes import admin_bp
@@ -10,7 +11,7 @@ from routes.egresado_routes import egresado_bp
 
 
 app = Flask(__name__)
-app.secret_key = "uniemplea_secret"
+app.secret_key = os.getenv("FLASK_SECRET_KEY", os.urandom(24).hex())
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(admin_bp, url_prefix="/admin")
@@ -24,7 +25,7 @@ app.register_blueprint(empresa_bp, url_prefix="/empresa")
 
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def home():
     return render_template("dashboards/login.html")
 
