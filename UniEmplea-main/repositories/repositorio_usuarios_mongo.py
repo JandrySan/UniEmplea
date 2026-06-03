@@ -8,6 +8,7 @@ from models.director_carrera import DirectorCarrera
 from models.estudiante import Estudiante
 from models.egresado import Egresado
 from models.administrador import AdministradorGeneral
+from bson.errors import InvalidId
 
 class RepositorioUsuariosMongo:
 
@@ -44,7 +45,7 @@ class RepositorioUsuariosMongo:
         data = None
         try:
             data = self.collection.find_one({"_id": ObjectId(usuario_id)})
-        except:
+        except InvalidId:
             pass
 
         if not data:

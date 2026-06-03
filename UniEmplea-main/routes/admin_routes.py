@@ -29,6 +29,10 @@ from database.mongo_connection import MongoDB
 
 
 
+URL_LISTAR_USUARIOS = "admin.listar_usuarios"
+URL_GESTION_ACADEMICA = "admin.gestion_academica"
+URL_LISTAR_ESTUDIANTES = "admin.listar_estudiantes"
+
 admin_bp = Blueprint("admin", __name__)
 
 # Instancias 
@@ -48,7 +52,7 @@ servicio_auth = ServicioAutenticacion(repo_auth)
 
 # Rutas del administrador
 
-@admin_bp.route("/dashboard")
+@admin_bp.route("/dashboard", methods=["GET"])
 @requiere_rol("administrador")
 def dashboard_admin():
 
@@ -84,7 +88,7 @@ def dashboard_admin():
 
 
 
-@admin_bp.route("/usuarios")
+@admin_bp.route("/usuarios", methods=["GET"])
 @requiere_rol("administrador")
 def listar_usuarios():
     usuarios = list(repo_usuarios.collection.find())
@@ -98,6 +102,9 @@ def listar_usuarios():
 @admin_bp.route("/usuarios/crear", methods=["GET", "POST"])
 @requiere_rol("administrador")
 def crear_usuario():
+    TEMPLATE_CREAR_USUARIO = "dashboards/admin_crear_usuario.html"
+    
+
     if request.method == "POST":
         nombre = request.form.get("nombre")
         correo = request.form.get("correo")
@@ -107,13 +114,13 @@ def crear_usuario():
 
         if not nombre or not correo or not password or not rol:
             return render_template(
-                "dashboards/admin_crear_usuario.html",
+                TEMPLATE_CREAR_USUARIO,
                 error="Todos los campos son obligatorios"
             )
 
         if repo_usuarios.buscar_por_correo(correo):
             return render_template(
-                "dashboards/admin_crear_usuario.html",
+                TEMPLATE_CREAR_USUARIO,
                 error="El correo ya existe"
             )
 
@@ -130,9 +137,9 @@ def crear_usuario():
 
         repo_usuarios.collection.insert_one(data)
 
-        return redirect(url_for("admin.listar_usuarios"))
+        return redirect(url_for("URL_LISTAR_USUARIOS"))
 
-    return render_template("dashboards/admin_crear_usuario.html")
+    return render_template("TEMPLATE_CREAR_USUARIO")
 
     
 @admin_bp.route("/usuarios/<id>/editar", methods=["GET", "POST"])
@@ -141,7 +148,7 @@ def editar_usuario(id):
     usuario = repo_usuarios.collection.find_one({"_id": ObjectId(id)})
 
     if not usuario:
-        return redirect(url_for("admin.listar_usuarios"))
+        return redirect(url_for("URL_LISTAR_USUARIOS"))
 
     if request.method == "POST":
         nuevo_rol = request.form.get("rol")
@@ -151,20 +158,20 @@ def editar_usuario(id):
             {"$set": {"rol": nuevo_rol}}
         )
 
-        return redirect(url_for("admin.listar_usuarios"))
+        return redirect(url_for("URL_LISTAR_USUARIOS"))
 
     return render_template(
         "dashboards/admin_editar_usuario.html",
         usuario=usuario
     )
 
-@admin_bp.route("/usuarios/<id>/toggle")
+@admin_bp.route("/usuarios/<id>/toggle", methods=["GET"])
 @requiere_rol("administrador")
 def toggle_usuario(id):
     usuario = repo_usuarios.collection.find_one({"_id": ObjectId(id)})
 
     if not usuario:
-        return redirect(url_for("admin.listar_usuarios"))
+        return redirect(url_for("URL_LISTAR_USUARIOS"))
 
     nuevo_estado = not usuario.get("activo", True)
 
@@ -173,18 +180,18 @@ def toggle_usuario(id):
         {"$set": {"activo": nuevo_estado}}
     )
 
-    return redirect(url_for("admin.listar_usuarios"))
+    return redirect(url_for("URL_LISTAR_USUARIOS"))
 
-@admin_bp.route("/usuarios/<id>/eliminar")
+@admin_bp.route("/usuarios/<id>/eliminar", methods=["GET"])
 @requiere_rol("administrador")
 def eliminar_usuario(id):
     repo_usuarios.collection.delete_one(
         {"_id": ObjectId(id)}
     )
-    return redirect(url_for("admin.listar_usuarios"))
+    return redirect(url_for("URL_LISTAR_USUARIOS"))
 
 
-@admin_bp.route("/usuarios/<id>/estado")
+@admin_bp.route("/usuarios/<id>/estado", methods=["GET"])
 @requiere_rol("administrador")
 def cambiar_estado_usuario(id):
     usuario = repo_usuarios.collection.find_one(
@@ -198,12 +205,12 @@ def cambiar_estado_usuario(id):
             {"$set": {"activo": nuevo_estado}}
         )
 
-    return redirect(url_for("admin.listar_usuarios"))
+    return redirect(url_for("URL_LISTAR_USUARIOS"))
 
 # Rutas de estudiantes
 
 
-@admin_bp.route("/estudiantes")
+@admin_bp.route("/estudiantes", methods=["GET"])
 @requiere_rol("administrador")
 def listar_estudiantes():
 
@@ -238,7 +245,7 @@ def editar_estudiante(id):
     estudiante = repo_estudiantes.buscar_por_id(id)
 
     if not estudiante:
-        return redirect(url_for("admin.listar_estudiantes"))
+        return redirect(url_for("URL_LISTAR_ESTUDIANTES"))
 
     if request.method == "POST":
         semestre = request.form.get("semestre")
@@ -250,7 +257,7 @@ def editar_estudiante(id):
         }
 
         repo_estudiantes.actualizar(id, data)
-        return redirect(url_for("admin.listar_estudiantes"))
+        return redirect(url_for("URL_LISTAR_ESTUDIANTES"))
 
     return render_template(
         "dashboards/admin_editar_estudiante.html",
@@ -276,7 +283,7 @@ def asignar_decano():
         repo_usuarios.asignar_facultad(decano_id, facultad_id)
 
         flash("Decano asignado correctamente", "success")
-        return redirect(url_for("admin.dashboard_admin"))
+        return redirect(url_for("URL_DASHBOARD_ADMIN"))
 
     
     decanos = repo_usuarios.obtener_decanos()
@@ -327,7 +334,7 @@ def editar_facultad(facultad_id):
     nuevo_nombre = request.form.get("nombre")
     if nuevo_nombre:
         repo_facultades.actualizar(facultad_id, nuevo_nombre)
-    return redirect(url_for("admin.gestion_academica"))
+    return redirect(url_for("URL_GESTION_ACADEMICA"))
 
 
 # ELIMINAR FACULTAD 
@@ -336,10 +343,10 @@ def editar_facultad(facultad_id):
 def eliminar_facultad(facultad_id):
     carreras = repo_carreras.obtener_por_facultad(facultad_id)
     if carreras:
-        return redirect(url_for("admin.gestion_academica"))
+        return redirect(url_for("URL_GESTION_ACADEMICA"))
 
     repo_facultades.eliminar(facultad_id)
-    return redirect(url_for("admin.gestion_academica"))
+    return redirect(url_for("URL_GESTION_ACADEMICA"))
 
 # carrera 
 
@@ -357,7 +364,7 @@ def crear_carrera(facultad_id):
         )
         repo_carreras.crear(carrera)
 
-    return redirect(url_for("admin.gestion_academica"))
+    return redirect(url_for("URL_GESTION_ACADEMICA"))
 
 
 # ELIMINAR CARRERA
@@ -365,7 +372,7 @@ def crear_carrera(facultad_id):
 @requiere_rol("administrador")
 def eliminar_carrera(carrera_id):
     repo_carreras.eliminar(carrera_id)
-    return redirect(url_for("admin.gestion_academica"))
+    return redirect(url_for("URL_GESTION_ACADEMICA"))
 
 
 # EDITAR CARRERA
@@ -376,7 +383,7 @@ def editar_carrera(carrera_id):
     if nuevo_nombre:
         repo_carreras.actualizar(carrera_id, nuevo_nombre)
 
-    return redirect(url_for("admin.gestion_academica"))
+    return redirect(url_for("URL_GESTION_ACADEMICA"))
 
 
 @admin_bp.route("/academico/carrera/<carrera_id>/director", methods=["POST"])
@@ -385,13 +392,13 @@ def asignar_director(carrera_id):
     director_id = request.form.get("director_id")
     if director_id:
         repo_carreras.asignar_director(carrera_id, director_id)
-    return redirect(url_for("admin.gestion_academica"))
+    return redirect(url_for("URL_GESTION_ACADEMICA"))
 
 
 
 # gestionar ofertas
 
-@admin_bp.route("/ofertas")
+@admin_bp.route("/ofertas", methods=["GET"])
 @requiere_rol("administrador")
 def gestionar_ofertas():
     repo_ofertas = RepositorioOfertasMongo()
