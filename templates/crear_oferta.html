@@ -1,29 +1,45 @@
 {% extends "base.html" %}
 {% block contenido %}
-<h2>Publicar nueva oferta</h2>
-<form method="post">
-  <label>Título:</label><br>
-  <input name="titulo" required><br><br>
+<div class="contenedor-oferta">
+  <h2>Publicar nueva oferta</h2>
+  
+  <form method="post" class="form-oferta">
+    
+    <div class="campo-grupo">
+      <label for="titulo">Título:</label>
+      <input id="titulo" name="titulo" required>
+    </div>
 
-  <label>Descripción:</label><br>
-  <textarea name="descripcion" rows="5" cols="50" required></textarea><br><br>
+    <div class="campo-grupo">
+      <label for="descripcion">Descripción:</label>
+      <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
+    </div>
 
-  <label>Requisitos:</label><br>
-  <textarea name="requisitos" rows="3" cols="50"></textarea><br><br>
+    <div class="campo-grupo">
+      <label for="requisitos">Requisitos:</label>
+      <textarea id="requisitos" name="requisitos" rows="3"></textarea>
+    </div>
 
-  <label>Ubicación:</label><br>
-  <input name="ubicacion"><br><br>
+    <div class="campo-grupo">
+      <label for="ubicacion">Ubicación:</label>
+      <input id="ubicacion" name="ubicacion">
+    </div>
 
-  <label>Salario:</label><br>
-  <input name="salario"><br><br>
+    <div class="campo-grupo">
+      <label for="salario">Salario:</label>
+      <input id="salario" name="salario">
+    </div>
 
-  <label>Modalidad:</label><br>
-  <select name="modalidad">
-    <option value="Presencial">Presencial</option>
-    <option value="Remoto">Remoto</option>
-    <option value="Híbrido">Híbrido</option>
-  </select><br><br>
+    <div class="campo-grupo">
+      <label for="modalidad">Modalidad:</label>
+      <select id="modalidad" name="modalidad">
+        <option value="Presencial">Presencial</option>
+        <option value="Remoto">Remoto</option>
+        <option value="Híbrido">Híbrido</option>
+      </select>
+    </div>
 
-  <button type="submit">Publicar</button>
-</form>
+    <button type="submit" class="btn-publicar">Publicar</button>
+  </form>
+</div>
 {% endblock %}

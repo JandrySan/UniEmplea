@@ -89,7 +89,7 @@
     button {
       width: 100%;
       padding: 12px 0;
-      background-color: #3b82f6;
+      background-color: #1d4ed8;
       border: none;
       color: white;
       font-weight: bold;
@@ -139,28 +139,26 @@
 </head>
 
 <body>
-
-  <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
-    <img src="{{ url_for('static', filename='UniEmplea3.png') }}" alt="Imagen debajo del título"
+<form id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
+    <img src="{{ url_for('static', filename='UniEmplea3.png') }}" alt="Logotipo oficial de UniEmplea"
       style="width:200px; margin: 20px 0;">
     <h1>Iniciar sesión</h1>
 
-    <!-- Correo con ícono -->
     <div class="input-group">
-      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="input-icon" alt="Correo">
+      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="input-icon" alt="Correo electrónico">
       <input name="correo" type="email" placeholder="Correo" required>
     </div>
 
-    <!-- Contraseña con ícono y toggle -->
     <div class="input-group password-container">
       <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="input-icon" alt="Contraseña">
       <input id="password" name="contrasena" type="password" placeholder="Contraseña" required>
-      <img src="https://cdn-icons-png.flaticon.com/512/159/159604.png" class="toggle-icon" alt="Mostrar/Ocultar"
-        onclick="togglePassword()" title="Mostrar/Ocultar contraseña">
+      
+      <button type="button" class="btn-toggle" onclick="togglePassword()" aria-label="Mostrar u ocultar contraseña" title="Mostrar/Ocultar contraseña">
+        <img src="https://cdn-icons-png.flaticon.com/512/159/159604.png" class="toggle-icon" alt="">
+      </button>
     </div>
 
-    <!-- CAPTCHA -->
-    <label id="captcha-label"></label>
+    <label id="captcha-label" for="captcha"></label>
     <input type="number" id="captcha" placeholder="Escribe la respuesta" required>
 
     <div class="error" id="captcha-error"></div>
@@ -169,8 +167,7 @@
 
     <p style="margin-top: 20px;">
       ¿Eres una empresa? <a href="{{ url_for('auth.registro_empresa') }}"
-        style="color: #60a5fa; font-weight: bold;">Regístrate aquí</a>
-    </p>
+        style="color: #1d4ed8; font-weight: bold;">Regístrate aquí</a> </p>
 
   </form>
 
@@ -184,10 +181,12 @@
 
     // Validar el captcha antes de enviar
     document.getElementById('loginForm').addEventListener('submit', function (e) {
-      const respuesta = parseInt(document.getElementById('captcha').value.trim());
+      // SOLUCIÓN MODERNIZACIÓN: Uso estricto de Number.parseInt y radix 10
+      const respuesta = Number.parseInt(document.getElementById('captcha').value.trim(), 10);
       const errorBox = document.getElementById('captcha-error');
 
-      if (isNaN(respuesta) || respuesta !== resultado) {
+      // SOLUCIÓN MODERNIZACIÓN: Cambiado por Number.isNaN
+      if (Number.isNaN(respuesta) || respuesta !== resultado) {
         e.preventDefault(); // Detiene el envío del formulario
         errorBox.innerText = '❌ Captcha incorrecto. Intenta de nuevo.';
       } else {
@@ -201,7 +200,3 @@
       input.type = input.type === 'password' ? 'text' : 'password';
     }
   </script>
-
-</body>
-
-</html>

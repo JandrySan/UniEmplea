@@ -65,41 +65,42 @@
         <h2> Publicar Nueva Oferta</h2>
 
         <form action="{{ url_for('empresa.crear_oferta') }}" method="POST">
-            <label>Título</label>
-            <input type="text" name="titulo" required>
+            
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo" required>
 
-            <label>Descripción</label>
-            <textarea name="descripcion" rows="4" required></textarea>
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
 
-            <label>Ciudad</label>
-            <input type="text" name="ciudad">
+            <label for="ciudad">Ciudad</label>
+            <input type="text" id="ciudad" name="ciudad">
 
-            <label>Modalidad</label>
-            <select name="modalidad">
+            <label for="modalidad">Modalidad</label>
+            <select id="modalidad" name="modalidad">
                 <option value="presencial">Presencial</option>
                 <option value="virtual">Virtual</option>
                 <option value="hibrido">Híbrido</option>
             </select>
 
-            <label>Jornada</label>
-            <select name="jornada">
+            <label for="jornada">Jornada</label>
+            <select id="jornada" name="jornada">
                 <option value="tiempo_completo">Tiempo completo</option>
                 <option value="medio_tiempo">Medio tiempo</option>
             </select>
 
-            <label>Salario</label>
-            <input type="number" name="salario">
+            <label for="salario">Salario</label>
+            <input type="number" id="salario" name="salario">
 
-            <label>Carrera</label>
-            <select name="carrera_id">
+            <label for="carrera_id">Carrera</label>
+            <select id="carrera_id" name="carrera_id">
                 <option value="">Todas</option>
                 {% for c in carreras %}
                     <option value="{{ c._id }}">{{ c.nombre }}</option>
                 {% endfor %}
             </select>
 
-            <label>Tipo</label>
-            <select name="tipo">
+            <label for="tipo">Tipo</label>
+            <select id="tipo" name="tipo">
                 <option value="empleo">Empleo</option>
                 <option value="practica">Prácticas</option>
             </select>

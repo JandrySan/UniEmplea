@@ -173,21 +173,24 @@
 <!-- ===== MÉTRICAS ===== -->
 <div id="metricas" class="seccion" style="display:block;">
     <div class="metricas">
-        <div class="metrica" onclick="mostrarLista('lista-total')">
+        
+        <button type="button" class="metrica" onclick="mostrarLista('lista-total')" aria-label="Ver lista de total de estudiantes">
             <h3>{{ metricas.total_estudiantes }}</h3>
             <p>Total Estudiantes</p>
-        </div>
+        </button>
 
-        <div class="metrica" onclick="mostrarLista('lista-practicas')">
+        <button type="button" class="metrica" onclick="mostrarLista('lista-practicas')" aria-label="Ver lista de estudiantes en prácticas">
             <h3>{{ metricas.en_practicas }}</h3>
             <p>En Prácticas</p>
-        </div>
+        </button>
 
-        <div class="metrica" onclick="mostrarLista('lista-tutor')">
+        <button type="button" class="metrica" onclick="mostrarLista('lista-tutor')" aria-label="Ver lista de estudiantes con tutor">
             <h3>{{ metricas.con_tutor }}</h3>
             <p>Con Tutor</p>
-        </div>
+        </button>
+
     </div>
+</div>
 
     <!-- LISTA TOTAL -->
     <div id="lista-total" class="card lista" style="display:none;">

@@ -55,7 +55,7 @@
         input:focus {
             outline: none;
             border-color: #2563eb;
-            ring: 2px solid #bfdbfe;
+            box-shadow: 0 0 0 3px #bfdbfe;
         }
 
         button {
@@ -124,34 +124,34 @@
         <form method="POST" action="{{ url_for('auth.registro_empresa') }}">
 
             <div class="form-group">
-                <label>RUC</label>
-                <input type="text" name="ruc" placeholder="Ej: 1234567890001" required pattern="\d{10,13}"
+                <label for="ruc">RUC</label>
+                <input type="text" id="ruc" name="ruc" placeholder="Ej: 1234567890001" required pattern="\d{10,13}"
                     title="Ingrese un RUC válido (10-13 dígitos)">
             </div>
 
             <div class="form-group">
-                <label>Nombre de la Empresa</label>
-                <input type="text" name="nombre" placeholder="Ej: Tech Solutions S.A." required>
+                <label for="nombre">Nombre de la Empresa</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ej: Tech Solutions S.A." required>
             </div>
 
             <div class="form-group">
-                <label>Correo Electrónico</label>
-                <input type="email" name="correo" placeholder="contacto@empresa.com" required>
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" name="correo" placeholder="contacto@empresa.com" required>
             </div>
 
             <div class="form-group">
-                <label>Teléfono</label>
-                <input type="tel" name="telefono" placeholder="0991234567" required>
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" placeholder="0991234567" required>
             </div>
 
             <div class="form-group">
-                <label>Dirección</label>
-                <input type="text" name="direccion" placeholder="Av. Principal 123" required>
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" name="direccion" placeholder="Av. Principal 123" required>
             </div>
 
             <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" name="password" placeholder="********" required minlength="6">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="********" required minlength="6">
             </div>
 
             <button type="submit">Registrar Empresa</button>

@@ -1,34 +1,51 @@
-<!-- evaluar_egresado.html -->
 {% extends "base.html" %}
 {% block contenido %}
-<h2>Evaluar Egresado</h2>
-<form method="post">
-  <label>Egresado:</label><br>
-  <select name="id_egresado" required>
-    <option value="">Seleccionar egresado...</option>
-    {% for e in egresados %}
-      <option value="{{ e._id }}">{{ e.nombre }} - {{ e.carrera }}</option>
-    {% endfor %}
-  </select><br><br>
+<div class="contenedor-evaluacion">
+  <h2>Evaluar Egresado</h2>
+  
+  <form method="post" class="form-evaluacion">
+    
+    <div class="campo-grupo">
+      <label for="id_egresado">Egresado:</label>
+      <select id="id_egresado" name="id_egresado" required>
+        <option value="">Seleccionar egresado...</option>
+        {% for e in egresados %}
+          <option value="{{ e._id }}">{{ e.nombre }} - {{ e.carrera }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-  <label>Calificación final (0-10):</label><br>
-  <input type="number" step="0.1" min="0" max="10" name="calificacion" required><br><br>
+    <div class="campo-grupo">
+      <label for="calificacion">Calificación final (0-10):</label>
+      <input type="number" id="calificacion" step="0.1" min="0" max="10" name="calificacion" required>
+    </div>
 
-  <label>Conocimientos técnicos (0-10):</label><br>
-  <input type="number" step="0.1" min="0" max="10" name="comp_tecnicos" value="0"><br><br>
+    <div class="campo-grupo">
+      <label for="comp_tecnicos">Conocimientos técnicos (0-10):</label>
+      <input type="number" id="comp_tecnicos" step="0.1" min="0" max="10" name="comp_tecnicos" value="0">
+    </div>
 
-  <label>Trabajo en equipo (0-10):</label><br>
-  <input type="number" step="0.1" min="0" max="10" name="comp_equipo" value="0"><br><br>
+    <div class="campo-grupo">
+      <label for="comp_equipo">Trabajo en equipo (0-10):</label>
+      <input type="number" id="comp_equipo" step="0.1" min="0" max="10" name="comp_equipo" value="0">
+    </div>
 
-  <label>Comunicación (0-10):</label><br>
-  <input type="number" step="0.1" min="0" max="10" name="comp_comunicacion" value="0"><br><br>
+    <div class="campo-grupo">
+      <label for="comp_comunicacion">Comunicación (0-10):</label>
+      <input type="number" id="comp_comunicacion" step="0.1" min="0" max="10" name="comp_comunicacion" value="0">
+    </div>
 
-  <label>Resolución de problemas (0-10):</label><br>
-  <input type="number" step="0.1" min="0" max="10" name="comp_problemas" value="0"><br><br>
+    <div class="campo-grupo">
+      <label for="comp_problemas">Resolución de problemas (0-10):</label>
+      <input type="number" id="comp_problemas" step="0.1" min="0" max="10" name="comp_problemas" value="0">
+    </div>
 
-  <label>Observaciones:</label><br>
-  <textarea name="observaciones" rows="4" cols="50"></textarea><br><br>
+    <div class="campo-grupo">
+      <label for="observaciones">Observaciones:</label>
+      <textarea id="observaciones" name="observaciones" rows="4"></textarea>
+    </div>
 
-  <button type="submit">Guardar evaluación</button>
-</form>
+    <button type="submit" class="btn-guardar">Guardar evaluación</button>
+  </form>
+</div>
 {% endblock %}

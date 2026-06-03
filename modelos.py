@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any
 
+
 # =============================================================
 # Modelo base y utilidades
 # =============================================================
@@ -399,7 +400,7 @@ class Oferta(ModeloBase):
         self._descripcion = descripcion
         self._empresa_id = empresa_id
         self._carrera_id = carrera_id
-        self._fecha_publicacion = datetime.utcnow()
+        self._fecha_publicacion = datetime.now(timezone.utc)
         self._estado = "activa"
         self._requisitos = requisitos
         self._ubicacion = ubicacion
@@ -437,7 +438,7 @@ class Postulacion(ModeloBase):
         self._id_oferta = id_oferta
         self._titulo_oferta = titulo_oferta
         self._empresa_id = empresa_id
-        self._fecha_postulacion = datetime.utcnow()
+        self._fecha_postulacion = datetime.now(timezone.utc)
         self._estado = "pendiente"
         self._cita_presentacion: Optional[datetime] = None
         self._respuesta_empresa: Optional[str] = None  # mensaje opcional
@@ -486,7 +487,7 @@ class Practica(ModeloBase):
         self._fecha_inicio = fecha_inicio
         self._fecha_fin = fecha_fin
         self._estado = "asignada"
-        self._fecha_asignacion = datetime.utcnow()
+        self._fecha_asignacion = datetime.now(timezone.utc)
 
     def completar(self):
         self._estado = "completada"
