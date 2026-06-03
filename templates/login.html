@@ -57,6 +57,7 @@
       border: none;
       border-radius: 6px;
       font-size: 16px;
+      box-sizing: border-box;
     }
 
     .input-icon {
@@ -73,21 +74,32 @@
       position: relative;
     }
 
-    .password-container .toggle-icon {
+    /* SOLUCIÓN AL OJO: Convertimos el contenedor en un botón transparente interactivo */
+    .btn-toggle-password {
       position: absolute;
-      right: 10px;
+      right: 5px;
       top: 50%;
       transform: translateY(-50%);
-      width: 22px;
-      height: 22px;
+      background: none;
+      border: none;
+      padding: 5px;
+      margin: 0;
+      width: auto;
       cursor: pointer;
-      opacity: 0.8;
     }
 
-    button {
+    .btn-toggle-password .toggle-icon {
+      width: 22px;
+      height: 22px;
+      opacity: 0.8;
+      display: block;
+    }
+
+    /* Botón principal de submit */
+    .btn-submit {
       width: 100%;
       padding: 12px 0;
-      background-color: #3b82f6;
+      background-color: #1d4ed8; /* Azul corregido para el contraste de antes */
       border: none;
       color: white;
       font-weight: bold;
@@ -98,30 +110,16 @@
       margin-top: 15px;
     }
 
-    button:hover {
-      background-color: #2563eb;
-    }
-
-    a {
-      color: #90cdf4;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
+    .btn-submit:hover {
+      background-color: #1e40af;
     }
 
     h1 {
       margin-bottom: 20px;
     }
 
-    p {
-      margin-top: 15px;
-      font-size: 14px;
-    }
-
     .error {
-      color: red;
+      color: #f87171; /* Un rojo más claro y legible sobre el fondo oscuro */
       font-size: 14px;
       margin-top: 10px;
     }
@@ -138,29 +136,29 @@
 <body>
 
 <form id="loginForm" method="POST" action="{{ url_for('login') }}">
-  <img src="{{ url_for('static', filename='UniEmplea3.png') }}" alt="Imagen debajo del título" style="width:200px; margin: 20px 0;">
+  <img src="{{ url_for('static', filename='UniEmplea3.png') }}" alt="Logo UniEmplea" style="width:200px; margin: 20px 0;">
   <h1>Iniciar sesión</h1>
 
-  <!-- Correo con ícono -->
   <div class="input-group">
-    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="input-icon" alt="Correo">
+    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="input-icon" alt="">
     <input name="correo" type="email" placeholder="Correo" required>
   </div>
 
-  <!-- Contraseña con ícono y toggle -->
   <div class="input-group password-container">
-    <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="input-icon" alt="Contraseña">
+    <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="input-icon" alt="">
     <input id="password" name="contrasena" type="password" placeholder="Contraseña" required>
-    <img src="https://cdn-icons-png.flaticon.com/512/159/159604.png" class="toggle-icon" alt="Mostrar/Ocultar" onclick="togglePassword()" title="Mostrar/Ocultar contraseña">
+    
+    <button type="button" class="btn-toggle-password" onclick="togglePassword()" title="Mostrar/Ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+      <img src="https://cdn-icons-png.flaticon.com/512/159/159604.png" class="toggle-icon" alt="Ícono de ojo">
+    </button>
   </div>
 
-  <!-- CAPTCHA -->
-  <label id="captcha-label"></label>
+  <label id="captcha-label" for="captcha"></label>
   <input type="number" id="captcha" placeholder="Escribe la respuesta" required>
 
   <div class="error" id="captcha-error"></div>
 
-  <button type="submit">Entrar</button>
+  <button type="submit" class="btn-submit">Entrar</button>
  
 </form>
 
@@ -172,12 +170,14 @@
 
   document.getElementById('captcha-label').innerText = `¿Cuánto es ${num1} + ${num2}?`;
 
-  // Validar el captcha antes de enviar
+ // Validar el captcha antes de enviar
   document.getElementById('loginForm').addEventListener('submit', function (e) {
-    const respuesta = parseInt(document.getElementById('captcha').value.trim());
+    // SOLUCIÓN: Usamos Number.parseInt() en lugar del global obsoleto
+    const respuesta = Number.parseInt(document.getElementById('captcha').value.trim(), 10);
     const errorBox = document.getElementById('captcha-error');
 
-    if (isNaN(respuesta) || respuesta !== resultado) {
+    // SOLUCIÓN: Usamos Number.isNaN() en lugar del global obsoleto
+    if (Number.isNaN(respuesta) || respuesta !== resultado) {
       e.preventDefault(); // Detiene el envío del formulario
       errorBox.innerText = '❌ Captcha incorrecto. Intenta de nuevo.';
     } else {
