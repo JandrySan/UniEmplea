@@ -17,20 +17,31 @@
 </ul>
 
 <h3>Prácticas a cargo</h3>
-<table border="1" cellpadding="6">
-  <tr><th>Estudiante</th><th>Empresa</th><th>Área</th><th>Estado</th><th>Acción</th></tr>
-  {% for p in practicas %}
-  <tr>
-    <td>{{ p.nombre_estudiante or p.id_estudiante }}</td>
-    <td>{{ p.nombre_empresa or p.id_empresa }}</td>
-    <td>{{ p.area }}</td>
-    <td>{{ p.estado }}</td>
-    <td>
-      <form method="POST" action="{{ url_for('aprobar_practica', id_practica=p._id) }}">
-        <button type="submit">Aprobar</button>
-      </form>
-    </td>
-  </tr>
-  {% endfor %}
+<table class="tabla-practicas">
+  <thead>
+    <tr>
+      <th>Estudiante</th>
+      <th>Empresa</th>
+      <th>Área</th>
+      <th>Estado</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in practicas %}
+    <tr>
+      <td>{{ p.nombre_estudiante or p.id_estudiante }}</td>
+      <td>{{ p.nombre_empresa or p.id_empresa }}</td>
+      <td>{{ p.area }}</td>
+      <td>{{ p.estado }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('aprobar_practica', id_practica=p._id) }}">
+          <button type="submit" class="btn-aprobar">Aprobar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
+
 {% endblock %}
